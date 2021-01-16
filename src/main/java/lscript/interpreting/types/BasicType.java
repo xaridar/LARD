@@ -31,7 +31,7 @@ public abstract class BasicType extends Value {
 
     @Override
     public Tuple<BasicType, Error> apply(Token opToken, Value otherType) {
-        Tuple<BasicType, Error> res = null;
+        Tuple<BasicType, Error> res;
         if (!(otherType instanceof BasicType))
             return super.apply(opToken, otherType);
         BasicType other = (BasicType) otherType;

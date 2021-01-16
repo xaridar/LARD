@@ -2,7 +2,7 @@ package lscript.interpreting.types;
 
 public class Int extends Number {
 
-    private int value;
+    private final int value;
 
     public Int(int value) {
         super("int", value);

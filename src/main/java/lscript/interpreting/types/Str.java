@@ -65,6 +65,7 @@ public class Str extends BasicType {
         return s;
     }
 
+    @SuppressWarnings("unused")
     public static Str from(Value val) {
         return new Str(val.getValue().toString());
     }

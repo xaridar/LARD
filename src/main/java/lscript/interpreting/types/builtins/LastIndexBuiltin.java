@@ -31,7 +31,7 @@ public class LastIndexBuiltin implements IExecutable {
         RTResult res = new RTResult();
         Value toIndex = execCtx.getSymbolTable().get("toIndex");
         Value val = execCtx.getSymbolTable().get("val");
-        Int startIndex = null;
+        Int startIndex;
         if (execNum > 2) {
             startIndex = (Int) execCtx.getSymbolTable().get("val");
             if (startIndex.getValue() == null) {

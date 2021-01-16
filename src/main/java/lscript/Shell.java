@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Shell {
@@ -39,9 +40,23 @@ public class Shell {
             in = System.in;
             fn = "<stdin>";
             Scanner scanner = new Scanner(in);
-            while (true) {
+            boolean listening = true;
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    System.out.println("\nClosing LScript...");
+                    Thread.sleep(200);
+                } catch (InterruptedException exc) {
+                    Thread.currentThread().interrupt();
+                }
+            }));
+            while (listening) {
                 System.out.print("LScript > ");
-                String text = scanner.nextLine();
+                String text = "";
+                try {
+                    text = scanner.nextLine();
+                } catch (NoSuchElementException ignored) {
+                    listening = false;
+                }
                 if (text.strip().equals("")) continue;
                 Tuple<Object, Error> result = run(fn, text);
 
@@ -60,7 +75,7 @@ public class Shell {
                 System.out.println("Commandline arguments are not currently supported for LScript.");
                 System.exit(0);
             }
-            Path p = Path.of(/*System.getProperty("user.dir"),*/ args[0]);
+            Path p = Path.of(args[0]);
             if (!Files.exists(p)) {
                 System.out.println("File does not exist.");
                 System.exit(0);
@@ -80,7 +95,7 @@ public class Shell {
     public static Tuple<Object, Error> run(String fn, String text) {
         Context context = new Context("<module>", null, null);
         context.setSymbolTable(global_symbol_table);
-        Lexer lexer = new Lexer(fn, text, context);
+        Lexer lexer = new Lexer(fn, text);
         Tuple<List<Token>, Error> tkns = lexer.make_tokens();
         if (tkns.getRight() != null)
             return Tuple.of(null, tkns.getRight());

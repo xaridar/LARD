@@ -35,8 +35,6 @@ public class Constants {
     public static final String TT_COMMA = "COMMA";
     public static final String TT_BANG = "BANG";
     public static final String TT_SEMICOLON = "SEMICOLON";
-    public static final String TT_SINGLE_QUOTE = "SNGL_QU";
-    public static final String TT_DOUBLE_QUOTE = "DBL_QU";
     public static final String TT_AND = "AND";
     public static final String TT_PIPE = "PIPE";
     public static final String TT_DOUBLE_PIPE = "DBL_PIPE";
@@ -68,8 +66,6 @@ public class Constants {
     }
 
     private Constants() {
-        List<String> types = List.of("int", "float", "var", "const", "bool", "function", "str", "list", "map", "file");
-
         TYPES = new HashMap<>();
         TYPES.put("int", List.of("int", "float", "num"));
         TYPES.put("float", List.of("float", "num"));

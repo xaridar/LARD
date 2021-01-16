@@ -29,7 +29,7 @@ public class OpenBuiltin implements IExecutable {
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         Str path = (Str) execCtx.getSymbolTable().get("path");
         Str mode = (Str) execCtx.getSymbolTable().get("mode");
-        lscript.interpreting.types.File f = null;
+        lscript.interpreting.types.File f;
         File file = new File(path.toString());
         switch (mode.getValue()) {
             case "a":

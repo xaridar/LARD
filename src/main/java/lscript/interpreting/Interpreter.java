@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static lscript.Constants.*;
 
+@SuppressWarnings("unused")
 public class Interpreter {
 
     private static Interpreter INSTANCE;
@@ -140,7 +141,7 @@ public class Interpreter {
             }
             return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong type; Expected '" + expectedType + "', got '" + value.getType() + "'", context));
         } else if (context.getSymbolTable().hasVar(varName)) {
-            String lastType = context.getSymbolTable().set(expectedType, varName, value, false);
+            String lastType = context.getSymbolTable().set(null, varName, value, false);
             if (lastType != null)
                 return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong type; Expected '" + lastType + "', got '" + value.getType() + "'", context));
             return res.success(value);
@@ -278,15 +279,6 @@ public class Interpreter {
         if (res.shouldReturn()) return res;
         returnVal = returnVal.copy().setContext(context).setPos(node.getPosStart(), node.getPosEnd());
         return res.success(returnVal);
-    }
-
-    public RTResult visitMultiLineNode(MultiLineNode node, Context context) {
-        RTResult res = new RTResult();
-        for (int i = 0; i < node.getNodes().size(); i++) {
-            res.register(visit(node.getNodes().get(i), context));
-            if (res.shouldReturn()) return res;
-        }
-        return res.success(NullType.Void);
     }
 
     public RTResult visitIndexNode(IndexNode node, Context context) {

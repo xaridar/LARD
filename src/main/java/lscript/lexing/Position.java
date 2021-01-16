@@ -4,8 +4,8 @@ public class Position {
     private int idx;
     private int ln;
     private int col;
-    private String fn;
-    private String ftxt;
+    private final String fn;
+    private final String ftxt;
 
     public Position(int idx, int ln, int col, String fn, String ftxt) {
         this.idx = idx;

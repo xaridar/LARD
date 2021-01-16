@@ -1,8 +1,8 @@
 package lscript.lexing;
 
-import lscript.*;
+import lscript.Constants;
+import lscript.Tuple;
 import lscript.errors.Error;
-import lscript.interpreting.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +12,13 @@ import static lscript.Constants.*;
 
 public class Lexer {
     private Character current_char;
-    private final String fn;
     private final Position pos;
     private final String text;
-    private final Context context;
 
-    public Lexer (String fn, String text, Context context) {
-        this.fn = fn;
+    public Lexer(String fn, String text) {
         this.text = text;
         this.pos = new Position(-1, 0, -1, fn, text);
         this.current_char = null;
-        this.context = context;
         advance();
     }
 

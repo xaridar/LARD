@@ -2,7 +2,7 @@ package lscript.interpreting.types;
 
 public class Float extends Number {
 
-    private float value;
+    private final float value;
 
     public Float(float value) {
         super("float", value);

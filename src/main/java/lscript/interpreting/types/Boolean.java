@@ -7,7 +7,7 @@ public class Boolean extends BasicType {
 
     public static Boolean True = new Boolean(true);
     public static Boolean False = new Boolean(false);
-    private boolean value;
+    private final boolean value;
 
     public Boolean(boolean value) {
         super("bool");

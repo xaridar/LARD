@@ -19,7 +19,7 @@ public class Parser {
 
     private Token currentToken;
     private Token nextToken;
-    private List<Token> tokens;
+    private final List<Token> tokens;
     private int tokenIndex;
 
     public Parser(List<Token> tokens) {
@@ -90,10 +90,6 @@ public class Parser {
             Node ifExpr = res.register(ifExpr());
             if (res.hasError()) return res;
             return res.success(ifExpr);
-//        } else if (tok.matches(TT_KW, "switch")) {
-//            Node switchCase = res.register(switchCase());
-//            if (res.hasError()) return res;
-//            return res.success(switchCase);
         } else if (tok.getType().equals(TT_LEFT_BRACKET)) {
             Node listExpr = res.register(listExpr());
             if (res.hasError()) return res;
@@ -118,46 +114,6 @@ public class Parser {
 
         return res.failure(new Error.InvalidSyntaxError(tok.getPosStart(), tok.getPosEnd(), "Expected value, identifier, '+', '-', '(', '[', '{', 'if', 'for', 'while', or 'func'"));
     }
-
-//    private ParseResult switchCase() {
-//        ParseResult res = new ParseResult();
-//        List<Node> cases = new ArrayList<>();
-//        if (!currentToken.matches(TT_KW, "switch"))
-//            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected 'switch'"));
-//        res.registerAdvancement();
-//        advance();
-//        if (!currentToken.getType().equals(TT_LEFT_PAREN))
-//            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '('"));
-//        res.registerAdvancement();
-//        advance();
-//        Node var = res.register(expression());
-//        if (res.hasError()) return res;
-//        Token eqToken = new Token(TT_BOOLEQ, null, currentToken.getPosStart(), null, null);
-//
-//        if (!currentToken.getType().equals(TT_RIGHT_PAREN))
-//            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected ')'"));
-//        res.registerAdvancement();
-//        advance();
-//
-//        if (!currentToken.getType().equals(TT_LEFT_BRACE))
-//            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '{'"));
-//        res.registerAdvancement();
-//        advance();
-//
-//        if (!currentToken.matches(TT_KW, "case"))
-//            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected 'case'"));
-//        res.registerAdvancement();
-//        advance();
-//        Node val = res.register(expression());
-//        if (res.hasError()) return res;
-//
-//        if (!currentToken.getType().equals(TT_COLON))
-//            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected ':'"));
-//        res.registerAdvancement();
-//        advance();
-//        cases.add(new BinaryOperationNode(var, eqToken, val));
-//
-//    }
 
     private ParseResult mapExpr() {
         ParseResult res = new ParseResult();
@@ -270,7 +226,8 @@ public class Parser {
         List<Tuple<Token, Token>> argNameTokens = new ArrayList<>();
 
         if (currentToken.getType().equals(TT_KW)) {
-            if (!Constants.getInstance().TYPES.containsKey((String) currentToken.getValue()))
+            String str = (String) currentToken.getValue();
+            if (!Constants.getInstance().TYPES.containsKey(str))
                 return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected variable type"));
             Token type = currentToken;
             res.registerAdvancement();
@@ -284,8 +241,8 @@ public class Parser {
             while (currentToken.getType().equals(TT_COMMA)) {
                 res.registerAdvancement();
                 advance();
-
-                if (!Constants.getInstance().TYPES.containsKey((String) currentToken.getValue()))
+                str = (String) currentToken.getValue();
+                if (!Constants.getInstance().TYPES.containsKey(str))
                     return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(),
                         "Expected variable type"));
                 if (currentToken.getValue().equals("const"))
@@ -320,7 +277,8 @@ public class Parser {
             advance();
             if (!currentToken.getType().equals(TT_KW))
                 return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
-            if (!getInstance().TYPES.containsKey((String) currentToken.getValue()))
+            String str = (String) currentToken.getValue();
+            if (!getInstance().TYPES.containsKey(str))
                 return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
             returnTypes.add((String) currentToken.getValue());
             while (currentToken.getType().equals(TT_COMMA)) {
@@ -329,7 +287,8 @@ public class Parser {
 
                 if (!currentToken.getType().equals(TT_KW))
                     return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
-                if (!getInstance().TYPES.containsKey((String) currentToken.getValue()))
+                str = (String) currentToken.getValue();
+                if (!getInstance().TYPES.containsKey(str))
                     return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
                 returnTypes.add(currentToken.getType());
             }
@@ -496,7 +455,7 @@ public class Parser {
     private Tuple<Tuple<List<Tuple<Tuple<Node, Node>, Boolean>>, Tuple<Node, Boolean>>, Error> ifExprCases(String caseKW) {
         ParseResult res = new ParseResult();
         List<Tuple<Tuple<Node, Node>, Boolean>> cases = new ArrayList<>();
-        Tuple<Node, Boolean> else_case = null;
+        Tuple<Node, Boolean> else_case;
 
         if (!currentToken.matches(TT_KW, caseKW))
             return Tuple.of(null,
@@ -544,9 +503,8 @@ public class Parser {
     }
 
     public Tuple<Tuple<List<Tuple<Tuple<Node, Node>, Boolean>>, Tuple<Node, Boolean>>, Error> ifExprBorC() {
-        ParseResult res = new ParseResult();
         List<Tuple<Tuple<Node, Node>, Boolean>> cases = new ArrayList<>();
-        Tuple<Node, Boolean> elseCase = null;
+        Tuple<Node, Boolean> elseCase;
 
         if (currentToken.matches(TT_KW, "elif")) {
             Tuple<Tuple<List<Tuple<Tuple<Node, Node>, Boolean>>, Tuple<Node, Boolean>>, Error> allCases = ifExprB();
@@ -606,14 +564,11 @@ public class Parser {
             advance();
             List<Node> arg_nodes = new ArrayList<>();
 
-            if (currentToken.getType().equals(TT_RIGHT_PAREN)) {
-                res.registerAdvancement();
-                advance();
-            } else {
+            if (!currentToken.getType().equals(TT_RIGHT_PAREN)) {
                 arg_nodes.add(res.register(expression()));
                 if (res.hasError())
                     return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(),
-                    "Expected ')', 'for', 'if', 'while', 'func', type, value, identifier, '+', '-', '('"));
+                            "Expected ')', 'for', 'if', 'while', 'func', type, value, identifier, '+', '-', '('"));
                 while (currentToken.getType().equals(TT_COMMA)) {
                     res.registerAdvancement();
                     advance();
@@ -624,9 +579,9 @@ public class Parser {
                 if (!currentToken.getType().equals(TT_RIGHT_PAREN))
                     return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected ',' or ')'"));
 
-                res.registerAdvancement();
-                advance();
             }
+            res.registerAdvancement();
+            advance();
             if (atom instanceof VarAccessNode)
                 return res.success(new CallNode((VarAccessNode) atom, arg_nodes));
             return res.failure(new Error.InvalidSyntaxError(atom.getPosStart(), atom.getPosEnd(), "Expected identifier"));
@@ -783,7 +738,8 @@ public class Parser {
     public ParseResult expr() {
         ParseResult res = new ParseResult();
         if (currentToken.getType().equals(TT_KW)) {
-            if (Constants.getInstance().TYPES.containsKey((String) currentToken.getValue())) {
+            String str = (String) currentToken.getValue();
+            if (Constants.getInstance().TYPES.containsKey(str)) {
                 String type = (String) currentToken.getValue();
                 res.registerAdvancement();
                 advance();

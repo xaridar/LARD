@@ -24,7 +24,7 @@ public class MaxBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        Number value = null;
+        Number value;
         if (execNum == 0) {
             value = new Int(Math.max(((Int) execCtx.getSymbolTable().get("val1")).getValue(), ((Int) execCtx.getSymbolTable().get("val2")).getValue()));
         } else {
