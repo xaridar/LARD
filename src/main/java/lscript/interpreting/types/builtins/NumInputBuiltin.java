@@ -28,9 +28,9 @@ public class NumInputBuiltin implements IExecutable {
         Scanner scanner = new Scanner(System.in);
         String s = scanner.nextLine();
         if (s.matches("^-?\\d+\\.\\d+$")) {
-            return new RTResult().success(new LFloat(java.lang.Float.parseFloat(s)));
+            return new RTResult().success(new LFloat(java.lang.Float.parseFloat(s)).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
         } else if (s.matches("^-?\\d+$")) {
-            return new RTResult().success(new LInt(Integer.parseInt(s)));
+            return new RTResult().success(new LInt(Integer.parseInt(s)).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
         }
         return new RTResult().success(NullType.Null);
     }

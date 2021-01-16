@@ -21,6 +21,6 @@ public class StrBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        return new RTResult().success(new LString(execCtx.getSymbolTable().get("val").toString()));
+        return new RTResult().success(new LString(execCtx.getSymbolTable().get("val").toString()).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

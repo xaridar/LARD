@@ -23,6 +23,6 @@ public class RootBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        return new RTResult().success(new LFloat((float) Math.pow(((LNumber) execCtx.getSymbolTable().get("val")).getValue().doubleValue(), 1 / ((LNumber) execCtx.getSymbolTable().get("power")).getValue().doubleValue())));
+        return new RTResult().success(new LFloat((float) Math.pow(((LNumber) execCtx.getSymbolTable().get("val")).getValue().doubleValue(), 1 / ((LNumber) execCtx.getSymbolTable().get("power")).getValue().doubleValue())).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

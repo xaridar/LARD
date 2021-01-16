@@ -24,8 +24,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * Main class, which takes input from cmd or a file and interprets it.
+ */
 public class Shell {
     public static SymbolTable global_symbol_table = new SymbolTable();
+
+    /**
+     * @param args - cmd line arguments - if none are passed, it reads from cmd; otherwise, it looks for a file to read with the specified path
+     * @throws IOException when no file is found for commandline url
+     */
     public static void main(String[] args) throws IOException {
 
         global_symbol_table.set("nullType", "null", NullType.Null, true);
@@ -93,6 +101,12 @@ public class Shell {
 
     }
 
+    /**
+     * Runs the interpreter on text as a String
+     * @param fn - the name of the input file
+     * @param text - the inputted text
+     * @return a Tuple which holds the results of the interpretation
+     */
     public static Tuple<Object, Error> run(String fn, String text) {
         Context context = new Context("<module>", null, null);
         context.setSymbolTable(global_symbol_table);

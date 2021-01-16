@@ -52,6 +52,6 @@ public class OpenBuiltin implements IExecutable {
                 return new RTResult().failure(new Error.InvalidSyntaxError(fun.getPosStart(), fun.getPosEnd(), "Expected file mode: either 'a', 'r', or 'w'"));
         }
         f = new LFile(Paths.get(path.getValue()).toAbsolutePath().toString(), mode.getValue());
-        return new RTResult().success(f);
+        return new RTResult().success(f.setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

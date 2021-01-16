@@ -59,6 +59,6 @@ public class LastIndexBuiltin implements IExecutable {
         } else {
             return null;
         }
-        return res.success(new LInt(index));
+        return res.success(new LInt(index).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

@@ -31,6 +31,6 @@ public class RemoveBuiltin implements IExecutable {
                 map.getMap().remove(val);
             });
         }
-        return new RTResult().success(ret[0]);
+        return new RTResult().success(ret[0].setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

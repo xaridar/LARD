@@ -17,8 +17,7 @@ public abstract class LNumber extends BasicType {
         return value;
     }
 
-    // ops
-
+    // operations
 
     @Override
     public Tuple<BasicType, Error> addedTo(BasicType other) {

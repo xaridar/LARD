@@ -1,5 +1,8 @@
 package lscript.parsing.nodes;
 
+/**
+ * A simple Node representing a while loop.
+ */
 public class WhileNode extends Node {
     private final Node conditionNode;
     private final Node bodyNode;

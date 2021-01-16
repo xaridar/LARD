@@ -14,14 +14,23 @@ public class CallNode extends Node {
         this.argNodes = argNodes;
     }
 
+    /**
+     * @return a list of Nodes representing parameter to the function.
+     */
     public List<Node> getArgNodes() {
         return argNodes;
     }
 
+    /**
+     * @return the VarAccessNode representing the function to call.
+     */
     public VarAccessNode getNodeToCall() {
         return nodeToCall;
     }
 
+    /**
+     * @return a String representation of the Node for debugging.
+     */
     @Override
     public String toString() {
         return String.format("(%s(%s))", nodeToCall.getToken().toString(), argNodes.stream().map(Object::toString).collect(Collectors.joining(", ")));

@@ -30,6 +30,6 @@ public class MinBuiltin implements IExecutable {
         } else {
             value = new LFloat(Math.min(((LNumber) execCtx.getSymbolTable().get("val1")).getValue().floatValue(), ((LNumber) execCtx.getSymbolTable().get("val2")).getValue().floatValue()));
         }
-        return new RTResult().success(value);
+        return new RTResult().success(value.setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

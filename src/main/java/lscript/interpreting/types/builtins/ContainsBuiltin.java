@@ -37,6 +37,6 @@ public class ContainsBuiltin implements IExecutable {
                 contains = m.getValue().keySet().stream().anyMatch(val -> val.equalTo(element).isTrue());
                 break;
         }
-        return new RTResult().success(new LBoolean(contains));
+        return new RTResult().success(new LBoolean(contains).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

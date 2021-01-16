@@ -49,6 +49,6 @@ public class FormatBuiltin implements IExecutable {
             builder.append(val, valIndex, indexToAppendTo);
             valIndex = val.indexOf("{}", valIndex);
         }
-        return new RTResult().success(new LString(builder.toString()));
+        return new RTResult().success(new LString(builder.toString()).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

@@ -24,9 +24,9 @@ public class AbsBuiltin implements IExecutable {
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         if (execNum == 0) {
-            return new RTResult().success(new LInt(Math.abs(((LInt) execCtx.getSymbolTable().get("val")).getValue())));
+            return new RTResult().success(new LInt(Math.abs(((LInt) execCtx.getSymbolTable().get("val")).getValue())).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
         } else if (execNum == 1) {
-            return new RTResult().success(new LFloat(Math.abs(((LFloat) execCtx.getSymbolTable().get("val")).getValue())));
+            return new RTResult().success(new LFloat(Math.abs(((LFloat) execCtx.getSymbolTable().get("val")).getValue())).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
         }
         return null;
     }

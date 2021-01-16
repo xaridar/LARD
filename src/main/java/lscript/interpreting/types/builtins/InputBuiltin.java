@@ -26,6 +26,6 @@ public class InputBuiltin implements IExecutable {
             System.out.print(execCtx.getSymbolTable().get("prompt"));
         }
         Scanner scanner = new Scanner(System.in);
-        return new RTResult().success(new LString(scanner.nextLine()));
+        return new RTResult().success(new LString(scanner.nextLine()).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

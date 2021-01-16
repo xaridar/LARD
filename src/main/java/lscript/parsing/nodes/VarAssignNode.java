@@ -2,6 +2,9 @@ package lscript.parsing.nodes;
 
 import lscript.lexing.Token;
 
+/**
+ * A simple Node representing an attempt to assign a variable.
+ */
 public class VarAssignNode extends Node {
     private final String type;
     private final Token token;

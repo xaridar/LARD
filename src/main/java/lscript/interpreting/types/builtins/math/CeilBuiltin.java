@@ -23,6 +23,6 @@ public class CeilBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        return new RTResult().success(new LInt((int) Math.ceil(((LNumber) execCtx.getSymbolTable().get("val")).getValue().doubleValue())));
+        return new RTResult().success(new LInt((int) Math.ceil(((LNumber) execCtx.getSymbolTable().get("val")).getValue().doubleValue())).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

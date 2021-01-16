@@ -254,7 +254,7 @@ public class Interpreter {
             funcName = (String) node.getVarNameToken().getValue();
         Node bodyNode = node.getBodyNode();
         List<String> returnTypes = node.getReturnTypes();
-        List<Tuple<String, String>> argNames = node.getArgNameTokens().stream().map(t -> Tuple.of((String) t.getLeft().getValue(), (String) t.getRight().getValue())).collect(Collectors.toList());
+        List<Tuple<String, String>> argNames = node.getArgTokens().stream().map(t -> Tuple.of((String) t.getLeft().getValue(), (String) t.getRight().getValue())).collect(Collectors.toList());
         Value funcValue = new LFunction(funcName, bodyNode, argNames, returnTypes).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
 
         if (node.getVarNameToken() != null)

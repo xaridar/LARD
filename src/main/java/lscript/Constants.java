@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Holds constant Token types and variable types for the interpreter
+ */
 public class Constants {
     public static final String TT_INT = "INT";
     public static final String TT_FLOAT = "FLOAT";
@@ -66,6 +69,9 @@ public class Constants {
         return INSTANCE;
     }
 
+    /**
+     * Sets up maps in the singleton
+     */
     private Constants() {
         TYPES = new HashMap<>();
         TYPES.put("int", List.of("int", "float", "num"));

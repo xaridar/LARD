@@ -35,7 +35,7 @@ public class ReadFileBultin implements IExecutable {
         try {
             StringBuilder s = new StringBuilder();
             Files.lines(Path.of(f.getPath()), StandardCharsets.UTF_8).forEach(s::append);
-            return new RTResult().success(new LString(s.toString()));
+            return new RTResult().success(new LString(s.toString()).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
         } catch (IOException e) {
             return new RTResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot find file '" + f.getPath() + "'", execCtx));
         }

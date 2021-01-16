@@ -32,6 +32,6 @@ public class LenBuiltin implements IExecutable {
                 len = ((LMap) execCtx.getSymbolTable().get("collection")).getMap().size();
                 break;
         }
-        return new RTResult().success(new LInt(len));
+        return new RTResult().success(new LInt(len).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

@@ -23,6 +23,6 @@ public class PopBuiltin implements IExecutable {
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         LList list = (LList) execCtx.getSymbolTable().get("container");
-        return new RTResult().success(list.getElements().remove(((LInt) execCtx.getSymbolTable().get("index")).getValue().intValue()));
+        return new RTResult().success(list.getElements().remove(((LInt) execCtx.getSymbolTable().get("index")).getValue().intValue()).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }
