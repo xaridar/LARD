@@ -5,9 +5,9 @@ import lscript.interpreting.Context;
 import lscript.errors.Error;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.File;
+import lscript.interpreting.types.LFile;
 import lscript.interpreting.types.NullType;
-import lscript.interpreting.types.Str;
+import lscript.interpreting.types.LString;
 import lscript.interpreting.types.builtins.IExecutable;
 
 import java.io.IOException;
@@ -30,8 +30,8 @@ public class WriteFileBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        File f = (File) execCtx.getSymbolTable().get("f");
-        Str text = (Str) execCtx.getSymbolTable().get("text");
+        LFile f = (LFile) execCtx.getSymbolTable().get("f");
+        LString text = (LString) execCtx.getSymbolTable().get("text");
         if (!f.canWrite()) {
             return new RTResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot write to a file in '" + f.getAccessMode() + "' mode.", execCtx));
         }

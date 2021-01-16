@@ -5,8 +5,8 @@ import lscript.interpreting.Context;
 import lscript.errors.Error;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.File;
-import lscript.interpreting.types.Str;
+import lscript.interpreting.types.LFile;
+import lscript.interpreting.types.LString;
 import lscript.interpreting.types.builtins.IExecutable;
 
 import java.io.IOException;
@@ -28,14 +28,14 @@ public class ReadFileBultin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        File f = (File) execCtx.getSymbolTable().get("f");
+        LFile f = (LFile) execCtx.getSymbolTable().get("f");
         if (!f.canRead()) {
             return new RTResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot read a file in '" + f.getAccessMode() + "' mode.", execCtx));
         }
         try {
             StringBuilder s = new StringBuilder();
             Files.lines(Path.of(f.getPath()), StandardCharsets.UTF_8).forEach(s::append);
-            return new RTResult().success(new Str(s.toString()));
+            return new RTResult().success(new LString(s.toString()));
         } catch (IOException e) {
             return new RTResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot find file '" + f.getPath() + "'", execCtx));
         }

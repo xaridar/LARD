@@ -31,25 +31,25 @@ public class LastIndexBuiltin implements IExecutable {
         RTResult res = new RTResult();
         Value toIndex = execCtx.getSymbolTable().get("toIndex");
         Value val = execCtx.getSymbolTable().get("val");
-        Int startIndex;
+        LInt startIndex;
         if (execNum > 2) {
-            startIndex = (Int) execCtx.getSymbolTable().get("val");
+            startIndex = (LInt) execCtx.getSymbolTable().get("val");
             if (startIndex.getValue() == null) {
                 return res.failure(new Error.RunTimeError(startIndex.getPosStart(), startIndex.getPosEnd(), "Expected int, got null.", execCtx));
             }
         }
         int index = -1;
         if (execNum == 0) {
-            String s = ((Str) toIndex).getValue();
-            index = s.lastIndexOf(((Str) val).getValue());
+            String s = ((LString) toIndex).getValue();
+            index = s.lastIndexOf(((LString) val).getValue());
         } else if (execNum == 1) {
-            List<Value> l = ((lscript.interpreting.types.List) toIndex).getValue();
+            List<Value> l = ((LList) toIndex).getValue();
             Stream<Value> stream = l.stream().filter(value -> val.equalTo(value).isTrue());
             Optional<Value> v = stream.skip(stream.count() - 1).findFirst();
             if (v.isPresent())
                 index = l.indexOf(v.get());
         } else if (execNum == 2) {
-            Map<Value, Value> m = ((lscript.interpreting.types.Map) toIndex).getValue();
+            Map<Value, Value> m = ((LMap) toIndex).getValue();
             Stream<Value> stream = m.values().stream().filter(value -> val.equalTo(value).isTrue());
             Optional<Value> v = stream.skip(stream.count() - 1).findFirst();
             if (v.isPresent()) {
@@ -59,6 +59,6 @@ public class LastIndexBuiltin implements IExecutable {
         } else {
             return null;
         }
-        return res.success(new Int(index));
+        return res.success(new LInt(index));
     }
 }

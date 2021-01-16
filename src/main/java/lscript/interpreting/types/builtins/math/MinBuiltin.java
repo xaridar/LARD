@@ -4,9 +4,9 @@ import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.Float;
-import lscript.interpreting.types.Int;
-import lscript.interpreting.types.Number;
+import lscript.interpreting.types.LFloat;
+import lscript.interpreting.types.LInt;
+import lscript.interpreting.types.LNumber;
 import lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.List;
@@ -24,11 +24,11 @@ public class MinBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        Number value;
+        LNumber value;
         if (execNum == 0) {
-            value = new Int(Math.min(((Int) execCtx.getSymbolTable().get("val1")).getValue(), ((Int) execCtx.getSymbolTable().get("val2")).getValue()));
+            value = new LInt(Math.min(((LInt) execCtx.getSymbolTable().get("val1")).getValue(), ((LInt) execCtx.getSymbolTable().get("val2")).getValue()));
         } else {
-            value = new Float(Math.min(((Number) execCtx.getSymbolTable().get("val1")).getValue().floatValue(), ((Number) execCtx.getSymbolTable().get("val2")).getValue().floatValue()));
+            value = new LFloat(Math.min(((LNumber) execCtx.getSymbolTable().get("val1")).getValue().floatValue(), ((LNumber) execCtx.getSymbolTable().get("val2")).getValue().floatValue()));
         }
         return new RTResult().success(value);
     }

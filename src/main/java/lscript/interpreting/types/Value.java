@@ -75,9 +75,9 @@ public abstract class Value {
     }
 
 
-    public abstract Boolean equalTo(Value other);
+    public abstract LBoolean equalTo(Value other);
 
-    public abstract Boolean notEqualTo(Value other);
+    public abstract LBoolean notEqualTo(Value other);
 
 
     public boolean isTrue() {

@@ -5,7 +5,8 @@ import lscript.interpreting.Context;
 import lscript.errors.Error;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.Str;
+import lscript.interpreting.types.LFile;
+import lscript.interpreting.types.LString;
 import lscript.interpreting.types.builtins.IExecutable;
 
 import java.io.File;
@@ -27,9 +28,9 @@ public class OpenBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        Str path = (Str) execCtx.getSymbolTable().get("path");
-        Str mode = (Str) execCtx.getSymbolTable().get("mode");
-        lscript.interpreting.types.File f;
+        LString path = (LString) execCtx.getSymbolTable().get("path");
+        LString mode = (LString) execCtx.getSymbolTable().get("mode");
+        LFile f;
         File file = new File(path.toString());
         switch (mode.getValue()) {
             case "a":
@@ -50,7 +51,7 @@ public class OpenBuiltin implements IExecutable {
             default:
                 return new RTResult().failure(new Error.InvalidSyntaxError(fun.getPosStart(), fun.getPosEnd(), "Expected file mode: either 'a', 'r', or 'w'"));
         }
-        f = new lscript.interpreting.types.File(Paths.get(path.getValue()).toAbsolutePath().toString(), mode.getValue());
+        f = new LFile(Paths.get(path.getValue()).toAbsolutePath().toString(), mode.getValue());
         return new RTResult().success(f);
     }
 }

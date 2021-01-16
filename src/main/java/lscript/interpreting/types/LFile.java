@@ -1,19 +1,19 @@
 package lscript.interpreting.types;
 
-public class File extends Value {
+public class LFile extends Value {
 
     private final String path;
     private final String accessMode;
 
-    public File(String path, String accessMode) {
+    public LFile(String path, String accessMode) {
         super("file");
         this.path = path;
         this.accessMode = accessMode;
     }
 
     @Override
-    public File copy() {
-        return (File) new File(path, accessMode).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+    public LFile copy() {
+        return (LFile) new LFile(path, accessMode).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
@@ -47,15 +47,15 @@ public class File extends Value {
     }
 
     @Override
-    public Boolean equalTo(Value other) {
-        if (!(other instanceof File)) {
-            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+    public LBoolean equalTo(Value other) {
+        if (!(other instanceof LFile)) {
+            return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return (Boolean) new Boolean(path.equals(((File) other).getPath())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LBoolean) new LBoolean(path.equals(((LFile) other).getPath())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Boolean notEqualTo(Value other) {
-        return (Boolean) new Boolean(!equalTo(other).getValue()).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+    public LBoolean notEqualTo(Value other) {
+        return (LBoolean) new LBoolean(!equalTo(other).getValue()).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 }

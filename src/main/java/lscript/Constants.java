@@ -1,7 +1,8 @@
 package lscript;
 
 import lscript.interpreting.types.BasicType;
-import lscript.interpreting.types.Str;
+import lscript.interpreting.types.LList;
+import lscript.interpreting.types.LString;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,8 +83,8 @@ public class Constants {
         TYPES.put("file", List.of("file"));
 
         CONVERT_CLASSES = new HashMap<>();
-        CONVERT_CLASSES.put("str", Str.class);
-        CONVERT_CLASSES.put("list", lscript.interpreting.types.List.class);
+        CONVERT_CLASSES.put("str", LString.class);
+        CONVERT_CLASSES.put("list", LList.class);
 
         DESIGNATED_KEYWORDS = new ArrayList<>();
         DESIGNATED_KEYWORDS.addAll(TYPES.keySet());

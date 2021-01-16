@@ -4,7 +4,7 @@ import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.*;
-import lscript.interpreting.types.Boolean;
+import lscript.interpreting.types.LBoolean;
 
 import java.util.List;
 
@@ -25,18 +25,18 @@ public class ContainsBuiltin implements IExecutable {
         Value element = execCtx.getSymbolTable().get("element");
         switch (execNum) {
             case 0:
-                Str str = (Str) execCtx.getSymbolTable().get("container");
-                contains = str.getValue().contains(((Str) element).getValue());
+                LString str = (LString) execCtx.getSymbolTable().get("container");
+                contains = str.getValue().contains(((LString) element).getValue());
                 break;
             case 1:
-                lscript.interpreting.types.List l = (lscript.interpreting.types.List) execCtx.getSymbolTable().get("container");
+                LList l = (LList) execCtx.getSymbolTable().get("container");
                 contains = l.getValue().stream().anyMatch(val -> val.equalTo(element).isTrue());
                 break;
             case 2:
-                Map m = (Map) execCtx.getSymbolTable().get("container");
+                LMap m = (LMap) execCtx.getSymbolTable().get("container");
                 contains = m.getValue().keySet().stream().anyMatch(val -> val.equalTo(element).isTrue());
                 break;
         }
-        return new RTResult().success(new Boolean(contains));
+        return new RTResult().success(new LBoolean(contains));
     }
 }

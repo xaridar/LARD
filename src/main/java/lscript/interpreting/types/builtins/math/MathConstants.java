@@ -1,7 +1,7 @@
 package lscript.interpreting.types.builtins.math;
 
-import lscript.interpreting.types.Float;
+import lscript.interpreting.types.LFloat;
 
 public class MathConstants {
-    public static final Float Pi = new Float((float) Math.PI);
+    public static final LFloat Pi = new LFloat((float) Math.PI);
 }

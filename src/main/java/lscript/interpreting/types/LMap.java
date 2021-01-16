@@ -5,10 +5,10 @@ import lscript.errors.Error;
 
 import java.util.HashMap;
 
-public class Map extends BasicType {
+public class LMap extends BasicType {
     private final java.util.HashMap<Value, Value> map;
 
-    public Map(java.util.HashMap<Value, Value> map) {
+    public LMap(java.util.HashMap<Value, Value> map) {
         super("map");
         this.map = map;
     }
@@ -23,8 +23,8 @@ public class Map extends BasicType {
     }
 
     @Override
-    public Map copy() {
-        Map m = new Map(map);
+    public LMap copy() {
+        LMap m = new LMap(map);
         m.setContext(getContext());
         m.setPos(getPosStart(), getPosEnd());
         return m;
@@ -37,9 +37,9 @@ public class Map extends BasicType {
 
     @Override
     public Tuple<BasicType, Error> addedTo(BasicType other) {
-        Map newMap = copy();
-        if (other instanceof Map) {
-            newMap.getMap().putAll(((Map) other).getMap());
+        LMap newMap = copy();
+        if (other instanceof LMap) {
+            newMap.getMap().putAll(((LMap) other).getMap());
             return Tuple.of(newMap, null);
         }
         return null;
@@ -51,7 +51,7 @@ public class Map extends BasicType {
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
-            Boolean equal = key.equalTo(val);
+            LBoolean equal = key.equalTo(val);
             if (equal.isTrue()) {
                 element[0] = value;
                 break;
@@ -64,40 +64,40 @@ public class Map extends BasicType {
     }
 
     @Override
-    public Boolean equalTo(Value other) {
-        if (!(other instanceof Map))
-            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+    public LBoolean equalTo(Value other) {
+        if (!(other instanceof LMap))
+            return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         boolean res = true;
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
             Tuple<Value, Error> otherElement = other.elementAt(key);
             if (otherElement.getRight() != null)
-                return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
-            Boolean equal = value.equalTo(otherElement.getLeft());
+                return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+            LBoolean equal = value.equalTo(otherElement.getLeft());
             if (!equal.isTrue()) {
                 res = false;
             }
         }
-        return (Boolean) new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LBoolean) new LBoolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Boolean notEqualTo(Value other) {
-        if (!(other instanceof Map))
-            return (Boolean) new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+    public LBoolean notEqualTo(Value other) {
+        if (!(other instanceof LMap))
+            return (LBoolean) new LBoolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         boolean res = true;
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
             Tuple<Value, Error> otherElement = other.elementAt(key);
             if (otherElement.getRight() != null)
-                return (Boolean) new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
-            Boolean equal = value.equalTo(otherElement.getLeft());
+                return (LBoolean) new LBoolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+            LBoolean equal = value.equalTo(otherElement.getLeft());
             if (equal.isTrue()) {
                 res = false;
             }
         }
-        return (Boolean) new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LBoolean) new LBoolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 }

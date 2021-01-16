@@ -9,16 +9,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Str extends BasicType {
+public class LString extends BasicType {
 
     private String value;
 
-    public Str(String value) {
+    public LString(String value) {
         super("str");
         this.value = value;
     }
 
-    public Str(String value, Context context) {
+    public LString(String value, Context context) {
         super("str");
         setContext(context);
         List<String> allMatches = new ArrayList<>();
@@ -58,16 +58,16 @@ public class Str extends BasicType {
     }
 
     @Override
-    public Str copy() {
-        Str s = new Str(value);
+    public LString copy() {
+        LString s = new LString(value);
         s.setPos(getPosStart(), getPosEnd());
         s.setContext(getContext());
         return s;
     }
 
     @SuppressWarnings("unused")
-    public static Str from(Value val) {
-        return new Str(val.getValue().toString());
+    public static LString from(Value val) {
+        return new LString(val.getValue().toString());
     }
 
     @Override
@@ -80,42 +80,42 @@ public class Str extends BasicType {
 
     @Override
     public Tuple<BasicType, Error> addedTo(BasicType other) {
-        return Tuple.of(new Str(value + other.toString()).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return Tuple.of(new LString(value + other.toString()).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
     }
 
     @Override
     public Tuple<BasicType, Error> multipliedBy(BasicType other) {
-        if (other instanceof Int) {
-            return Tuple.of(new Str(value.repeat(((Int) other).getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        if (other instanceof LInt) {
+            return Tuple.of(new LString(value.repeat(((LInt) other).getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
         }
         return null;
     }
 
     @Override
     public Tuple<Value, Error> elementAt(Value val) {
-        if (!(val instanceof Int))
+        if (!(val instanceof LInt))
             return Tuple.of(null, new Error.RunTimeError(val.getPosStart(), val.getPosEnd(), "str values can only be indexed by integer values.", context));
-        int num = ((Int) val).getValue();
+        int num = ((LInt) val).getValue();
         if (0 <= num && num < value.length() - 1)
-            return Tuple.of(new Str(Character.toString(value.charAt(((Int) val).getValue()))).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return Tuple.of(new LString(Character.toString(value.charAt(((LInt) val).getValue()))).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
         if (num < 0 && -1*num < value.length())
-            return Tuple.of(new Str(Character.toString(value.charAt(num + value.length()))).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return Tuple.of(new LString(Character.toString(value.charAt(num + value.length()))).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
         return Tuple.of(null, new Error.IndexOutOfBoundsError(val.getPosStart(), val.getPosEnd(), "Index " + num + " out of range for length " + value.length(), context));
     }
 
     @Override
-    public Boolean equalTo(Value other) {
-        if (!(other instanceof Str)) {
-            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+    public LBoolean equalTo(Value other) {
+        if (!(other instanceof LString)) {
+            return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return (Boolean) new Boolean(value.equals(other.getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LBoolean) new LBoolean(value.equals(other.getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Boolean notEqualTo(Value other) {
-        if (!(other instanceof Str)) {
-            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+    public LBoolean notEqualTo(Value other) {
+        if (!(other instanceof LString)) {
+            return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return (Boolean) new Boolean(!value.equals(other.getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LBoolean) new LBoolean(!value.equals(other.getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 }

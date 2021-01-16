@@ -3,10 +3,7 @@ package lscript.interpreting.types.builtins;
 import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.Int;
-import lscript.interpreting.types.Map;
-import lscript.interpreting.types.Str;
+import lscript.interpreting.types.*;
 
 import java.util.List;
 
@@ -26,15 +23,15 @@ public class LenBuiltin implements IExecutable {
         int len = 0;
         switch (execNum) {
             case 0:
-                len = ((Str) execCtx.getSymbolTable().get("string")).getValue().length();
+                len = ((LString) execCtx.getSymbolTable().get("string")).getValue().length();
                 break;
             case 1:
-                len = ((lscript.interpreting.types.List) execCtx.getSymbolTable().get("collection")).getElements().size();
+                len = ((LList) execCtx.getSymbolTable().get("collection")).getElements().size();
                 break;
             case 2:
-                len = ((Map) execCtx.getSymbolTable().get("collection")).getMap().size();
+                len = ((LMap) execCtx.getSymbolTable().get("collection")).getMap().size();
                 break;
         }
-        return new RTResult().success(new Int(len));
+        return new RTResult().success(new LInt(len));
     }
 }

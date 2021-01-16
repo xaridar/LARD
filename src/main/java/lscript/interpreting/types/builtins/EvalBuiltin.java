@@ -6,7 +6,7 @@ import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.NullType;
-import lscript.interpreting.types.Str;
+import lscript.interpreting.types.LString;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class EvalBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        Shell.run(fun.getPosStart().getFn(), ((Str) execCtx.getSymbolTable().get("text")).getValue());
+        Shell.run(fun.getPosStart().getFn(), ((LString) execCtx.getSymbolTable().get("text")).getValue());
         return new RTResult().success(NullType.Void);
     }
 }

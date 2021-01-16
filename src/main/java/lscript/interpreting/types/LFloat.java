@@ -1,22 +1,22 @@
 package lscript.interpreting.types;
 
-public class Float extends Number {
+public class LFloat extends LNumber {
 
     private final float value;
 
-    public Float(float value) {
+    public LFloat(float value) {
         super("float", value);
         this.value = value;
     }
 
-    public Float(int value) {
+    public LFloat(int value) {
         super("float", value);
         this.value = value;
     }
 
     @Override
-    public Float copy() {
-        Float b = new Float(value);
+    public LFloat copy() {
+        LFloat b = new LFloat(value);
         b.setContext(getContext());
         b.setPos(getPosStart(), getPosEnd());
         return b;

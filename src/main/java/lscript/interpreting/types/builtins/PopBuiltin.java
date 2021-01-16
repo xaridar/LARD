@@ -4,7 +4,8 @@ import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.Int;
+import lscript.interpreting.types.LInt;
+import lscript.interpreting.types.LList;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class PopBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        lscript.interpreting.types.List list = (lscript.interpreting.types.List) execCtx.getSymbolTable().get("container");
-        return new RTResult().success(list.getElements().remove(((Int) execCtx.getSymbolTable().get("index")).getValue().intValue()));
+        LList list = (LList) execCtx.getSymbolTable().get("container");
+        return new RTResult().success(list.getElements().remove(((LInt) execCtx.getSymbolTable().get("index")).getValue().intValue()));
     }
 }

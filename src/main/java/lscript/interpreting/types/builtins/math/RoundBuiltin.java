@@ -4,8 +4,8 @@ import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.Int;
-import lscript.interpreting.types.Number;
+import lscript.interpreting.types.LInt;
+import lscript.interpreting.types.LNumber;
 import lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.List;
@@ -23,6 +23,6 @@ public class RoundBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        return new RTResult().success(new Int((int) Math.round(((Number) execCtx.getSymbolTable().get("val")).getValue().doubleValue())));
+        return new RTResult().success(new LInt((int) Math.round(((LNumber) execCtx.getSymbolTable().get("val")).getValue().doubleValue())));
     }
 }

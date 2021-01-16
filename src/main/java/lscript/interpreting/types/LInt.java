@@ -1,17 +1,17 @@
 package lscript.interpreting.types;
 
-public class Int extends Number {
+public class LInt extends LNumber {
 
     private final int value;
 
-    public Int(int value) {
+    public LInt(int value) {
         super("int", value);
         this.value = value;
     }
 
     @Override
-    public Int copy() {
-        Int b = new Int(value);
+    public LInt copy() {
+        LInt b = new LInt(value);
         b.setContext(getContext());
         b.setPos(getPosStart(), getPosEnd());
         return b;

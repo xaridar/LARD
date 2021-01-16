@@ -5,7 +5,8 @@ import lscript.interpreting.Context;
 import lscript.errors.Error;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.Str;
+import lscript.interpreting.types.LList;
+import lscript.interpreting.types.LString;
 
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class FormatBuiltin implements IExecutable {
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         StringBuilder builder = new StringBuilder();
-        lscript.interpreting.types.List list = (lscript.interpreting.types.List) execCtx.getSymbolTable().get("args");
-        Str string = (Str) execCtx.getSymbolTable().get("text");
+        LList list = (LList) execCtx.getSymbolTable().get("args");
+        LString string = (LString) execCtx.getSymbolTable().get("text");
         int count = 0;
         String val = string.getValue();
         int lastIdx = 0;
@@ -36,7 +37,7 @@ public class FormatBuiltin implements IExecutable {
             }
         }
         if (list.getElements().size() != count) return new RTResult().failure(new Error.RunTimeError(fun.getPosStart(), fun.getPosEnd(), "Wrong number  of arguments passed into 'format': Expected " + count + ", got " + list.getElements().size(), execCtx));
-        if (count == 0) return new RTResult().success(new Str(val));
+        if (count == 0) return new RTResult().success(new LString(val));
         builder.append(val, 0, val.indexOf("{}"));
         int valIndex = 0;
         valIndex += val.indexOf("{}");
@@ -48,6 +49,6 @@ public class FormatBuiltin implements IExecutable {
             builder.append(val, valIndex, indexToAppendTo);
             valIndex = val.indexOf("{}", valIndex);
         }
-        return new RTResult().success(new Str(builder.toString()));
+        return new RTResult().success(new LString(builder.toString()));
     }
 }

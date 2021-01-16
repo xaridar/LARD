@@ -20,13 +20,13 @@ public class NullType extends BasicType {
         }
 
         @Override
-        public Boolean equalTo(Value other) {
-            return (Boolean) new lscript.interpreting.types.Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        public LBoolean equalTo(Value other) {
+            return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
 
         @Override
-        public Boolean notEqualTo(Value other) {
-            return (Boolean) new lscript.interpreting.types.Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        public LBoolean notEqualTo(Value other) {
+            return (LBoolean) new LBoolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
     };
 
@@ -50,18 +50,18 @@ public class NullType extends BasicType {
     }
 
     @Override
-    public Boolean equalTo(Value other) {
+    public LBoolean equalTo(Value other) {
         if (!(other instanceof NullType)) {
-            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+            return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return (Boolean) new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LBoolean) new LBoolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Boolean notEqualTo(Value other) {
+    public LBoolean notEqualTo(Value other) {
         if (!(other instanceof NullType)) {
-            return (Boolean) new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+            return (LBoolean) new LBoolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 }

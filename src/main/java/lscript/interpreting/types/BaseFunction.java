@@ -90,15 +90,15 @@ public class BaseFunction extends BasicType {
     }
 
     @Override
-    public Boolean equalTo(Value other) {
-        if (!(other instanceof Function)) {
-            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+    public LBoolean equalTo(Value other) {
+        if (!(other instanceof LFunction)) {
+            return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return (Boolean) new Boolean(name.equals(((Function) other).getName())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LBoolean) new LBoolean(name.equals(((LFunction) other).getName())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Boolean notEqualTo(Value other) {
-        return (Boolean) new Boolean(!equalTo(other).getValue()).setPos(getPosStart(), getPosEnd()).setContext(getContext());
+    public LBoolean notEqualTo(Value other) {
+        return (LBoolean) new LBoolean(!equalTo(other).getValue()).setPos(getPosStart(), getPosEnd()).setContext(getContext());
     }
 }

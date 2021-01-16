@@ -4,12 +4,13 @@ import lscript.errors.Error;
 import lscript.interpreting.Context;
 import lscript.interpreting.Interpreter;
 import lscript.interpreting.SymbolTable;
+import lscript.interpreting.types.LList;
 import lscript.lexing.Lexer;
 import lscript.lexing.Token;
 import lscript.parsing.Parser;
 import lscript.parsing.ParseResult;
 import lscript.interpreting.RTResult;
-import lscript.interpreting.types.Boolean;
+import lscript.interpreting.types.LBoolean;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.NullType;
 import lscript.interpreting.types.builtins.IExecutable;
@@ -28,8 +29,8 @@ public class Shell {
     public static void main(String[] args) throws IOException {
 
         global_symbol_table.set("nullType", "null", NullType.Null, true);
-        global_symbol_table.set("bool", "true", Boolean.True, true);
-        global_symbol_table.set("bool", "false", Boolean.False, true);
+        global_symbol_table.set("bool", "true", LBoolean.True, true);
+        global_symbol_table.set("bool", "false", LBoolean.False, true);
         global_symbol_table.set("float", "pi", MathConstants.Pi, true);
         for (IExecutable func : IExecutable.builtins) {
             global_symbol_table.set("function", func.getName(), new BuiltInFunction(func.getName()), true);
@@ -64,9 +65,9 @@ public class Shell {
                     System.out.println(result.right.toString());
                 }
                 else if (result.left != null) {
-                    if (((lscript.interpreting.types.List) result.left).getElements().size() == 1) {
-                        if (((lscript.interpreting.types.List) result.left).getElements().get(0) != NullType.Void)
-                            System.out.println(((lscript.interpreting.types.List) result.left).getElements().get(0));
+                    if (((LList) result.left).getElements().size() == 1) {
+                        if (((LList) result.left).getElements().get(0) != NullType.Void)
+                            System.out.println(((LList) result.left).getElements().get(0));
                     } else System.out.println(result.left);
                 }
             }

@@ -4,8 +4,8 @@ import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.Float;
-import lscript.interpreting.types.Int;
+import lscript.interpreting.types.LFloat;
+import lscript.interpreting.types.LInt;
 import lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.List;
@@ -24,9 +24,9 @@ public class AbsBuiltin implements IExecutable {
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         if (execNum == 0) {
-            return new RTResult().success(new Int(Math.abs(((Int) execCtx.getSymbolTable().get("val")).getValue())));
+            return new RTResult().success(new LInt(Math.abs(((LInt) execCtx.getSymbolTable().get("val")).getValue())));
         } else if (execNum == 1) {
-            return new RTResult().success(new Float(Math.abs(((Float) execCtx.getSymbolTable().get("val")).getValue())));
+            return new RTResult().success(new LFloat(Math.abs(((LFloat) execCtx.getSymbolTable().get("val")).getValue())));
         }
         return null;
     }

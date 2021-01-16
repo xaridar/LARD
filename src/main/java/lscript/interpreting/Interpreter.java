@@ -6,7 +6,7 @@ import lscript.errors.Error;
 import lscript.lexing.Token;
 import lscript.parsing.nodes.*;
 import lscript.interpreting.types.*;
-import lscript.interpreting.types.Float;
+import lscript.interpreting.types.LFloat;
 
 import java.lang.Boolean;
 import java.lang.reflect.InvocationTargetException;
@@ -41,14 +41,14 @@ public class Interpreter {
 
     public RTResult visitNumberNode(NumberNode node, Context context) {
         if (node.getToken().getType().equals(TT_INT))
-            return new RTResult().success(new Int((int) node.getToken().getValue()).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
+            return new RTResult().success(new LInt((int) node.getToken().getValue()).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
         else if (node.getToken().getType().equals(TT_FLOAT))
-            return new RTResult().success(new Float((float) node.getToken().getValue()).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
+            return new RTResult().success(new LFloat((float) node.getToken().getValue()).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
         return new RTResult().failure(new Error.InvalidSyntaxError(node.getPosStart(), node.getPosEnd(), "Expected 'int' or 'float'"));
     }
 
     public RTResult visitStringNode(StringNode node, Context context) {
-        return new RTResult().success(new Str((String) node.getToken().getValue(), context).setPos(node.getPosStart(), node.getPosEnd()));
+        return new RTResult().success(new LString((String) node.getToken().getValue(), context).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
     public RTResult visitListNode(ListNode node, Context context) {
@@ -58,7 +58,7 @@ public class Interpreter {
             vals.add(res.register(visit(n, context)));
             if (res.shouldReturn()) return res;
         }
-        return res.success(new lscript.interpreting.types.List(vals).setPos(node.getPosStart(), node.getPosEnd()));
+        return res.success(new LList(vals).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
     public RTResult visitMapNode(MapNode node, Context context) {
@@ -68,7 +68,7 @@ public class Interpreter {
             pairs.put(res.register(visit(tup.getLeft(), context)), res.register(visit(tup.getRight(), context)));
             if (res.shouldReturn()) return res;
         }
-        return res.success(new Map(pairs).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
+        return res.success(new LMap(pairs).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
     public RTResult visitBinaryOperationNode(BinaryOperationNode node, Context context) {
@@ -91,7 +91,7 @@ public class Interpreter {
 
         Tuple<BasicType, Error> result = null;
         if (node.getOperationToken().getType().equals(Constants.TT_MINUS)) {
-            result = val.apply(new Token(Constants.TT_MUL, null, node.getOperationToken().getPosStart(), node.getOperationToken().getPosEnd(), "*"), new Int(-1));
+            result = val.apply(new Token(Constants.TT_MUL, null, node.getOperationToken().getPosStart(), node.getOperationToken().getPosEnd(), "*"), new LInt(-1));
         } else if (node.getOperationToken().getType().equals(Constants.TT_BANG)) {
             result = val.apply(node.getOperationToken(), null);
         }
@@ -176,28 +176,28 @@ public class Interpreter {
 
     public RTResult visitForNode(ForNode node, Context context) {
         RTResult res = new RTResult();
-        Int step_value;
+        LInt step_value;
 
         Value start = res.register(visit(node.getStartValueNode(), context));
         if (res.shouldReturn()) return res;
-        if (!(start instanceof Int))
+        if (!(start instanceof LInt))
             return res.failure(new Error.RunTimeError(start.getPosStart(), start.getPosEnd(), "Expected int value", context));
-        Int startValue = (Int) start;
+        LInt startValue = (LInt) start;
 
         Value end = res.register(visit(node.getEndValueNode(), context));
         if (res.shouldReturn()) return res;
-        if (!(end instanceof Int))
+        if (!(end instanceof LInt))
             return res.failure(new Error.RunTimeError(end.getPosStart(), end.getPosEnd(), "Expected int value", context));
-        Int endValue = (Int) end;
+        LInt endValue = (LInt) end;
 
         if (node.getStepNode() != null) {
             Value step = res.register(visit(node.getStepNode(), context));
             if (res.shouldReturn()) return res;
-            if (!(step instanceof Int))
+            if (!(step instanceof LInt))
                 return res.failure(new Error.RunTimeError(step.getPosStart(), step.getPosEnd(), "Expected int value", context));
-            step_value = (Int) step;
+            step_value = (LInt) step;
         } else
-            step_value = new Int(1);
+            step_value = new LInt(1);
 
          int[] i = {startValue.getValue()};
 
@@ -209,7 +209,7 @@ public class Interpreter {
              condition = v -> i[0] > endValue.getValue();
          }
          while (condition.test(null)) {
-             context.getSymbolTable().set((String) node.getVarTypeToken().getValue(), (String) node.getVarNameToken().getValue(), new Int(i[0]), false);
+             context.getSymbolTable().set((String) node.getVarTypeToken().getValue(), (String) node.getVarNameToken().getValue(), new LInt(i[0]), false);
              i[0] += step_value.getValue();
 
              res.register(visit(node.getBodyNode(), context));
@@ -255,7 +255,7 @@ public class Interpreter {
         Node bodyNode = node.getBodyNode();
         List<String> returnTypes = node.getReturnTypes();
         List<Tuple<String, String>> argNames = node.getArgNameTokens().stream().map(t -> Tuple.of((String) t.getLeft().getValue(), (String) t.getRight().getValue())).collect(Collectors.toList());
-        Value funcValue = new Function(funcName, bodyNode, argNames, returnTypes).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
+        Value funcValue = new LFunction(funcName, bodyNode, argNames, returnTypes).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
 
         if (node.getVarNameToken() != null)
             context.getSymbolTable().set("function", funcName, funcValue, false);
@@ -323,7 +323,7 @@ public class Interpreter {
         if (retVals.size() == 0) {
             return res.success(NullType.Void);
         }
-        return res.successRet(new lscript.interpreting.types.List(retVals));
+        return res.successRet(new LList(retVals));
     }
 
     public RTResult visitBreakNode(BreakNode node, Context context) {
