@@ -252,8 +252,9 @@ public class Interpreter {
         if (node.getVarNameToken() != null)
             funcName = (String) node.getVarNameToken().getValue();
         Node bodyNode = node.getBodyNode();
+        List<String> returnTypes = node.getReturnTypes();
         List<Tuple<String, String>> argNames = node.getArgNameTokens().stream().map(t -> Tuple.of((String) t.getLeft().getValue(), (String) t.getRight().getValue())).collect(Collectors.toList());
-        Value funcValue = new Function(funcName, bodyNode, argNames).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
+        Value funcValue = new Function(funcName, bodyNode, argNames, returnTypes).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
 
         if (node.getVarNameToken() != null)
             context.getSymbolTable().set("function", funcName, funcValue, false);

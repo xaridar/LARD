@@ -311,28 +311,29 @@ public class Parser {
 
         res.registerAdvancement();
         advance();
-        List<Token> returnTypes = new ArrayList<>();
+        List<String> returnTypes = new ArrayList<>();
 
-//        if(currentToken.getType().equals(TT_DOUBLE_PIPE)) {
-//            res.registerAdvancement();
-//            advance();
-//            if (!currentToken.getType().equals(TT_KW))
-//                return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
-//            if (!getInstance().TYPES.containsKey((String) currentToken.getValue()))
-//                return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
-//            returnTypes.add(currentToken);
-//            while (currentToken.getType().equals(TT_COMMA)) {
-//                res.registerAdvancement();
-//                advance();
-//
-//                if (!currentToken.getType().equals(TT_KW))
-//                    return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
-//                if (!getInstance().TYPES.containsKey((String) currentToken.getValue()))
-//                    return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
-//                returnTypes.add(currentToken);
-//            }
-//        }
-//        if (returnTypes.isEmpty()) returnTypes.add(new Token(TT_KW, "void", currentToken.getPosStart(), currentToken.getPosEnd(), null));
+        if(currentToken.getType().equals(TT_COLON)) {
+            res.registerAdvancement();
+            advance();
+            if (!currentToken.getType().equals(TT_KW))
+                return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
+            if (!getInstance().TYPES.containsKey((String) currentToken.getValue()))
+                return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
+            returnTypes.add((String) currentToken.getValue());
+            while (currentToken.getType().equals(TT_COMMA)) {
+                res.registerAdvancement();
+                advance();
+
+                if (!currentToken.getType().equals(TT_KW))
+                    return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
+                if (!getInstance().TYPES.containsKey((String) currentToken.getValue()))
+                    return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
+                returnTypes.add(currentToken.getType());
+            }
+            res.registerAdvancement();
+            advance();
+        }
 
         if (!currentToken.getType().equals(TT_LEFT_BRACE))
             return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '{'"));
@@ -349,7 +350,7 @@ public class Parser {
         res.registerAdvancement();
         advance();
 
-        return res.success(new FuncDefNode(varNameToken, argNameTokens, /*returnTypes,*/ nodeToReturn));
+        return res.success(new FuncDefNode(varNameToken, argNameTokens, returnTypes, nodeToReturn));
     }
 
     private ParseResult whileExpr() {
