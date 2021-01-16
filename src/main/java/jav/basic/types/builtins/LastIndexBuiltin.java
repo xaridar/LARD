@@ -6,25 +6,26 @@ import jav.basic.Error;
 import jav.basic.results.RTResult;
 import jav.basic.types.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class IndexBuiltin implements IExecutable {
+public class LastIndexBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
         return List.of(
                 List.of(Tuple.of("str", "toIndex"), Tuple.of("str", "val")),
                 List.of(Tuple.of("list", "toIndex"), Tuple.of("var", "val")),
-                List.of(Tuple.of("map", "toIndex"), Tuple.of("var", "val")),
-                List.of(Tuple.of("str", "toIndex"), Tuple.of("str", "val"), Tuple.of("int", "startIndex")),
-                List.of(Tuple.of("list", "toIndex"), Tuple.of("var", "val"), Tuple.of("int", "startIndex"))
+                List.of(Tuple.of("map", "toIndex"), Tuple.of("var", "val"))
         );
     }
 
     @Override
     public String getName() {
-        return "indexof";
+        return "lastindexof";
     }
 
     @Override
@@ -42,27 +43,21 @@ public class IndexBuiltin implements IExecutable {
         int index = -1;
         if (execNum == 0) {
             String s = ((Str) toIndex).getValue();
-            index = s.indexOf(((Str) val).getValue());
+            index = s.lastIndexOf(((Str) val).getValue());
         } else if (execNum == 1) {
             List<Value> l = ((jav.basic.types.List) toIndex).getValue();
-            Optional<Value> v = l.stream().filter(value -> val.equalTo(value).isTrue()).findFirst();
+            Stream<Value> stream = l.stream().filter(value -> val.equalTo(value).isTrue());
+            Optional<Value> v = stream.skip(stream.count() - 1).findFirst();
             if (v.isPresent())
                 index = l.indexOf(v.get());
         } else if (execNum == 2) {
             Map<Value, Value> m = ((jav.basic.types.Map) toIndex).getValue();
-            Optional<Value> v = m.values().stream().filter(value -> val.equalTo(value).isTrue()).findFirst();
+            Stream<Value> stream = m.values().stream().filter(value -> val.equalTo(value).isTrue());
+            Optional<Value> v = stream.skip(stream.count() - 1).findFirst();
             if (v.isPresent()) {
                 Value key = m.keySet().stream().filter(k -> m.get(k) == v.get()).findFirst().orElse(NullType.Null);
                 return res.success(key);
             }
-        } else if (execNum == 3) {
-            String s = ((Str) toIndex).getValue();
-            index = s.indexOf(((Str) val).getValue(), startIndex.getValue());
-        } else if (execNum == 4) {
-            List<Value> l = ((jav.basic.types.List) toIndex).getValue();
-            Optional<Value> v = l.subList(startIndex.getValue(), l.size()).stream().filter(value -> val.equalTo(value).isTrue()).findFirst();
-            if (v.isPresent())
-                index = l.indexOf(v.get());
         } else {
             return null;
         }

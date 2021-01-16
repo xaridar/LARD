@@ -42,6 +42,7 @@ public interface IExecutable {
             new EvalBuiltin(),
             new QuitBuiltin(),
             new ContainsBuiltin(),
-            new IndexBuiltin()
+            new IndexBuiltin(),
+            new LastIndexBuiltin()
     );
 }

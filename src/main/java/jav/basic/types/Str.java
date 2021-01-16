@@ -29,7 +29,12 @@ public class Str extends BasicType {
         }
         StringBuilder builder = new StringBuilder();
         int index = 0;
-        builder.append(value, index, value.indexOf("%"));
+        if (allMatches.size() > 0)
+            builder.append(value, index, value.indexOf("%"));
+        else {
+            this.value = value;
+            return;
+        }
         index += value.substring(index, value.indexOf("%")).length();
         for (String arg : allMatches) {
             if (getContext().getSymbolTable().get(arg) == null) {
