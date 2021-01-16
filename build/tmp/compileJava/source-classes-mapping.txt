@@ -1,62 +1,62 @@
-jav/basic/Position.java
- jav.basic.Position
-jav/Shell.java
- jav.Shell
-jav/Constants.java
- jav.Constants
-jav/basic/nodes/BinaryOperationNode.java
- jav.basic.nodes.BinaryOperationNode
-jav/basic/nodes/VarAccessNode.java
- jav.basic.nodes.VarAccessNode
-jav/basic/nodes/NumberNode.java
- jav.basic.nodes.NumberNode
-jav/basic/types/Boolean.java
- jav.basic.types.Boolean
-jav/basic/types/Number.java
- jav.basic.types.Number
- jav.basic.types.Number$1
-jav/basic/nodes/ForNode.java
- jav.basic.nodes.ForNode
-jav/Util.java
- jav.Util
-jav/basic/nodes/Node.java
- jav.basic.nodes.Node
-jav/Lexer.java
- jav.Lexer
-jav/basic/types/Float.java
- jav.basic.types.Float
-jav/basic/nodes/UnaryOperationNode.java
- jav.basic.nodes.UnaryOperationNode
-jav/basic/nodes/IfNode.java
- jav.basic.nodes.IfNode
-jav/basic/Interpreter.java
- jav.basic.Interpreter
-jav/basic/nodes/VarAssignNode.java
- jav.basic.nodes.VarAssignNode
-jav/basic/results/RTResult.java
- jav.basic.results.RTResult
-jav/Tuple.java
- jav.Tuple
-jav/basic/types/BasicType.java
- jav.basic.types.BasicType
-jav/basic/Error.java
- jav.basic.Error
- jav.basic.Error$ExpectedCharError
- jav.basic.Error$IllegalCharError
- jav.basic.Error$InvalidSyntaxError
- jav.basic.Error$RunTimeError
- jav.basic.Error$UnsupportedOperationError
-jav/basic/SymbolTable.java
- jav.basic.SymbolTable
-jav/basic/nodes/WhileNode.java
- jav.basic.nodes.WhileNode
-jav/basic/results/ParseResult.java
- jav.basic.results.ParseResult
-jav/basic/Context.java
- jav.basic.Context
-jav/basic/Token.java
- jav.basic.Token
-jav/basic/types/Int.java
- jav.basic.types.Int
-jav/basic/Parser.java
- jav.basic.Parser
+jav/lscript/Position.java
+ lscript.lexing.Position
+jav/lscript.Shell.java
+ lscript.Shell
+jav/lscript.Constants.java
+ lscript.Constants
+jav/lscript/nodes/BinaryOperationNode.java
+ lscript.parsing.nodes.BinaryOperationNode
+jav/lscript/nodes/VarAccessNode.java
+ lscript.parsing.nodes.VarAccessNode
+jav/lscript/nodes/NumberNode.java
+ lscript.parsing.nodes.NumberNode
+jav/lscript/types/Boolean.java
+ lscript.interpreting.types.Boolean
+jav/lscript/types/Number.java
+ lscript.interpreting.types.Number
+ lscript.interpreting.types.Number$1
+jav/lscript/nodes/ForNode.java
+ lscript.parsing.nodes.ForNode
+jav/lscript.Util.java
+ lscript.Util
+jav/lscript/nodes/Node.java
+ lscript.parsing.nodes.Node
+jav/lscript.lexing.Lexer.java
+ lscript.lexing.Lexer
+jav/lscript/types/Float.java
+ lscript.interpreting.types.Float
+jav/lscript/nodes/UnaryOperationNode.java
+ lscript.parsing.nodes.UnaryOperationNode
+jav/lscript/nodes/IfNode.java
+ lscript.parsing.nodes.IfNode
+jav/lscript/Interpreter.java
+ lscript.interpreting.Interpreter
+jav/lscript/nodes/VarAssignNode.java
+ lscript.parsing.nodes.VarAssignNode
+jav/lscript/results/RTResult.java
+ lscript.interpreting.RTResult
+jav/lscript.Tuple.java
+ lscript.Tuple
+jav/lscript/types/BasicType.java
+ lscript.interpreting.types.BasicType
+jav/lscript/Error.java
+ lscript.errors.Error
+ lscript.errors.Error$ExpectedCharError
+ lscript.errors.Error$IllegalCharError
+ lscript.errors.Error$InvalidSyntaxError
+ lscript.errors.Error$RunTimeError
+ lscript.errors.Error$UnsupportedOperationError
+jav/lscript/SymbolTable.java
+ lscript.interpreting.SymbolTable
+jav/lscript/nodes/WhileNode.java
+ lscript.parsing.nodes.WhileNode
+jav/lscript/results/ParseResult.java
+ lscript.parsing.ParseResult
+jav/lscript/Context.java
+ lscript.interpreting.Context
+jav/lscript/Token.java
+ lscript.lexing.Token
+jav/lscript/types/Int.java
+ lscript.interpreting.types.Int
+jav/lscript/Parser.java
+ lscript.parsing.Parser

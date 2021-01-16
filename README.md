@@ -5,7 +5,7 @@ LScript is a primarily statically-typed scripting language, with the ability to 
 It is written fully in Java.
 
 
-To run the language in command line, compile all of the classes provided. The Main method is located in Basic/src/main/java/jav/Shell.java.
+To run the language in command line, compile all of the classes provided. The Main method is located in Basic/src/main/java/jav/lscript.Shell.java.
 
 The interpreter can be run without any arguments, which will result in a command line version of the language; 
 It can also be provided the path to a file, which it will subsequently process and run.
