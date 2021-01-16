@@ -26,12 +26,15 @@ public class ContainsBuiltin implements IExecutable {
         switch (execNum) {
             case 0:
                 Str str = (Str) execCtx.getSymbolTable().get("container");
+                contains = str.getValue().contains(((Str) element).getValue());
                 break;
             case 1:
                 jav.basic.types.List l = (jav.basic.types.List) execCtx.getSymbolTable().get("container");
+                contains = l.getValue().stream().anyMatch(val -> val.equalTo(element).isTrue());
                 break;
             case 2:
                 Map m = (Map) execCtx.getSymbolTable().get("container");
+                contains = m.getValue().keySet().stream().anyMatch(val -> val.equalTo(element).isTrue());
                 break;
         }
         return new RTResult().success(new Boolean(contains));

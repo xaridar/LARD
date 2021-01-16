@@ -67,10 +67,10 @@ public abstract class BasicType extends Value {
                 res = greaterThanOrEqualTo(other);
                 break;
             case Constants.TT_BOOLEQ:
-                res = equalTo(other);
+                res = Tuple.of(equalTo(other), null);
                 break;
             case Constants.TT_NEQ:
-                res = notEqualTo(other);
+                res = Tuple.of(notEqualTo(other), null);
                 break;
             case Constants.TT_AND:
                 res = and(other);

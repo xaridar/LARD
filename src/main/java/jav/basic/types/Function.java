@@ -1,9 +1,7 @@
 package jav.basic.types;
 
-import jav.Constants;
 import jav.Tuple;
 import jav.basic.Context;
-import jav.basic.Error;
 import jav.basic.Interpreter;
 import jav.basic.nodes.Node;
 import jav.basic.results.RTResult;
@@ -53,22 +51,6 @@ public class Function extends BaseFunction {
 
     public Node getBodyNode() {
         return bodyNode;
-    }
-
-    @Override
-    public Tuple<BasicType, Error> equalTo(Value other) {
-        if (!(other instanceof Function)) {
-            return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-        }
-        return Tuple.of(new Boolean(name.equals(((Function) other).getName())).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-    }
-
-    @Override
-    public Tuple<BasicType, Error> notEqualTo(Value other) {
-        if (!(other instanceof Function)) {
-            return Tuple.of(new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-        }
-        return Tuple.of(new Boolean(!name.equals(((Function) other).getName())).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
     }
 
 }

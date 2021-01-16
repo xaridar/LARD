@@ -36,19 +36,19 @@ public class Boolean extends BasicType {
 
 
     @Override
-    public Tuple<BasicType, Error> equalTo(Value other) {
+    public Boolean equalTo(Value other) {
         if (!(other instanceof Boolean)) {
-            return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return Tuple.of(new Boolean(value == ((Boolean) other).getValue()).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(value == ((Boolean) other).getValue()).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Tuple<BasicType, Error> notEqualTo(Value other) {
+    public Boolean notEqualTo(Value other) {
         if (!(other instanceof Boolean)) {
-            return Tuple.of(new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return Tuple.of(new Boolean(value != ((Boolean) other).getValue()).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(value != ((Boolean) other).getValue()).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Boolean extends BasicType {
     }
 
     @Override
-    public Tuple<java.lang.Boolean, Error> isTrue() {
-        return Tuple.of(value, null);
+    public boolean isTrue() {
+        return value;
     }
 }

@@ -90,12 +90,15 @@ public class BaseFunction extends BasicType {
     }
 
     @Override
-    public Tuple<BasicType, Error> equalTo(Value other) {
-        return null;
+    public Boolean equalTo(Value other) {
+        if (!(other instanceof Function)) {
+            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        }
+        return (Boolean) new Boolean(name.equals(((Function) other).getName())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Tuple<BasicType, Error> notEqualTo(Value other) {
-        return null;
+    public Boolean notEqualTo(Value other) {
+        return (Boolean) new Boolean(!equalTo(other).getValue()).setPos(getPosStart(), getPosEnd()).setContext(getContext());
     }
 }

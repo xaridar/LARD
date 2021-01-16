@@ -157,9 +157,7 @@ public class Interpreter {
             if (!(conditionVal instanceof BasicType)) {
                 return res.failure(new Error.RunTimeError(conditionVal.getPosStart(), conditionVal.getPosEnd(), "Expected boolean expression", context));
             }
-            if (conditionVal.isTrue().getRight() != null)
-                return res.failure(conditionVal.isTrue().getRight());
-            if (conditionVal.isTrue().getLeft()) {
+            if (conditionVal.isTrue()) {
                 Value exprValue = res.register(visit(condition.getRight(), context));
                 if (res.shouldReturn()) return res;
                 if (!cond.getRight()) return res.success(exprValue);
@@ -234,9 +232,7 @@ public class Interpreter {
             if (res.shouldReturn()) return res;
             if (!(condition instanceof BasicType))
                 return res.failure(new Error.RunTimeError(condition.getPosStart(), condition.getPosEnd(), "Expected boolean expression", context));
-            if (condition.isTrue().getRight() != null)
-                return res.failure(condition.isTrue().getRight());
-            if (!condition.isTrue().getLeft()) break;
+            if (!condition.isTrue()) break;
             res.register(visit(node.getBodyNode(), context));
             if (!res.isLoopBreak() && !res.isLoopCont() && res.shouldReturn()) return res;
             if (res.isLoopCont())

@@ -77,40 +77,38 @@ public class List extends BasicType {
     }
 
     @Override
-    public Tuple<BasicType, Error> equalTo(Value other) {
+    public Boolean equalTo(Value other) {
         if (!(other instanceof List))
-            return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         boolean res = true;
         for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
             Value val = elements.get(i);
             Tuple<Value, Error> otherElement = other.elementAt(new Int(i));
             if (otherElement.getRight() != null)
-                return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-            Tuple<BasicType, Error> equal = val.equalTo(otherElement.getLeft());
-            if (equal.getRight() != null) return Tuple.of(null, equal.getRight());
-            if (!equal.getLeft().isTrue().getLeft()) {
+                return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+            Boolean equal = val.equalTo(otherElement.getLeft());
+            if (!equal.isTrue()) {
                 res = false;
             }
         }
-        return Tuple.of(new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Tuple<BasicType, Error> notEqualTo(Value other) {
+    public Boolean notEqualTo(Value other) {
         if (!(other instanceof List))
-            return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         boolean res = true;
         for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
             Value val = elements.get(i);
             Tuple<Value, Error> otherElement = other.elementAt(new Int(i));
             if (otherElement.getRight() != null)
-                return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-            Tuple<BasicType, Error> equal = val.equalTo(otherElement.getLeft());
-            if (equal.getRight() != null) return Tuple.of(null, equal.getRight());
-            if (equal.getLeft().isTrue().getLeft()) {
+                return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+            Boolean equal = val.equalTo(otherElement.getLeft());
+            if (equal.isTrue()) {
                 res = false;
             }
         }
-        return Tuple.of(new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 }

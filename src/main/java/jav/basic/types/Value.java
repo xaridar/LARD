@@ -75,13 +75,13 @@ public abstract class Value {
     }
 
 
-    public abstract Tuple<BasicType, Error> equalTo(Value other);
+    public abstract Boolean equalTo(Value other);
 
-    public abstract Tuple<BasicType, Error> notEqualTo(Value other);
+    public abstract Boolean notEqualTo(Value other);
 
 
-    public Tuple<java.lang.Boolean, Error> isTrue() {
-        return Tuple.of(!getValue().equals(NullType.Null), null);
+    public boolean isTrue() {
+        return !getValue().equals(NullType.Null);
     }
 
 }

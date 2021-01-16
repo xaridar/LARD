@@ -3,7 +3,6 @@ package jav.basic.types;
 import jav.Tuple;
 import jav.basic.Context;
 import jav.basic.Error;
-import jav.basic.results.RTResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,11 +86,6 @@ public class Str extends BasicType {
     }
 
     @Override
-    public Tuple<java.lang.Boolean, Error> isTrue() {
-        return Tuple.of(!value.equals(""), null);
-    }
-
-    @Override
     public Tuple<Value, Error> elementAt(Value val) {
         if (!(val instanceof Int))
             return Tuple.of(null, new Error.RunTimeError(val.getPosStart(), val.getPosEnd(), "str values can only be indexed by integer values.", context));
@@ -104,18 +98,18 @@ public class Str extends BasicType {
     }
 
     @Override
-    public Tuple<BasicType, Error> equalTo(Value other) {
+    public Boolean equalTo(Value other) {
         if (!(other instanceof Str)) {
-            return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return Tuple.of(new Boolean(value.equals(other.getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(value.equals(other.getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Tuple<BasicType, Error> notEqualTo(Value other) {
+    public Boolean notEqualTo(Value other) {
         if (!(other instanceof Str)) {
-            return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return Tuple.of(new Boolean(!value.equals(other.getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(!value.equals(other.getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 }

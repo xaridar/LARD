@@ -40,6 +40,8 @@ public interface IExecutable {
             new ReadFileBultin(),
             new WriteFileBuiltin(),
             new EvalBuiltin(),
-            new QuitBuiltin()
+            new QuitBuiltin(),
+            new ContainsBuiltin(),
+            new IndexBuiltin()
     );
 }

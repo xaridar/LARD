@@ -51,9 +51,8 @@ public class Map extends BasicType {
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
-            Tuple<BasicType, Error> equal = key.equalTo(val);
-            if (equal.getRight() != null) return Tuple.of(null, equal.getRight());
-            if (equal.getLeft().isTrue().getLeft()) {
+            Boolean equal = key.equalTo(val);
+            if (equal.isTrue()) {
                 element[0] = value;
                 break;
             }
@@ -65,42 +64,40 @@ public class Map extends BasicType {
     }
 
     @Override
-    public Tuple<BasicType, Error> equalTo(Value other) {
+    public Boolean equalTo(Value other) {
         if (!(other instanceof Map))
-            return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         boolean res = true;
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
             Tuple<Value, Error> otherElement = other.elementAt(key);
             if (otherElement.getRight() != null)
-                return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-            Tuple<BasicType, Error> equal = value.equalTo(otherElement.getLeft());
-            if (equal.getRight() != null) return Tuple.of(null, equal.getRight());
-            if (!equal.getLeft().isTrue().getLeft()) {
+                return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+            Boolean equal = value.equalTo(otherElement.getLeft());
+            if (!equal.isTrue()) {
                 res = false;
             }
         }
-        return Tuple.of(new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
-    public Tuple<BasicType, Error> notEqualTo(Value other) {
+    public Boolean notEqualTo(Value other) {
         if (!(other instanceof Map))
-            return Tuple.of(new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
         boolean res = true;
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
             Tuple<Value, Error> otherElement = other.elementAt(key);
             if (otherElement.getRight() != null)
-                return Tuple.of(new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-            Tuple<BasicType, Error> equal = value.equalTo(otherElement.getLeft());
-            if (equal.getRight() != null) return Tuple.of(null, equal.getRight());
-            if (equal.getLeft().isTrue().getLeft()) {
+                return (Boolean) new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+            Boolean equal = value.equalTo(otherElement.getLeft());
+            if (equal.isTrue()) {
                 res = false;
             }
         }
-        return Tuple.of(new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(res).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 }

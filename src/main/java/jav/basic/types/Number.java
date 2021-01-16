@@ -149,22 +149,22 @@ public abstract class Number extends BasicType {
     }
 
     @Override
-    public Tuple<BasicType, Error> equalTo(Value other) {
+    public Boolean equalTo(Value other) {
         if (other instanceof Number) {
             Boolean bool = new Boolean(value.floatValue() == ((Number) other).getValue().floatValue());
-            return Tuple.of(bool.setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) (bool.setContext(getContext()).setPos(getPosStart(), getPosEnd()));
         }
-        return Tuple.of(new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
 
     }
 
     @Override
-    public Tuple<BasicType, Error> notEqualTo(Value other) {
+    public Boolean notEqualTo(Value other) {
         if (other instanceof Number) {
             Boolean bool = new Boolean(value.floatValue() != ((Number) other).getValue().floatValue());
-            return Tuple.of(bool.setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return (Boolean) bool.setContext(getContext()).setPos(getPosStart(), getPosEnd());
         }
-        return Tuple.of(new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+        return (Boolean) new Boolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
 
     }
 }
