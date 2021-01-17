@@ -4,7 +4,7 @@ import lscript.errors.Error;
 import lscript.parsing.nodes.Node;
 
 /**
- * Manages results from parsing, and holds a success Node or error as a result.
+ * Manages results from parsing, and holds a success Node or Error as a result.
  */
 public class ParseResult {
 
@@ -24,9 +24,9 @@ public class ParseResult {
     }
 
     /**
-     * Registers another ParseResult into the current ParseResult, add its advanceCount o its own and taking it error if it has one.
+     * Registers another ParseResult into the current ParseResult, adding its advanceCount to its own and taking its error if it has one.
      * @param res - the ParseResult to register
-     * @return the registeres PareResult's Node.
+     * @return the registered ParseResult's Node.
      */
     public Node register(ParseResult res) {
         advanceCount += res.getAdvanceCount();
@@ -43,9 +43,9 @@ public class ParseResult {
     }
 
     /**
-     * Registers a node and returns itself for registration.
-     * @param node - The node to register.
-     * @return itself as a ParseResult, which can be registered later.
+     * Registers a Node and returns itself for registration.
+     * @param node - The Node to register.
+     * @return this ParseResult, which can be registered later.
      */
     public ParseResult success(Node node) {
         this.node = node;
@@ -53,9 +53,9 @@ public class ParseResult {
     }
 
     /**
-     * Registers an error if it doesn't already have one and returns itself for registration.
-     * @param error - The error to register.
-     * @return itself as a ParseResult, which can be registered later.
+     * Registers an Error if it doesn't already have one and returns itself for registration.
+     * @param error - The Error to register.
+     * @return this ParseResult, which can be registered later.
      */
     public ParseResult failure(Error error) {
         if (!hasError() || advanceCount == 0) this.error = error;

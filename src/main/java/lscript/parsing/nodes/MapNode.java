@@ -11,6 +11,11 @@ import java.util.List;
 public class MapNode extends Node {
     private final List<Tuple<Node, Node>> pairs;
 
+    /**
+     * @param pairs - a list of Tuples of Nodes contained in the map.
+     * @param posStart - The start position of the map.
+     * @param posEnd - The end position of the map.
+     */
     public MapNode(List<Tuple<Node, Node>> pairs, Position posStart, Position posEnd) {
         super(posStart, posEnd);
         this.pairs = pairs;

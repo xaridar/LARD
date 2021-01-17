@@ -15,6 +15,12 @@ public class FuncDefNode extends Node {
     private final List<String> returnTypes;
     private final Node bodyNode;
 
+    /**
+     * @param varNameToken - A Token representing the name of the instance variable of the loop.
+     * @param argTokens - A list of tokens representing the arguments of the function.
+     * @param returnTypes - A list of Strings containing the return types of the function.
+     * @param bodyNode - A Node to be called when the function is called.
+     */
     public FuncDefNode(Token varNameToken, List<Tuple<Token, Token>> argTokens, List<String> returnTypes, Node bodyNode) {
         super(varNameToken != null ? varNameToken.getPosStart() : argTokens.size() > 0 ? argTokens.get(0).getLeft().getPosStart() : bodyNode.getPosStart(), bodyNode.getPosEnd());
         this.varNameToken = varNameToken;

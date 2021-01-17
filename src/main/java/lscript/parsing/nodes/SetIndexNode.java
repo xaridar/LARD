@@ -8,6 +8,11 @@ public class SetIndexNode extends Node {
     private final Node index;
     private final Node val;
 
+    /**
+     * @param left - a Node that contains the value to be indexed.
+     * @param index - a Node that contains the index.
+     * @param val - a Node that contains the value to set to the index.
+     */
     public SetIndexNode(Node left, Node index, Node val) {
         super(left.getPosStart(), index.getPosEnd());
         this.left = left;

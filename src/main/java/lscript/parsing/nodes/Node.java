@@ -10,6 +10,11 @@ public class Node {
     protected Position posStart;
     protected Position posEnd;
 
+    /**
+     * Default constructor for Node.
+     * @param posStart - The start position of the node.
+     * @param posEnd - The end position of the node.
+     */
     public Node(Position posStart, Position posEnd) {
         this.posStart = posStart;
         this.posEnd = posEnd;

@@ -13,12 +13,23 @@ public class ConditionalNode extends Node {
     private final Tuple<Node, Boolean> elseCase;
     private final boolean braces;
 
+    /**
+     * @param cases - A list of Tuples containing the conditional cases and whether it should return a value.
+     * @param elseCase - A Tuple containing the else case of the conditional and whether it should return a value (can be null).
+     * @param braces - a boolean deciding whether the conditional ends with braces.
+     */
     public ConditionalNode(List<Tuple<Tuple<Node, Node>, Boolean>> cases, Tuple<Node, Boolean> elseCase, boolean braces) {
         super(cases.get(0).getLeft().getLeft().getPosStart(), (elseCase == null ? cases.get(cases.size() - 1).getLeft().getRight() : elseCase.getLeft()).getPosEnd());
         this.cases = cases;
         this.elseCase = elseCase;
         this.braces = braces;
     }
+
+    /**
+     * Overloaded constructor which sets braces to false.
+     * @param cases - A list of Tuples containing the conditional cases and whether it should return a value.
+     * @param elseCase - A Tuple containing the else case of the conditional and whether it should return a value (can be null).
+     */
     public ConditionalNode(List<Tuple<Tuple<Node, Node>, Boolean>> cases, Tuple<Node, Boolean> elseCase) {
         this(cases, elseCase, false);
     }

@@ -7,6 +7,10 @@ public class IndexNode extends Node {
     private final Node left;
     private final Node index;
 
+    /**
+     * @param left - The Node to index.
+     * @param index - A Node containing the index to access.
+     */
     public IndexNode(Node left, Node index) {
         super(left.getPosStart(), index.getPosEnd());
         this.left = left;

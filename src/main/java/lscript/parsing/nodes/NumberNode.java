@@ -8,6 +8,9 @@ import lscript.lexing.Token;
 public class NumberNode extends Node {
     private final Token token;
 
+    /**
+     * @param token - A Token representing the number value of the Node.
+     */
     public NumberNode(Token token) {
         super(token.getPosStart(), token.getPosEnd());
         this.token = token;

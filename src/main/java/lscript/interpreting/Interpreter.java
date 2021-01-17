@@ -19,25 +19,43 @@ import java.util.stream.Collectors;
 
 import static lscript.Constants.*;
 
+/**
+ * Singleton class, which recursively visits all nodes contained in a nested node and calls operations, functions, and other capabilities of the language.
+ */
 @SuppressWarnings("unused")
 public class Interpreter {
 
     private static Interpreter INSTANCE;
 
+    /**
+     * Singleton instance variable retrieval.
+     * @return the single Interpreter instance.
+     */
     public static Interpreter getInstance() {
         if (INSTANCE == null) INSTANCE = new Interpreter();
         return INSTANCE;
     }
 
+    /**
+     * Recursively visits a Node and all of its nested Nodes.
+     * @param node - The Node to interpret.
+     * @param context - The Context of the provided Node.
+     * @return an RTResult, containing either a Value or an Error.
+     */
     public RTResult visit(Node node, Context context) {
         try {
             Method method = getClass().getMethod("visit" + node.getClass().getSimpleName(), node.getClass(), Context.class);
             return (RTResult) method.invoke(this, node, context);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
             return null;
         }
     }
+
+    /**
+     * All of the following methods use java.lang.reflect API and are called on specific types of Nodes.
+     * Each of them takes two parameters: A node of their specified type to interpret, and the Context of said Node.
+     * They all return an RTResult, containing either a Value or an Error.
+     */
 
     public RTResult visitNumberNode(NumberNode node, Context context) {
         if (node.getToken().getType().equals(TT_INT))

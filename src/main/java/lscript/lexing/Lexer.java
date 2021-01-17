@@ -10,11 +10,18 @@ import java.util.List;
 import static lscript.Constants.*;
 
 
+/**
+ * This class turns a String of text into a list of lexed Tokens, containing all necessary information of Parsing the information.
+ */
 public class Lexer {
     private Character current_char;
     private final Position pos;
     private final String text;
 
+    /**
+     * @param fn - The name of the file being lexed.
+     * @param text - The text to be lexed.
+     */
     public Lexer(String fn, String text) {
         this.text = text;
         this.pos = new Position(-1, 0, -1, fn, text);
@@ -22,11 +29,18 @@ public class Lexer {
         advance();
     }
 
+    /**
+     * Advances the current position and sets the current character of the Lexer accordingly.
+     */
     public void advance() {
         pos.advance(current_char);
         current_char = pos.getIdx() < text.length() ? text.charAt(pos.getIdx()) : null;
     }
 
+    /**
+     * Creates a Tuple containing a list of Tokens and an Error as a result of lexed text.
+     * @return a Tuple containing a list of Tokens or an Error.
+     */
     public Tuple<List<Token>, Error> make_tokens() {
         List<Token> tokens = new ArrayList<>();
         while (current_char != null) {
@@ -125,6 +139,11 @@ public class Lexer {
         return Tuple.of(tokens, null);
     }
 
+    /**
+     * Creates a String token when a " or ' character is detected.
+     * @param endChar - The character that starts the String, which will inform the methhod which character to end at; this is to ensure Strings ending in " cannot end in ', and vice verse.
+     * @return a Tuple containing either a lexed String Token or an Error.
+     */
     public Tuple<Token, Error> makeString(Character endChar) {
         StringBuilder str = new StringBuilder();
         Position posStart = pos.copy();
@@ -158,6 +177,13 @@ public class Lexer {
         return Tuple.of(new Token(TT_STR, str.toString(), posStart, pos, null), null);
     }
 
+    /**
+     * Lexes a Token differently depending on whether the next character is an '=' symbol.
+     * @param eq_case - A string representing the type to pass to the created Token if an '=' is found.
+     * @param else_case - A string representing the type to pass to the created Token if an '=' is not found. Can be null.
+     * @param character - The character that the method is called on.
+     * @return a Tuple containing either a lexed token of either provided type, or an Error if the else_case parameter is null.
+     */
     public Tuple<Token, Error> parse_eq(String eq_case, String else_case, String character) {
         Position pos_start = pos.copy();
         advance();
@@ -174,6 +200,10 @@ public class Lexer {
         }
     }
 
+    /**
+     * Lexes a number Token of either type Int or Float.
+     * @return a new Token, with type Int or Float.
+     */
     public Token make_number() {
         StringBuilder num_str = new StringBuilder();
         int period_count = 0;
@@ -199,6 +229,10 @@ public class Lexer {
             return new Token(Constants.TT_FLOAT, Float.parseFloat(num_str.toString()), pos_start, pos, null);
     }
 
+    /**
+     * Lexes a Token with either a Keyword or Identifier type from letters a-z (case insensitive), 0-9, or _
+     * @return a new Token, with type Keyword or Identifier.
+     */
     public Token make_id() {
         StringBuilder identifier = new StringBuilder();
         Position pos_start = pos.copy();

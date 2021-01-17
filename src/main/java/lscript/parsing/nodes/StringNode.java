@@ -8,6 +8,9 @@ import lscript.lexing.Token;
 public class StringNode extends Node {
     private final Token token;
 
+    /**
+     * @param token - A Token representing the String value of the Node.
+     */
     public StringNode(Token token) {
         super(token.getPosStart(), token.getPosEnd());
         this.token = token;

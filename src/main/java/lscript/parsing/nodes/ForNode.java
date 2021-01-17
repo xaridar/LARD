@@ -13,6 +13,14 @@ public class ForNode extends Node {
     private final Node stepNode;
     private final Node bodyNode;
 
+    /**
+     * @param varTypeToken - A Token representing the type of the instance variable of the loop.
+     * @param varNameToken - A Token representing the name of the instance variable of the loop.
+     * @param startValueNode - A Node containing the start value of the instance variable of the loop.
+     * @param endValueNode - A Node containing the end value of the instance variable of the loop.
+     * @param stepNode - A Node containing the step value of the instance variable of the loop.
+     * @param bodyNode - A Node to be called during each instance of the loop.
+     */
     public ForNode(Token varTypeToken, Token varNameToken, Node startValueNode, Node endValueNode, Node stepNode, Node bodyNode) {
         super(varTypeToken.getPosStart(), bodyNode.getPosEnd());
         this.varTypeToken = varTypeToken;
