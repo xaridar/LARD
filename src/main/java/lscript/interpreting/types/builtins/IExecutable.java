@@ -62,6 +62,8 @@ public interface IExecutable {
             new QuitBuiltin(),
             new ContainsBuiltin(),
             new IndexBuiltin(),
-            new LastIndexBuiltin()
+            new LastIndexBuiltin(),
+            new RandBuiltin(),
+            new RandIntBuiltin()
     );
 }

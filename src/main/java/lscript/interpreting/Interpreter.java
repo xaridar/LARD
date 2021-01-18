@@ -111,7 +111,7 @@ public class Interpreter {
         if (node.getOperationToken().getType().equals(TT_MINUS)) {
             result = val.apply(new Token(TT_MUL, null, node.getOperationToken().getPosStart(), node.getOperationToken().getPosEnd(), "*"), new LInt(-1));
         } else if (node.getOperationToken().getType().equals(TT_BANG)) {
-            result = val.apply(node.getOperationToken(), null);
+            result = Tuple.of(new LBoolean(!(val.isTrue())).setContext(context).setPos(val.getPosStart(), val.getPosEnd()), null);
         }
 
         if (result != null) {
@@ -137,15 +137,16 @@ public class Interpreter {
         Value value = res.register(visit(node.getValueNode(), context));
         if (res.shouldReturn()) return res;
 
-        String expectedType = (String) node.getType().getValue();
+        String expectedType = null;
+        if (node.getType() != null) {
+            expectedType = (String) node.getType().getValue();
+        }
         if (expectedType != null) {
             if (Constants.getInstance().TYPES.get(expectedType) == null || Constants.getInstance().TYPES.get(value.getType()).contains(expectedType) || value.getType().equals("nullType")) {
-                if (!value.getType().equals("nullType"))
-                    value.setType(expectedType);
                 Error err = context.getSymbolTable().set(((String) expectedType), varName, value, false);
                 if (err != null)
                     return res.failure(err);
-                return res.success(NullType.Void);
+                return res.success(value);
             } else if (Constants.getInstance().CONVERT_CLASSES.containsKey(expectedType)) {
                 try {
                     value = (BasicType) Constants.getInstance().CONVERT_CLASSES.get(expectedType).getMethod("from", Value.class).invoke(null, value);
@@ -153,7 +154,7 @@ public class Interpreter {
                     Error err = context.getSymbolTable().set(expectedType, varName, value, false);
                     if (err != null)
                         return res.failure(err);
-                    return res.success(NullType.Void);
+                    return res.success(value);
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
@@ -164,7 +165,7 @@ public class Interpreter {
             Error err = context.getSymbolTable().set(null, varName, value, false);
             if (err != null)
                 return res.failure(err);
-            return res.success(NullType.Void);
+            return res.success(value);
         }
         return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "Type not defined. Use 'var' or 'const' for dynamic typing.", context));
     }
@@ -247,20 +248,22 @@ public class Interpreter {
 
     public RTResult visitWhileNode(WhileNode node, Context context) {
         RTResult res = new RTResult();
+        Context loopContext = new Context("<anonymous while loop>", context, node.getPosStart());
+        loopContext.setSymbolTable(new SymbolTable(context.getSymbolTable()));
 
         while (true) {
-            Value condition = res.register(visit(node.getConditionNode(), context));
+            Value condition = res.register(visit(node.getConditionNode(), loopContext));
             if (res.shouldReturn()) return res;
             if (!(condition instanceof BasicType))
-                return res.failure(new Error.RunTimeError(condition.getPosStart(), condition.getPosEnd(), "Expected boolean expression", context));
+                return res.failure(new Error.RunTimeError(condition.getPosStart(), condition.getPosEnd(), "Expected boolean expression", loopContext));
             if (!condition.isTrue()) break;
-            res.register(visit(node.getBodyNode(), context));
+            res.register(visit(node.getBodyNode(), loopContext));
             if (!res.isLoopBreak() && !res.isLoopCont() && res.shouldReturn()) return res;
             if (res.isLoopCont())
                 continue;
             if (res.isLoopBreak())
                 break;
-
+            loopContext.getSymbolTable().removeAll();
         }
 
         return res.success(NullType.Void);

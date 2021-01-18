@@ -727,8 +727,10 @@ public class Parser {
                     return res.failure(new Error.ExpectedCharError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected ';'"));
                 }
 
-                res.registerAdvancement();
-                advance();
+                if (statement.requiresSemicolon()) {
+                    res.registerAdvancement();
+                    advance();
+                }
             } else {
                 reverse(res.getToReverseCount());
 

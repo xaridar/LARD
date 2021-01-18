@@ -58,6 +58,15 @@ public class SymbolTable {
         }
         return null;
     }
+    public Symbol getSymbol(String var_name) {
+        Symbol value = getSymbolByName(var_name);
+        if (value == null && parent != null) {
+            return parent.getSymbol(var_name);
+        } else if (value != null) {
+            return value;
+        }
+        return null;
+    }
 
     /**
      * Checks against the current set of variables, and sets a variable based on type, name, value, and mutability.
@@ -68,7 +77,7 @@ public class SymbolTable {
      * @return Null if the variable is stored successfully, or a String representing the expected type of the variable if it conflicts with the provided one.
      */
     public Error set(String type, String var_name, Value value, boolean immutable) {
-        Symbol symbol = getSymbolByName(var_name);
+        Symbol symbol = getSymbol(var_name);
         if (symbol != null && symbol.canEdit()) {
             if (type == null) {
                 if (symbol.typeEquals(value.getType())) {
@@ -104,7 +113,7 @@ public class SymbolTable {
      * @return True if the variable name is found.
      */
     public boolean hasVar(String var_name) {
-        return getSymbolByName(var_name) != null;
+        return get(var_name) != null;
     }
 
     /**
@@ -129,5 +138,9 @@ public class SymbolTable {
      */
     private Symbol getSymbolByName(String varName) {
         return symbols.stream().filter(symbol -> symbol.getName().equals(varName)).findFirst().orElse(null);
+    }
+
+    public void removeAll() {
+        symbols.clear();
     }
 }

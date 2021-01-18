@@ -116,7 +116,13 @@ public abstract class Value {
      * @return An RTResult containing either a Value or an Error; without overriding, it returns an UnsupportedOperationError.
      */
     public Tuple<BasicType, Error> apply(Token opToken, Value other) {
-        return Tuple.of(null, new Error.UnsupportedOperationError(opToken.getPosStart(), opToken.getPosEnd(), "'" + opToken.getOpChar() + "' unsupported " + (other != null ? "between '" + getType() + "' and '" + other.getType() + "'" : "for type '" + getType() + "'"), context));
+        if (opToken.getType() == TT_BOOLEQ) {
+            return Tuple.of(equalTo(other), null);
+        } else if (opToken.getType() == TT_NEQ){
+            return Tuple.of(notEqualTo(other), null);
+        } else {
+            return Tuple.of(null, new Error.UnsupportedOperationError(opToken.getPosStart(), opToken.getPosEnd(), "'" + opToken.getOpChar() + "' unsupported " + (other != null ? "between '" + getType() + "' and '" + other.getType() + "'" : "for type '" + getType() + "'"), context));
+        }
     }
 
     /**

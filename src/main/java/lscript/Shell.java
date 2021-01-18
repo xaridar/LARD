@@ -18,8 +18,10 @@ import lscript.interpreting.types.builtins.math.MathConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -87,6 +89,11 @@ public class Shell {
             Path p = Path.of(args[0]);
             if (!Files.exists(p)) {
                 System.out.println("File does not exist.");
+                System.exit(0);
+            }
+            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:*.ls");
+            if (!pathMatcher.matches(p.getFileName())) {
+                System.out.println("File is of an incorrect format. Please use LScript source files (*.ls).");
                 System.exit(0);
             }
             fn = args[0];

@@ -52,10 +52,6 @@ public class BaseFunction extends BasicType {
             Error err = execCtx.getSymbolTable().set(argType, argName, argValue, false);
             if (err != null)
                 return res.failure(err);
-
-            err = execCtx.getSymbolTable().set("function", getName(), this, false);
-            if (err != null)
-                return res.failure(err);
         }
         return res.success(null);
     }
