@@ -6,6 +6,7 @@ import lscript.errors.Error;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.SymbolTable;
+import lscript.lexing.Token;
 
 import java.util.List;
 
@@ -48,12 +49,13 @@ public class BaseFunction extends BasicType {
                 return res.failure(new Error.RunTimeError(argValue.getPosStart(), argValue.getPosEnd(),
                         String.format("Wrong type passed as argument; Expected %s, got %s", argType, argValue.getType()), getContext()));
             argValue.setContext(execCtx);
-            String oldType = execCtx.getSymbolTable().set(argType, argName, argValue, false);
-            if (oldType != null)
-                return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(), String.format("Wrong type; expected %s, got %s", oldType, argType), execCtx));
-            oldType = execCtx.getSymbolTable().set("function", getName(), this, false);
-            if (oldType != null)
-                return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(), String.format("Wrong type; expected %s, got %s", oldType, argType), execCtx));
+            Error err = execCtx.getSymbolTable().set(argType, argName, argValue, false);
+            if (err != null)
+                return res.failure(err);
+
+            err = execCtx.getSymbolTable().set("function", getName(), this, false);
+            if (err != null)
+                return res.failure(err);
         }
         return res.success(null);
     }

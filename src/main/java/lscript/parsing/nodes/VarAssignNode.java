@@ -6,16 +6,16 @@ import lscript.lexing.Token;
  * A simple Node representing an attempt to assign a value to a variable.
  */
 public class VarAssignNode extends Node {
-    private final String type;
+    private final Token type;
     private final Token token;
     private final Node valueNode;
 
     /**
-     * @param type - A String representing the variable's type.
+     * @param type - A Token representing the variable's type.
      * @param token - The Token containing the variable name to be accessed.
      * @param valueNode - A Node containing the value to be assigned.
      */
-    public VarAssignNode(String type, Token token, Node valueNode) {
+    public VarAssignNode(Token type, Token token, Node valueNode) {
         super(token.getPosStart(), token.getPosEnd());
         this.type = type;
         this.token = token;
@@ -32,7 +32,7 @@ public class VarAssignNode extends Node {
     /**
      * @return a String representing the type of the variable.
      */
-    public String getType() {
+    public Token getType() {
         return type;
     }
 

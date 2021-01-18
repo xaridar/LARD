@@ -137,32 +137,34 @@ public class Interpreter {
         Value value = res.register(visit(node.getValueNode(), context));
         if (res.shouldReturn()) return res;
 
-        String expectedType = node.getType();
+        String expectedType = (String) node.getType().getValue();
         if (expectedType != null) {
             if (Constants.getInstance().TYPES.get(expectedType) == null || Constants.getInstance().TYPES.get(value.getType()).contains(expectedType) || value.getType().equals("nullType")) {
                 if (!value.getType().equals("nullType"))
                     value.setType(expectedType);
-                String lastType = context.getSymbolTable().set(expectedType, varName, value, false);
-                if (lastType != null)
-                    return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong type; Expected '" + lastType + "', got '" + value.getType() + "'", context));
-                return res.success(value);
+                Error err = context.getSymbolTable().set(((String) expectedType), varName, value, false);
+                if (err != null)
+                    return res.failure(err);
+                return res.success(NullType.Void);
             } else if (Constants.getInstance().CONVERT_CLASSES.containsKey(expectedType)) {
                 try {
                     value = (BasicType) Constants.getInstance().CONVERT_CLASSES.get(expectedType).getMethod("from", Value.class).invoke(null, value);
-                    String lastType = context.getSymbolTable().set(expectedType, varName, value, false);
-                    if (lastType != null)
-                        return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong type; Expected '" + lastType + "', got '" + value.getType() + "'", context));
-                    return res.success(value);
+
+                    Error err = context.getSymbolTable().set(expectedType, varName, value, false);
+                    if (err != null)
+                        return res.failure(err);
+                    return res.success(NullType.Void);
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
             }
             return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong type; Expected '" + expectedType + "', got '" + value.getType() + "'", context));
         } else if (context.getSymbolTable().hasVar(varName)) {
-            String lastType = context.getSymbolTable().set(null, varName, value, false);
-            if (lastType != null)
-                return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong type; Expected '" + lastType + "', got '" + value.getType() + "'", context));
-            return res.success(value);
+
+            Error err = context.getSymbolTable().set(null, varName, value, false);
+            if (err != null)
+                return res.failure(err);
+            return res.success(NullType.Void);
         }
         return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "Type not defined. Use 'var' or 'const' for dynamic typing.", context));
     }
@@ -227,7 +229,7 @@ public class Interpreter {
              condition = v -> i[0] > endValue.getValue();
          }
          while (condition.test(null)) {
-             context.getSymbolTable().set((String) node.getVarTypeToken().getValue(), (String) node.getVarNameToken().getValue(), new LInt(i[0]), false);
+             context.getSymbolTable().set(((String) node.getVarTypeToken().getValue()), ((String) node.getVarNameToken().getValue()), new LInt(i[0]), false);
              i[0] += step_value.getValue();
 
              res.register(visit(node.getBodyNode(), context));
@@ -275,7 +277,7 @@ public class Interpreter {
         List<Tuple<String, String>> argNames = node.getArgTokens().stream().map(t -> Tuple.of((String) t.getLeft().getValue(), (String) t.getRight().getValue())).collect(Collectors.toList());
         Value funcValue = new LFunction(funcName, bodyNode, argNames, returnTypes).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
 
-        if (node.getVarNameToken() != null)
+        if (funcName != null)
             context.getSymbolTable().set("function", funcName, funcValue, false);
 
         return res.success(funcValue);

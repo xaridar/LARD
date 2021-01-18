@@ -2,6 +2,7 @@ package lscript.parsing;
 
 import lscript.Constants;
 import lscript.errors.Error;
+import lscript.interpreting.types.Value;
 import lscript.lexing.Position;
 import lscript.Tuple;
 import lscript.lexing.Token;
@@ -718,16 +719,15 @@ public class Parser {
             statement = res.tryRegister(statement());
             if (statement != null) {
                 statements.add(statement);
+                if (!currentToken.getType().equals(TT_SEMICOLON) && statement.requiresSemicolon()) {
+                    return res.failure(new Error.ExpectedCharError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected ';'"));
+                }
+
+                res.registerAdvancement();
+                advance();
             } else {
                 reverse(res.getToReverseCount());
 
-                if (!currentToken.getType().equals(TT_SEMICOLON) && statements.size() > 1 && statements.get(statements.size() - 1).requiresSemicolon()) {
-                    return res.failure(new Error.ExpectedCharError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected ';'"));
-                } else if (statements.size() != 1) {
-
-                    res.registerAdvancement();
-                    advance();
-                }
                 break;
             }
         }
@@ -842,7 +842,7 @@ public class Parser {
         if (currentToken.getType().equals(TT_KW)) {
             String str = (String) currentToken.getValue();
             if (Constants.getInstance().TYPES.containsKey(str)) {
-                String type = (String) currentToken.getValue();
+                Token type = currentToken;
                 res.registerAdvancement();
                 advance();
 
@@ -859,8 +859,11 @@ public class Parser {
                     Node expression = res.register(expression());
                     if (res.hasError()) return res;
                     return res.success(new VarAssignNode(type, var_name, expression));
+                } else if (currentToken.getType().equals(TT_SEMICOLON)) {
+                    Node def = Value.getDefaultValue(((String) type.getValue()), currentToken.getPosEnd().copy());
+                    return res.success(new VarAssignNode(type, var_name, def));
                 }
-                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '='"));
+                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '=' or ';'"));
             }
         } else if (currentToken.getType().equals(TT_IDENTIFIER)) {
             Token var_name = currentToken;

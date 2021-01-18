@@ -6,8 +6,13 @@ import lscript.interpreting.Context;
 import lscript.lexing.Position;
 import lscript.lexing.Token;
 import lscript.interpreting.RTResult;
+import lscript.parsing.nodes.Node;
+import lscript.parsing.nodes.NumberNode;
+import lscript.parsing.nodes.VarAccessNode;
 
 import java.util.List;
+
+import static lscript.Constants.*;
 
 /**
  * Holds a single value of any type, including int, float, boolean, list, map, function, file, and nulltype.
@@ -27,6 +32,22 @@ public abstract class Value {
         this.posEnd = null;
         this.context = null;
         this.type = type;
+    }
+
+    /**
+     * @param type - A String representing the type to check for.
+     * @return A default value for a variable of the given type as a Node.
+     */
+    public static Node getDefaultValue(String type, Position posStart) {
+        switch (type) {
+            case "int":
+                return new NumberNode(new Token(TT_INT, 0, posStart, posStart.copy().advance(null), null));
+            case "float":
+            case "num":
+                return new NumberNode(new Token(TT_FLOAT, 0.0f, posStart, posStart.copy().advance(null).advance(null).advance(null), null));
+            default:
+                return new VarAccessNode(new Token(TT_KW, "null", posStart, posStart.copy().advance(null).advance(null).advance(null).advance(null), null));
+        }
     }
 
     /**
