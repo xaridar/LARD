@@ -1,13 +1,14 @@
 package lscript.lexing;
 
 import lscript.Constants;
+import lscript.TokenEnum;
 import lscript.Tuple;
 import lscript.errors.Error;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static lscript.Constants.*;
+import static lscript.TokenEnum.*;
 
 
 /**
@@ -56,34 +57,34 @@ public class Lexer {
                     return Tuple.of(new ArrayList<>(), tup.getRight());
                 tokens.add(tup.getLeft());
             } else if (current_char == '(') {
-                tokens.add(new Token(Constants.TT_LEFT_PAREN, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_LEFT_PAREN, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == ')') {
-                tokens.add(new Token(Constants.TT_RIGHT_PAREN, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_RIGHT_PAREN, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == '[') {
-                tokens.add(new Token(Constants.TT_LEFT_BRACKET, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_LEFT_BRACKET, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == ']') {
-                tokens.add(new Token(Constants.TT_RIGHT_BRACKET, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_RIGHT_BRACKET, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == '{') {
-                tokens.add(new Token(Constants.TT_LEFT_BRACE, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_LEFT_BRACE, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == '}') {
-                tokens.add(new Token(Constants.TT_RIGHT_BRACE, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_RIGHT_BRACE, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == ';') {
-                tokens.add(new Token(Constants.TT_SEMICOLON, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_SEMICOLON, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == '?') {
-                tokens.add(new Token(Constants.TT_QUESTION, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_QUESTION, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == ':') {
-                tokens.add(new Token(Constants.TT_COLON, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_COLON, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == '=') {
-                Tuple<Token, Error> tup = parse_eq(Constants.TT_BOOLEQ, Constants.TT_EQ, current_char.toString());
+                Tuple<Token, Error> tup = parse_eq(TT_BOOLEQ, TT_EQ, current_char.toString());
                 if (tup.getRight() != null)
                     return Tuple.of(new ArrayList<>(), tup.getRight());
                 tokens.add(tup.getLeft());
@@ -98,7 +99,7 @@ public class Lexer {
                     return Tuple.of(new ArrayList<>(), tup.getRight());
                 tokens.add(tup.getLeft());
             } else if (current_char == ',') {
-                tokens.add(new Token(Constants.TT_COMMA, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_COMMA, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == '|') {
                 Position pos_start = pos.copy();
@@ -111,20 +112,20 @@ public class Lexer {
                 else
                     tokens.add(new Token(TT_PIPE, null, pos_start, null, "|"));
             } else if (current_char == '&') {
-                tokens.add(new Token(Constants.TT_AND, null, pos, null, current_char.toString()));
+                tokens.add(new Token(TT_AND, null, pos, null, current_char.toString()));
                 advance();
             } else if (current_char == '<') {
-                Tuple<Token, Error> tup = parse_eq(Constants.TT_LEQ, Constants.TT_LT, current_char.toString());
+                Tuple<Token, Error> tup = parse_eq(TT_LEQ, TT_LT, current_char.toString());
                 if (tup.getRight() != null)
                     return Tuple.of(new ArrayList<>(), tup.getRight());
                 tokens.add(tup.getLeft());
             } else if (current_char == '>') {
-                Tuple<Token, Error> tup = parse_eq(Constants.TT_GEQ, Constants.TT_GT, current_char.toString());
+                Tuple<Token, Error> tup = parse_eq(TT_GEQ, TT_GT, current_char.toString());
                 if (tup.getRight() != null)
                     return Tuple.of(new ArrayList<>(), tup.getRight());
                 tokens.add(tup.getLeft());
             } else if (current_char == '!') {
-                Tuple<Token, Error> tup = parse_eq(Constants.TT_NEQ, Constants.TT_BANG, current_char.toString());
+                Tuple<Token, Error> tup = parse_eq(TT_NEQ, TT_BANG, current_char.toString());
                 if (tup.getRight() != null)
                     return Tuple.of(new ArrayList<>(), tup.getRight());
                 tokens.add(tup.getLeft());
@@ -135,7 +136,7 @@ public class Lexer {
                 return Tuple.of(new ArrayList<>(), new Error.IllegalCharError(pos_start, pos, "'" + chara +"'"));
             }
         }
-        tokens.add(new Token(Constants.TT_EOF, null, pos, null, null));
+        tokens.add(new Token(TT_EOF, null, pos, null, null));
         return Tuple.of(tokens, null);
     }
 
@@ -184,7 +185,7 @@ public class Lexer {
      * @param character - The character that the method is called on.
      * @return a Tuple containing either a lexed token of either provided type, or an Error if the else_case parameter is null.
      */
-    public Tuple<Token, Error> parse_eq(String eq_case, String else_case, String character) {
+    public Tuple<Token, Error> parse_eq(TokenEnum eq_case, TokenEnum else_case, String character) {
         Position pos_start = pos.copy();
         advance();
         if (current_char != null && current_char == '=') {
@@ -224,9 +225,9 @@ public class Lexer {
         }
 
         if (period_count == 0)
-            return new Token(Constants.TT_INT, Integer.parseInt(num_str.toString()), pos_start, pos, null);
+            return new Token(TT_INT, Integer.parseInt(num_str.toString()), pos_start, pos, null);
         else
-            return new Token(Constants.TT_FLOAT, Float.parseFloat(num_str.toString()), pos_start, pos, null);
+            return new Token(TT_FLOAT, Float.parseFloat(num_str.toString()), pos_start, pos, null);
     }
 
     /**
@@ -243,9 +244,9 @@ public class Lexer {
         }
 
         if (Constants.getInstance().DESIGNATED_KEYWORDS.contains(identifier.toString()))
-            return new Token(Constants.TT_KW, identifier.toString(), pos_start, pos, null);
+            return new Token(TT_KW, identifier.toString(), pos_start, pos, null);
         else
-            return new Token(Constants.TT_IDENTIFIER, identifier.toString(), pos_start, pos, null);
+            return new Token(TT_IDENTIFIER, identifier.toString(), pos_start, pos, null);
     }
 
 }

@@ -1,6 +1,5 @@
 package lscript.interpreting.types;
 
-import lscript.Constants;
 import lscript.Tuple;
 import lscript.errors.Error;
 import lscript.interpreting.Context;
@@ -36,49 +35,49 @@ public abstract class BasicType extends Value {
             return super.apply(opToken, otherType);
         BasicType other = (BasicType) otherType;
         switch (opToken.getType()) {
-            case Constants.TT_PLUS:
+            case TT_PLUS:
                 res = addedTo(other);
                 break;
-            case Constants.TT_MINUS:
+            case TT_MINUS:
                 res = subtractedBy(other);
                 break;
-            case Constants.TT_MUL:
+            case TT_MUL:
                 res = multipliedBy(other);
                 break;
-            case Constants.TT_DIV:
+            case TT_DIV:
                 res = dividedBy(other);
                 break;
-            case Constants.TT_POW:
+            case TT_POW:
                 res = toThePowerOf(other);
                 break;
-            case Constants.TT_MOD:
+            case TT_MOD:
                 res = modulo(other);
                 break;
-            case Constants.TT_LT:
+            case TT_LT:
                 res = lessThan(other);
                 break;
-            case Constants.TT_GT:
+            case TT_GT:
                 res = greaterThan(other);
                 break;
-            case Constants.TT_LEQ:
+            case TT_LEQ:
                 res = lessThanOrEqualTo(other);
                 break;
-            case Constants.TT_GEQ:
+            case TT_GEQ:
                 res = greaterThanOrEqualTo(other);
                 break;
-            case Constants.TT_BOOLEQ:
+            case TT_BOOLEQ:
                 res = Tuple.of(equalTo(other), null);
                 break;
-            case Constants.TT_NEQ:
+            case TT_NEQ:
                 res = Tuple.of(notEqualTo(other), null);
                 break;
-            case Constants.TT_AND:
+            case TT_AND:
                 res = and(other);
                 break;
-            case Constants.TT_PIPE:
+            case TT_PIPE:
                 res = or(other);
                 break;
-            case Constants.TT_BANG:
+            case TT_BANG:
                 res = reversed();
                 break;
             default:

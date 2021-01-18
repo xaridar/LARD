@@ -4,6 +4,9 @@ import lscript.interpreting.types.BasicType;
 import lscript.interpreting.types.LList;
 import lscript.interpreting.types.LString;
 
+import lscript.TokenEnum.*;
+import lscript.lexing.Token;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +56,7 @@ public class Constants {
     public static final String TT_DIVEQ = "DIVEQ";
     public static final String TT_MODEQ = "MODEQ";
     public static final String TT_POWEQ = "POWEQ";
-    public Map<Character, Map<String, String>> EQUAL_MODS;
+    public Map<Character, Map<String, TokenEnum>> EQUAL_MODS;
 
     public static final String TT_LT = "LESS_THAN";
     public static final String TT_GT = "GREATER_THAN";
@@ -97,35 +100,35 @@ public class Constants {
         DESIGNATED_KEYWORDS.addAll(List.of("if", "elif", "else", "while", "for", "func", "switch", "case", "default", "return", "continue", "break"));
 
         EQUAL_MODS = new HashMap<>();
-        HashMap<String, String> plusMod = new HashMap<>();
+        HashMap<String, TokenEnum> plusMod = new HashMap<>();
 
-        plusMod.put("with", TT_PLUSEQ);
-        plusMod.put("without", TT_PLUS);
+        plusMod.put("with", TokenEnum.TT_PLUSEQ);
+        plusMod.put("without", TokenEnum.TT_PLUS);
 
-        HashMap<String, String> minusMod = new HashMap<>();
+        HashMap<String, TokenEnum> minusMod = new HashMap<>();
 
-        minusMod.put("with", TT_MINUSEQ);
-        minusMod.put("without", TT_MINUS);
+        minusMod.put("with", TokenEnum.TT_MINUSEQ);
+        minusMod.put("without", TokenEnum.TT_MINUS);
 
-        HashMap<String, String> mulMod = new HashMap<>();
+        HashMap<String, TokenEnum> mulMod = new HashMap<>();
 
-        mulMod.put("with", TT_TIMESEQ);
-        mulMod.put("without", TT_MUL);
+        mulMod.put("with", TokenEnum.TT_TIMESEQ);
+        mulMod.put("without", TokenEnum.TT_MUL);
 
-        HashMap<String, String> divMod = new HashMap<>();
+        HashMap<String, TokenEnum> divMod = new HashMap<>();
 
-        divMod.put("with", TT_DIVEQ);
-        divMod.put("without", TT_DIV);
+        divMod.put("with", TokenEnum.TT_DIVEQ);
+        divMod.put("without", TokenEnum.TT_DIV);
 
-        HashMap<String, String> powMod = new HashMap<>();
+        HashMap<String, TokenEnum> powMod = new HashMap<>();
 
-        powMod.put("with", TT_POWEQ);
-        powMod.put("without", TT_POW);
+        powMod.put("with", TokenEnum.TT_POWEQ);
+        powMod.put("without", TokenEnum.TT_POW);
 
-        HashMap<String, String> modMod = new HashMap<>();
+        HashMap<String, TokenEnum> modMod = new HashMap<>();
 
-        modMod.put("with", TT_MODEQ);
-        modMod.put("without", TT_MOD);
+        modMod.put("with", TokenEnum.TT_MODEQ);
+        modMod.put("without", TokenEnum.TT_MOD);
 
         EQUAL_MODS.put('+', plusMod);
         EQUAL_MODS.put('-', minusMod);

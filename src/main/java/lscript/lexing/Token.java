@@ -1,10 +1,12 @@
 package lscript.lexing;
 
+import lscript.TokenEnum;
+
 /**
  * A piece of data created by the Lexer that stores information about one small piece of input for convenience in parsing.
  */
 public class Token {
-    String type;
+    TokenEnum type;
     Object value;
     String opChar;
     Position posStart = null;
@@ -17,7 +19,7 @@ public class Token {
      * @param posEnd - The end Position of the Token in the original text.
      * @param opChar - The operation character represented by the Token, if there is one. Can be null.
      */
-    public Token(String type, Object value, Position posStart, Position posEnd, String opChar) {
+    public Token(TokenEnum type, Object value, Position posStart, Position posEnd, String opChar) {
         this.type = type;
         this.value = value;
         this.opChar = opChar;
@@ -44,9 +46,9 @@ public class Token {
     @Override
     public String toString() {
         if (value != null) {
-            return type + ":" + value;
+            return type.name() + ":" + value;
         }
-        return type;
+        return type.name();
     }
 
     /**
@@ -55,7 +57,7 @@ public class Token {
      * @param value - A token value.
      * @return true if both parameters match this Token's fields.
      */
-    public boolean matches(String type, Object value) {
+    public boolean matches(TokenEnum type, Object value) {
         return this.type.equals(type) && this.value.equals(value);
     }
 
@@ -76,7 +78,7 @@ public class Token {
     /**
      * @return The type of the Token, as a String. All possible Token types are stored as constants in lscript.Constants.
      */
-    public String getType() {
+    public TokenEnum getType() {
         return type;
     }
 

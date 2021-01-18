@@ -1,5 +1,6 @@
 package lscript.interpreting.types;
 
+import lscript.TokenEnum;
 import lscript.Tuple;
 import lscript.errors.Error;
 import lscript.interpreting.Context;
@@ -12,7 +13,7 @@ import lscript.parsing.nodes.VarAccessNode;
 
 import java.util.List;
 
-import static lscript.Constants.*;
+import static lscript.TokenEnum.*;
 
 /**
  * Holds a single value of any type, including int, float, boolean, list, map, function, file, and nulltype.

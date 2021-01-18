@@ -1,6 +1,7 @@
 package lscript.parsing;
 
 import lscript.Constants;
+import lscript.TokenEnum;
 import lscript.errors.Error;
 import lscript.interpreting.types.Value;
 import lscript.lexing.Position;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static lscript.Constants.*;
+import static lscript.TokenEnum.*;
 
 /**
  * Creates different types of nodes from a list of tokens for interpretation
@@ -320,7 +321,7 @@ public class Parser {
             if (!currentToken.getType().equals(TT_KW))
                 return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
             String str = (String) currentToken.getValue();
-            if (!getInstance().TYPES.containsKey(str))
+            if (!Constants.getInstance().TYPES.containsKey(str))
                 return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
             returnTypes.add((String) currentToken.getValue());
             while (currentToken.getType().equals(TT_COMMA)) {
@@ -330,9 +331,9 @@ public class Parser {
                 if (!currentToken.getType().equals(TT_KW))
                     return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
                 str = (String) currentToken.getValue();
-                if (!getInstance().TYPES.containsKey(str))
+                if (!Constants.getInstance().TYPES.containsKey(str))
                     return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
-                returnTypes.add(currentToken.getType());
+                returnTypes.add(((String) currentToken.getValue()));
             }
             res.registerAdvancement();
             advance();
@@ -867,7 +868,7 @@ public class Parser {
             }
         } else if (currentToken.getType().equals(TT_IDENTIFIER)) {
             Token var_name = currentToken;
-            Map<String, String> mods = Constants.getInstance().EQUAL_MODS.values().stream().collect(Collectors.toMap(m -> m.get("with"), m -> m.get("without")));
+            Map<TokenEnum, TokenEnum> mods = Constants.getInstance().EQUAL_MODS.values().stream().collect(Collectors.toMap(m -> m.get("with"), m -> m.get("without")));
             if (nextToken != null) {
                 if (nextToken.getType().equals(TT_EQ)) {
                     res.registerAdvancement();
@@ -885,7 +886,7 @@ public class Parser {
                         return res.success(new VarAssignNode(null, var_name, assignment));
                     }
                 } else if (mods.containsKey(nextToken.getType())) {
-                    String to_token = mods.get(nextToken.getType());
+                    TokenEnum to_token = mods.get(nextToken.getType());
                     Token tok = new Token(to_token, null, nextToken.getPosStart(), null, null);
                     tokens.set(tokenIndex + 1, tok);
                     nextToken = tok;
@@ -935,7 +936,7 @@ public class Parser {
      * @param rightFunc - the method to call on the right side of the binary operator.
      * @return a ParseResult holding either a Node or Error - The Node is of type BinaryOperationNode, or it passes the node on the left.
      */
-    public ParseResult bin_op(Function<Void, ParseResult> leftFunc, List<String> ops, Function<Void, ParseResult> rightFunc) {
+    public ParseResult bin_op(Function<Void, ParseResult> leftFunc, List<TokenEnum> ops, Function<Void, ParseResult> rightFunc) {
         if (rightFunc == null) rightFunc = leftFunc;
         ParseResult res = new ParseResult();
         Node left = res.register(leftFunc.apply(null));

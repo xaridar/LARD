@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static lscript.Constants.*;
+import static lscript.TokenEnum.*;
 
 /**
  * Singleton class, which recursively visits all nodes contained in a nested node and calls operations, functions, and other capabilities of the language.
@@ -108,9 +108,9 @@ public class Interpreter {
         if (res.shouldReturn()) return res;
 
         Tuple<BasicType, Error> result = null;
-        if (node.getOperationToken().getType().equals(Constants.TT_MINUS)) {
-            result = val.apply(new Token(Constants.TT_MUL, null, node.getOperationToken().getPosStart(), node.getOperationToken().getPosEnd(), "*"), new LInt(-1));
-        } else if (node.getOperationToken().getType().equals(Constants.TT_BANG)) {
+        if (node.getOperationToken().getType().equals(TT_MINUS)) {
+            result = val.apply(new Token(TT_MUL, null, node.getOperationToken().getPosStart(), node.getOperationToken().getPosEnd(), "*"), new LInt(-1));
+        } else if (node.getOperationToken().getType().equals(TT_BANG)) {
             result = val.apply(node.getOperationToken(), null);
         }
 
