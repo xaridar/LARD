@@ -76,7 +76,7 @@ public class Shell {
                     if (((LList) result.left).getElements().size() == 1) {
                         if (((LList) result.left).getElements().get(0) != NullType.Void)
                             System.out.println(((LList) result.left).getElements().get(0));
-                    } else System.out.println(result.left);
+                    } else if (((LList) result.left).getElements().size() != 0) System.out.println(result.left);
                 }
             }
         } else {

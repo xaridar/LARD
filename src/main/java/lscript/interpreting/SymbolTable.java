@@ -1,14 +1,10 @@
 package lscript.interpreting;
 
-import lscript.Constants;
 import lscript.errors.Error;
 import lscript.interpreting.types.Value;
-import lscript.lexing.Token;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static lscript.Constants.TT_KW;
 
 /**
  * A table of variable names and values for accessing.

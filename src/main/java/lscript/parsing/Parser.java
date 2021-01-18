@@ -69,11 +69,14 @@ public class Parser {
      * @return a ParseResult containing the results of the parsing, in the form of either an Error or a Node.
      */
     public ParseResult parse() {
-        ParseResult res = statements();
-        if (!res.hasError() && !currentToken.getType().equals(TT_EOF))
-            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(),
-                    "Expected ';', '+', '-', '*', '/', '^', '%', '==', '!', '!=', '<', '>', '<=', '>=', '+=', '-=', '*=', '/=', '&', or '|'"));
-        return res;
+        if (currentToken.getType() != TT_EOF) {
+            ParseResult res = statements();
+            if (!res.hasError() && !currentToken.getType().equals(TT_EOF))
+                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(),
+                        "Expected ';', '+', '-', '*', '/', '^', '%', '==', '!', '!=', '<', '>', '<=', '>=', '+=', '-=', '*=', '/=', '&', or '|'"));
+            return res;
+        }
+        return new ParseResult().success(new ListNode(new ArrayList<>(), currentToken.getPosStart(), currentToken.getPosEnd()));
     }
 
     /**
@@ -776,7 +779,8 @@ public class Parser {
         }
 
         Node expression = res.register(expression());
-        if (res.hasError()) return res.failure(new Error.InvalidSyntaxError(posStart, currentToken.getPosEnd(), "Expected type, 'return', 'continue', 'break', 'if', 'for', 'while', 'func', value, identifier, '+', '-', '(', '[', '{', or '!'"));
+        if (res.hasError())
+            return res.failure(new Error.InvalidSyntaxError(posStart, currentToken.getPosEnd(), "Expected type, 'return', 'continue', 'break', 'if', 'for', 'while', 'func', value, identifier, '+', '-', '(', '[', '{', or '!'"));
         return res.success(expression);
     }
 

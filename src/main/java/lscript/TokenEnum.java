@@ -1,5 +1,8 @@
 package lscript;
 
+/**
+ * Holds constant Token types and variable types for the interpreter
+ */
 public enum TokenEnum {
     TT_INT,
     TT_FLOAT,
@@ -41,5 +44,8 @@ public enum TokenEnum {
     TT_BOOLEQ,
     TT_NEQ,
     TT_LEQ,
-    TT_GEQ;
+    TT_GEQ,
+
+    TT_OL_COMMENT,
+    TT_ML_COMMENT
 }

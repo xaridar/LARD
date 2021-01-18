@@ -13,7 +13,7 @@ public class Token {
     Position posEnd = null;
 
     /**
-     * @param type - The type of the Token, as a String. All possible Token types are stored as constants in lscript.Constants.
+     * @param type - The type of the Token, as a TokenEnum.
      * @param value - The value of the token, if it has one. Can be null.
      * @param posStart - The start Position of the Token in the original text.
      * @param posEnd - The end Position of the Token in the original text.
@@ -53,7 +53,7 @@ public class Token {
 
     /**
      * Tests whether the type and value of this Token match the parameter.
-     * @param type - A Token type.
+     * @param type - A TokenEnum.
      * @param value - A token value.
      * @return true if both parameters match this Token's fields.
      */
@@ -76,7 +76,7 @@ public class Token {
     }
 
     /**
-     * @return The type of the Token, as a String. All possible Token types are stored as constants in lscript.Constants.
+     * @return The type of the Token, as a TokenEnum.
      */
     public TokenEnum getType() {
         return type;

@@ -4,66 +4,21 @@ import lscript.interpreting.types.BasicType;
 import lscript.interpreting.types.LList;
 import lscript.interpreting.types.LString;
 
-import lscript.TokenEnum.*;
-import lscript.lexing.Token;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Holds constant Token types and variable types for the interpreter
+ * Holds constant Maps for ease of parsing and interpreting
  */
 public class Constants {
-    public static final String TT_INT = "INT";
-    public static final String TT_FLOAT = "FLOAT";
-    public static final String TT_KW = "KW";
-    public static final String TT_IDENTIFIER = "ID";
-    public static final String TT_STR = "STR";
-    public static final String TT_LEFT_BRACKET = "LEFT_BRCKT";
-    public static final String TT_RIGHT_BRACKET = "RIGHT_BRCKT";
 
     public Map<String, List<String>> TYPES;
     public Map<String, Class<? extends BasicType>> CONVERT_CLASSES;
 
     public List<String> DESIGNATED_KEYWORDS;
-
-    public static final String TT_PLUS = "PLUS";
-    public static final String TT_MINUS = "MINUS";
-    public static final String TT_MUL = "MUL";
-    public static final String TT_DIV = "DIV";
-    public static final String TT_MOD = "MODULO";
-    public static final String TT_LEFT_PAREN = "LEFT_PAREN";
-    public static final String TT_RIGHT_PAREN = "RIGHT_PAREN";
-    public static final String TT_EOF = "EOF";
-    public static final String TT_POW = "POW";
-    public static final String TT_EQ = "EQ";
-    public static final String TT_COMMA = "COMMA";
-    public static final String TT_BANG = "BANG";
-    public static final String TT_SEMICOLON = "SEMICOLON";
-    public static final String TT_AND = "AND";
-    public static final String TT_PIPE = "PIPE";
-    public static final String TT_DOUBLE_PIPE = "DBL_PIPE";
-    public static final String TT_QUESTION = "QUESMARK";
-    public static final String TT_COLON = "COLON";
-    public static final String TT_LEFT_BRACE = "LEFT_BRACE";
-    public static final String TT_RIGHT_BRACE = "RIGHT_BRACE";
-
-    public static final String TT_PLUSEQ = "PLUSEQ";
-    public static final String TT_MINUSEQ = "MINUSEQ";
-    public static final String TT_TIMESEQ = "TIMESEQ";
-    public static final String TT_DIVEQ = "DIVEQ";
-    public static final String TT_MODEQ = "MODEQ";
-    public static final String TT_POWEQ = "POWEQ";
     public Map<Character, Map<String, TokenEnum>> EQUAL_MODS;
-
-    public static final String TT_LT = "LESS_THAN";
-    public static final String TT_GT = "GREATER_THAN";
-    public static final String TT_BOOLEQ = "BOOLEQ";
-    public static final String TT_NEQ = "NEQ";
-    public static final String TT_LEQ = "LESS_THAN_OR_EQ";
-    public static final String TT_GEQ = "GREATER_THAN_OR_EQ";
 
     private static Constants INSTANCE;
 
