@@ -2,5 +2,7 @@
 
 print("Hello World!");
 
-str name = input("What is your name? ");
-print("Hello, %name!");
+for (int i = 0, 3) {
+    str name = input("What is your name? ");
+    print("Hello, %name!");
+}

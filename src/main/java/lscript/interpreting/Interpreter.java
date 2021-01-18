@@ -198,6 +198,8 @@ public class Interpreter {
     public RTResult visitForNode(ForNode node, Context context) {
         RTResult res = new RTResult();
         LInt step_value;
+        Context loopContext = new Context("<anonymous for loop>", context, node.getPosStart());
+        loopContext.setSymbolTable(new SymbolTable(context.getSymbolTable()));
 
         Value start = res.register(visit(node.getStartValueNode(), context));
         if (res.shouldReturn()) return res;
@@ -233,13 +235,13 @@ public class Interpreter {
              context.getSymbolTable().set(((String) node.getVarTypeToken().getValue()), ((String) node.getVarNameToken().getValue()), new LInt(i[0]), false);
              i[0] += step_value.getValue();
 
-             res.register(visit(node.getBodyNode(), context));
+             res.register(visit(node.getBodyNode(), loopContext));
              if (!res.isLoopBreak() && !res.isLoopCont() && res.shouldReturn()) return res;
              if (res.isLoopCont())
                  continue;
              if (res.isLoopBreak())
                  break;
-
+             loopContext.getSymbolTable().removeAll();
 
          }
          context.getSymbolTable().remove((String) node.getVarNameToken().getValue());
