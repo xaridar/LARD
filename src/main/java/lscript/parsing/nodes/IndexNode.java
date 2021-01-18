@@ -1,20 +1,34 @@
 package lscript.parsing.nodes;
 
+import lscript.TokenEnum;
+import lscript.lexing.Token;
+
 /**
  * A simple Node representing an attempt to index an object.
  */
 public class IndexNode extends Node {
     private final Node left;
-    private final Node index;
+    private final Node startIndex;
+    private final Node endIndex;
 
     /**
      * @param left - The Node to index.
-     * @param index - A Node containing the index to access.
+     * @param startIndex - A Node containing the starting index to access. Can be null.
+     * @param endIndex - A Node containing the ending index to access. Can be null.
      */
-    public IndexNode(Node left, Node index) {
-        super(left.getPosStart(), index.getPosEnd());
+    public IndexNode(Node left, Node startIndex, Node endIndex) {
+        super(left.getPosStart(), endIndex != null ? endIndex.getPosEnd() : startIndex != null ? startIndex.getPosEnd() : left.getPosEnd());
         this.left = left;
-        this.index = index;
+        if (startIndex == null && endIndex != null) {
+            this.startIndex = new NumberNode(new Token(TokenEnum.TT_INT, 0, endIndex.getPosStart(), endIndex.getPosEnd(), null));
+            this.endIndex = endIndex;
+        } else if (startIndex != null && endIndex == null) {
+            this.startIndex = startIndex;
+            this.endIndex = new NumberNode(new Token(TokenEnum.TT_INT, -1, startIndex.getPosStart(), startIndex.getPosEnd(), null));
+        } else {
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
+        }
     }
 
     /**
@@ -25,10 +39,17 @@ public class IndexNode extends Node {
     }
 
     /**
-     * @return the Node representing the desired index.
+     * @return A Node containing the starting index to access.
      */
-    public Node getIndex() {
-        return index;
+    public Node getStartIndex() {
+        return startIndex;
+    }
+
+    /**
+     * @return A Node containing the ending index to access.
+     */
+    public Node getEndIndex() {
+        return endIndex;
     }
 
     /**
@@ -36,6 +57,6 @@ public class IndexNode extends Node {
      */
     @Override
     public String toString() {
-        return left.toString() + "[" + index.toString() + "]";
+        return left.toString() + "[" + startIndex.toString() + ":" + endIndex.toString() + "]";
     }
 }

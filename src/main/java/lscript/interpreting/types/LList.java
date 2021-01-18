@@ -51,16 +51,23 @@ public class LList extends BasicType {
     }
 
     @Override
-    public Tuple<Value, Error> elementAt(Value val) {
-        if (!(val instanceof LInt))
-            return Tuple.of(null, new Error.RunTimeError(val.getPosStart(), val.getPosEnd(), "lists can only be indexed by integer values.", context));
-        int num = ((LInt) val).getValue();
-        if (0 <= num && num <= elements.size() - 1)
-            return Tuple.of(elements.get(((LInt) val).getValue()), null);
-        if (num < 0 && -1*num <= elements.size())
-            return Tuple.of(elements.get(num + elements.size()), null);
-        return Tuple.of(null, new Error.IndexOutOfBoundsError(val.getPosStart(), val.getPosEnd(), "Index " + num + " out of range for length " + elements.size(), context));
-
+    public Tuple<Value, Error> elementAt(Value startIndex, Value endIndex) {
+        if (!(startIndex instanceof LInt) || !(endIndex instanceof LInt))
+            return Tuple.of(null, new Error.RunTimeError(startIndex.getPosStart(), endIndex.getPosEnd(), "lists can only be indexed or sliced by integer values.", context));
+        int startNum = ((LInt) startIndex).getValue();
+        int endNum = ((LInt) endIndex).getValue();
+        if (startNum < 0)
+            startNum = startNum + elements.size();
+        if (startNum > elements.size()) return Tuple.of(null, new Error.IndexOutOfBoundsError(startIndex.getPosStart(), startIndex.getPosEnd(), "Index " + startIndex.getValue() + " out of range for length " + elements.size(), context));
+        if (endNum < 0)
+            endNum = endNum + elements.size();
+        if (endNum > elements.size()) return Tuple.of(null, new Error.IndexOutOfBoundsError(endIndex.getPosStart(), endIndex.getPosEnd(), "Index " + endIndex.getValue() + " out of range for length " + elements.size(), context));
+        if (startNum > endNum) return Tuple.of(null, new Error.RunTimeError(startIndex.getPosStart(), endIndex.getPosEnd(), "Start index cannot be greater than end index", context));
+        if (startNum == endNum) {
+            return Tuple.of(elements.get(startNum), null);
+        } else {
+            return Tuple.of(new LList(elements.subList(startNum, endNum)), null);
+        }
     }
 
     @Override
@@ -83,7 +90,7 @@ public class LList extends BasicType {
         boolean res = true;
         for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
             Value val = elements.get(i);
-            Tuple<Value, Error> otherElement = other.elementAt(new LInt(i));
+            Tuple<Value, Error> otherElement = other.elementAt(new LInt(i), new LInt(i));
             if (otherElement.getRight() != null)
                 return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
             LBoolean equal = val.equalTo(otherElement.getLeft());
@@ -101,7 +108,7 @@ public class LList extends BasicType {
         boolean res = true;
         for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
             Value val = elements.get(i);
-            Tuple<Value, Error> otherElement = other.elementAt(new LInt(i));
+            Tuple<Value, Error> otherElement = other.elementAt(new LInt(i), new LInt(i));
             if (otherElement.getRight() != null)
                 return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
             LBoolean equal = val.equalTo(otherElement.getLeft());

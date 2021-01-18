@@ -815,9 +815,29 @@ public class Parser {
         } else if (currentToken.getType().equals(TT_LEFT_BRACKET)) {
             res.registerAdvancement();
             advance();
+            Node startIdx = null;
+            Node endIdx = null;
+            if (currentToken.getType() == TT_COLON) {
+                res.registerAdvancement();
+                advance();
+                endIdx = res.register(expr());
+                if (res.hasError()) return res;
+            } else {
+                startIdx = res.register(expr());
+                if (res.hasError()) return res;
+                if (currentToken.getType() == TT_COLON) {
+                    res.registerAdvancement();
+                    advance();
+                    if (currentToken.getType() != TT_RIGHT_BRACKET) {
+                        endIdx = res.register(expr());
+                        if (res.hasError()) return res;
+                    }
+                } else {
+                    endIdx = startIdx;
+                }
+            }
 
-            Node index = res.register(expr());
-            if (res.hasError()) return res;
+
 
             if (!currentToken.getType().equals(TT_RIGHT_BRACKET))
                 return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected ']'"));
@@ -831,10 +851,10 @@ public class Parser {
 
                 Node toSet = res.register(expr());
                 if (res.hasError()) return res;
-                return res.success(new SetIndexNode(left, index, toSet));
+                return res.success(new SetIndexNode(left, startIdx, endIdx, toSet));
             }
 
-            return res.success(new IndexNode(left, index));
+            return res.success(new IndexNode(left, startIdx, endIdx));
         }
 
         return res.success(left);

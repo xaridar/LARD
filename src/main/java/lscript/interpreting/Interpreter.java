@@ -231,8 +231,9 @@ public class Interpreter {
          } else {
              condition = v -> i[0] > endValue.getValue();
          }
+         context.getSymbolTable().set(((String) node.getVarTypeToken().getValue()), ((String) node.getVarNameToken().getValue()), new LInt(i[0]), false);
          while (condition.test(null)) {
-             context.getSymbolTable().set(((String) node.getVarTypeToken().getValue()), ((String) node.getVarNameToken().getValue()), new LInt(i[0]), false);
+             context.getSymbolTable().set(null, ((String) node.getVarNameToken().getValue()), new LInt(i[0]), false);
              i[0] += step_value.getValue();
 
              res.register(visit(node.getBodyNode(), loopContext));
@@ -310,9 +311,11 @@ public class Interpreter {
         RTResult res = new RTResult();
         Value left = res.register(visit(node.getLeft(), context));
         if (res.shouldReturn()) return res;
-        Value index = res.register(visit(node.getIndex(), context));
+        Value startIndex = res.register(visit(node.getStartIndex(), context));
         if (res.shouldReturn()) return res;
-        Tuple<Value, Error> result = left.elementAt(index);
+        Value endIndex = res.register(visit(node.getEndIndex(), context));
+        if (res.shouldReturn()) return res;
+        Tuple<Value, Error> result = left.elementAt(startIndex, endIndex);
         if (result.getRight() != null) return res.failure(result.getRight());
         return res.success(result.getLeft());
     }
@@ -321,11 +324,13 @@ public class Interpreter {
         RTResult res = new RTResult();
         Value left = res.register(visit(node.getLeft(), context));
         if (res.shouldReturn()) return res;
-        Value index = res.register(visit(node.getIndex(), context));
+        Value startIndex = res.register(visit(node.getStartIndex(), context));
+        if (res.shouldReturn()) return res;
+        Value endIndex = res.register(visit(node.getEndIndex(), context));
         if (res.shouldReturn()) return res;
         Value value = res.register(visit(node.getVal(), context));
         if (res.shouldReturn()) return res;
-        Tuple<Value, Error> result = left.setElementAt(index, value);
+        Tuple<Value, Error> result = left.setElementAt(startIndex, value);
         if (result.getRight() != null) return res.failure(result.getRight());
         return res.success(result.getLeft());
     }

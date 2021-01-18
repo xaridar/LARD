@@ -127,11 +127,12 @@ public abstract class Value {
 
     /**
      * Accesses the element at an index, called by IndexNode.
-     * @param value - A Value to index this value at.
+     * @param startIndex - A start Value to index this value at.
+     * @param endIndex - An end Value to index this value at.
      * @return An RTResult containing either a Value or an Error; without overriding, it returns an UnsupportedOperationError.
      */
-    public Tuple<Value, Error> elementAt(Value value) {
-        return Tuple.of(null, new Error.UnsupportedOperationError(value.getPosStart(), value.getPosEnd(), "Indexing unsupported for type '" + getType() + "'", context));
+    public Tuple<Value, Error> elementAt(Value startIndex, Value endIndex) {
+        return Tuple.of(null, new Error.UnsupportedOperationError(startIndex.getPosStart(), endIndex.getPosEnd(), "Indexing unsupported for type '" + getType() + "'", context));
     }
 
     /**

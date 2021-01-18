@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class LString extends BasicType {
 
-    private String value;
+    private final String value;
 
     public LString(String value) {
         super("str");
@@ -92,15 +92,23 @@ public class LString extends BasicType {
     }
 
     @Override
-    public Tuple<Value, Error> elementAt(Value val) {
-        if (!(val instanceof LInt))
-            return Tuple.of(null, new Error.RunTimeError(val.getPosStart(), val.getPosEnd(), "str values can only be indexed by integer values.", context));
-        int num = ((LInt) val).getValue();
-        if (0 <= num && num < value.length() - 1)
-            return Tuple.of(new LString(Character.toString(value.charAt(((LInt) val).getValue()))).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-        if (num < 0 && -1*num < value.length())
-            return Tuple.of(new LString(Character.toString(value.charAt(num + value.length()))).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
-        return Tuple.of(null, new Error.IndexOutOfBoundsError(val.getPosStart(), val.getPosEnd(), "Index " + num + " out of range for length " + value.length(), context));
+    public Tuple<Value, Error> elementAt(Value startIndex, Value endIndex) {
+        if (!(startIndex instanceof LInt) || !(endIndex instanceof LInt))
+            return Tuple.of(null, new Error.RunTimeError(startIndex.getPosStart(), endIndex.getPosEnd(), "lists can only be indexed or sliced by integer values.", context));
+        int startNum = ((LInt) startIndex).getValue();
+        int endNum = ((LInt) endIndex).getValue();
+        if (startNum < 0)
+            startNum = startNum + value.length();
+        if (startNum > value.length()) return Tuple.of(null, new Error.IndexOutOfBoundsError(startIndex.getPosStart(), startIndex.getPosEnd(), "Index " + startIndex.getValue() + " out of range for length " + value.length(), context));
+        if (endNum < 0)
+            endNum = endNum + value.length();
+        if (endNum > value.length()) return Tuple.of(null, new Error.IndexOutOfBoundsError(endIndex.getPosStart(), endIndex.getPosEnd(), "Index " + endIndex.getValue() + " out of range for length " + value.length(), context));
+        if (startNum > endNum) return Tuple.of(null, new Error.RunTimeError(startIndex.getPosStart(), endIndex.getPosEnd(), "Start index cannot be greater than end index", context));
+        if (startIndex == endIndex) {
+            return Tuple.of(new LString(String.valueOf(value.charAt(startNum))), null);
+        } else {
+            return Tuple.of(new LString(value.substring(startNum, endNum)), null);
+        }
     }
 
     @Override

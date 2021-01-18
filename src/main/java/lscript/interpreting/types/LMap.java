@@ -46,21 +46,37 @@ public class LMap extends BasicType {
     }
 
     @Override
-    public Tuple<Value, Error> elementAt(Value val) {
-        final Value[] element = {null};
+    public Tuple<Value, Error> elementAt(Value startIndex, Value endIndex) {
+        if (startIndex.notEqualTo(endIndex).isTrue()) return Tuple.of(null, new Error.UnsupportedOperationError(startIndex.getPosStart(), endIndex.getPosEnd(), "Cannot slice map", getContext()));
+        Value element = null;
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
-            LBoolean equal = key.equalTo(val);
+            LBoolean equal = key.equalTo(startIndex);
             if (equal.isTrue()) {
-                element[0] = value;
+                element = value;
                 break;
             }
         }
-        if (element[0] == null) {
-            return Tuple.of(null, new Error.RunTimeError(val.getPosStart(), val.getPosEnd(), "No value found for key " + val, context));
+        if (element == null) {
+            return Tuple.of(null, new Error.RunTimeError(startIndex.getPosStart(), startIndex.getPosEnd(), "No value found for key " + startIndex, context));
         }
-        return Tuple.of(element[0], null);
+        return Tuple.of(element, null);
+    }
+
+    @Override
+    public Tuple<Value, Error> setElementAt(Value startIndex, Value value) {
+        Value lastVal = NullType.Null;
+        for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
+            Value key = entry.getKey();
+            LBoolean equal = key.equalTo(startIndex);
+            if (equal.isTrue()) {
+                lastVal = map.remove(key);
+                break;
+            }
+        }
+        map.put(startIndex, value);
+        return Tuple.of(lastVal, null);
     }
 
     @Override
@@ -71,7 +87,7 @@ public class LMap extends BasicType {
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
-            Tuple<Value, Error> otherElement = other.elementAt(key);
+            Tuple<Value, Error> otherElement = other.elementAt(key, key);
             if (otherElement.getRight() != null)
                 return (LBoolean) new LBoolean(false).setContext(getContext()).setPos(getPosStart(), getPosEnd());
             LBoolean equal = value.equalTo(otherElement.getLeft());
@@ -90,7 +106,7 @@ public class LMap extends BasicType {
         for (java.util.Map.Entry<Value, Value> entry : map.entrySet()) {
             Value key = entry.getKey();
             Value value = entry.getValue();
-            Tuple<Value, Error> otherElement = other.elementAt(key);
+            Tuple<Value, Error> otherElement = other.elementAt(key, key);
             if (otherElement.getRight() != null)
                 return (LBoolean) new LBoolean(true).setContext(getContext()).setPos(getPosStart(), getPosEnd());
             LBoolean equal = value.equalTo(otherElement.getLeft());
