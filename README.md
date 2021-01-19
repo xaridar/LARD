@@ -1,5 +1,5 @@
 # LScript
-A custom interpreted language, written in Java.
+A custom interpreted scripting language, written in Java.
 
 LScript is a primarily statically-typed scripting language, with the ability to use dynamic typing in most cases, as well.
 It is written fully in Java.
