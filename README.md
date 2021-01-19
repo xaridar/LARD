@@ -11,13 +11,13 @@ The interpreter can be run without any arguments, which will result in a command
 It can also be provided the path to a file, which it will subsequently process and run.
 
 <br><br>
-Some example LScript source files can be found in the [examples folder];
+Some example LScript source files can be found in the [examples folder].
 <br><br>
 
 This language is based off of the [tutorial series] by CodePulse on Youtube titled "Create Your Own Programming Language," 
 with different syntax choices, capabilities, and quirks, as well as converted from Python to Java.
 
 
-[Shell.java]: ../../blob/master/src/main/java/lscript/Shell.java
+[Shell.java]: src/main/java/lscript/Shell.java
 [tutorial series]: https://www.youtube.com/watch?v=Eythq9848Fg&list=PLZQftyCk7_SdoVexSmwy_tBgs7P0b97yD
 [examples folder]: examples
