@@ -4,6 +4,8 @@ import lscript.Tuple;
 import lscript.lexing.Token;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * A simple Node representing a function definition.
@@ -13,7 +15,7 @@ public class FuncDefNode extends Node {
     private final Token varNameToken;
     private final List<Tuple<Token, Token>> argTokens;
     private final List<String> returnTypes;
-    private final Node bodyNode;
+    private final MultilineNode bodyNode;
 
     /**
      * @param varNameToken - A Token representing the name of the instance variable of the loop.
@@ -21,7 +23,7 @@ public class FuncDefNode extends Node {
      * @param returnTypes - A list of Strings containing the return types of the function.
      * @param bodyNode - A Node to be called when the function is called.
      */
-    public FuncDefNode(Token varNameToken, List<Tuple<Token, Token>> argTokens, List<String> returnTypes, Node bodyNode) {
+    public FuncDefNode(Token varNameToken, List<Tuple<Token, Token>> argTokens, List<String> returnTypes, MultilineNode bodyNode) {
         super(varNameToken != null ? varNameToken.getPosStart() : argTokens.size() > 0 ? argTokens.get(0).getLeft().getPosStart() : bodyNode.getPosStart(), bodyNode.getPosEnd());
         this.varNameToken = varNameToken;
         this.argTokens = argTokens;
@@ -46,7 +48,7 @@ public class FuncDefNode extends Node {
     /**
      * @return the Node to be called when the function is called.
      */
-    public Node getBodyNode() {
+    public MultilineNode getBodyNode() {
         return bodyNode;
     }
 

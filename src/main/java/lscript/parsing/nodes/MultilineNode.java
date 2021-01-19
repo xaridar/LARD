@@ -5,18 +5,17 @@ import lscript.lexing.Position;
 import java.util.List;
 
 /**
- * A simple Node representing a list (used for language lists).
+ * A node that represents multiline statements.
  */
-public class ListNode extends Node {
-
+public class MultilineNode extends Node {
     private final List<Node> nodes;
 
     /**
-     * @param nodes - a list of Nodes contained in the list.
-     * @param posStart - The start position of the list.
-     * @param posEnd - The end position of the list.
+     * @param nodes - a list of Nodes contained in the Node.
+     * @param posStart - The start position of the Node.
+     * @param posEnd - The end position of the Node.
      */
-    public ListNode(List<Node> nodes, Position posStart, Position posEnd) {
+    public MultilineNode(List<Node> nodes, Position posStart, Position posEnd) {
         super(posStart, posEnd);
         this.nodes = nodes;
     }

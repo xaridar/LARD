@@ -39,26 +39,8 @@ public class LFunction extends BaseFunction {
         res.register(interpreter.visit(bodyNode, newContext));
         if (res.getFuncRetVal() == null && res.shouldReturn()) return res;
         Value retVal = res.getFuncRetVal();
-        if (retVal instanceof LList) {
-            if (retTypes.size() != ((LList) retVal).getElements().size()) {
-                return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(), "Wrong number of return types; Expected " + retTypes.size() + ", got " + ((LList) retVal).getElements().size(), newContext));
-            }
-            for (int i = 0, retValSize = ((LList) retVal).getElements().size(); i < retValSize; i++) {
-                Value val = ((LList) retVal).getElements().get(i);
-                if (!(Constants.getInstance().TYPES.get(retTypes.get(i)) == null || Constants.getInstance().TYPES.get(val.getType()).contains(retTypes.get(i)))) {
-                    return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(), "Wrong type; Expected '" + retTypes.get(i) + "', got '" + val.getType() + "'", newContext));
-                }
-            }
-        } else if (retVal != null) {
-            if (retTypes.size() != 1) {
-                return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(), "Wrong number of return types; Expected " + retTypes.size() + ", got 1", newContext));
-            }
-        }else {
-            if (retTypes.size() != 0) {
-                return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(), "Wrong number of return types; Expected " + retTypes.size() + ", got 0", newContext));
-            }
+        if (retVal == null)
             retVal = NullType.Void;
-        }
         return res.success(retVal);
     }
 

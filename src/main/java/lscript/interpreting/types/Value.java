@@ -7,9 +7,7 @@ import lscript.interpreting.Context;
 import lscript.lexing.Position;
 import lscript.lexing.Token;
 import lscript.interpreting.RTResult;
-import lscript.parsing.nodes.Node;
-import lscript.parsing.nodes.NumberNode;
-import lscript.parsing.nodes.VarAccessNode;
+import lscript.parsing.nodes.*;
 
 import java.util.List;
 
@@ -46,6 +44,12 @@ public abstract class Value {
             case "float":
             case "num":
                 return new NumberNode(new Token(TT_FLOAT, 0.0f, posStart, posStart.copy().advance(null).advance(null).advance(null), null));
+            case "str":
+                return new StringNode(new Token(TT_STR, "", posStart, posStart.copy(), null));
+            case "list":
+                return new ListNode(List.of(), posStart, posStart.copy());
+            case "map":
+                return new MapNode(List.of(), posStart, posStart.copy());
             default:
                 return new VarAccessNode(new Token(TT_KW, "null", posStart, posStart.copy().advance(null).advance(null).advance(null).advance(null), null));
         }

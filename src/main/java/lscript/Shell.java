@@ -30,7 +30,7 @@ import java.util.Scanner;
  * Main class, which takes input from cmd or a file and interprets it.
  */
 public class Shell {
-    public static SymbolTable global_symbol_table = new SymbolTable();
+    public static SymbolTable GLOBAL_SYMBOL_TABLE = new SymbolTable();
 
     /**
      * @param args - cmd line arguments - if none are passed, it reads from cmd; otherwise, it looks for a file to read with the specified path
@@ -38,12 +38,12 @@ public class Shell {
      */
     public static void main(String[] args) throws IOException {
 
-        global_symbol_table.set("nullType", "null", NullType.Null, true);
-        global_symbol_table.set("bool", "true", LBoolean.True, true);
-        global_symbol_table.set("bool", "false", LBoolean.False, true);
-        global_symbol_table.set("float", "pi", MathConstants.Pi, true);
+        GLOBAL_SYMBOL_TABLE.set("nullType", "null", NullType.Null, true);
+        GLOBAL_SYMBOL_TABLE.set("bool", "true", LBoolean.True, true);
+        GLOBAL_SYMBOL_TABLE.set("bool", "false", LBoolean.False, true);
+        GLOBAL_SYMBOL_TABLE.set("float", "pi", MathConstants.Pi, true);
         for (IExecutable func : IExecutable.builtins) {
-            global_symbol_table.set("function", func.getName(), new BuiltInFunction(func.getName()), true);
+            GLOBAL_SYMBOL_TABLE.set("function", func.getName(), new BuiltInFunction(func.getName()), true);
         }
         InputStream in;
         String fn;
@@ -111,12 +111,12 @@ public class Shell {
     /**
      * Runs the interpreter on text as a String
      * @param fn - the name of the input file
-     * @param text - the inputted text
+     * @param text - the input text
      * @return a Tuple which holds the results of the interpretation
      */
     public static Tuple<Object, Error> run(String fn, String text) {
-        Context context = new Context("<module>", null, null);
-        context.setSymbolTable(global_symbol_table);
+        Context context = new Context(fn, null, null);
+        context.setSymbolTable(GLOBAL_SYMBOL_TABLE);
         Lexer lexer = new Lexer(fn, text);
         Tuple<List<Token>, Error> tkns = lexer.make_tokens();
         if (tkns.getRight() != null)
@@ -128,9 +128,39 @@ public class Shell {
         if (ast.hasError()) return Tuple.of(null, ast.getError());
 
         Interpreter interpreter = Interpreter.getInstance();
+        Interpreter.setOnlySymbols(false);
         RTResult result = interpreter.visit(ast.getNode(), context);
         if (result.hasError()) return Tuple.of(null, result.getError());
 
         return Tuple.of(result.getValue(), null);
+    }
+
+    /**
+     * Runs the interpreter on text as a String, for internal functions
+     * @param fn - the name of the input file
+     * @param text - the input text
+     * @param setOnlySymbols - A parameter for interpreting, which tells the Interpreter whether to skip scripts and only interpret variables and functions.
+     * @return a Tuple which holds any Error result of the interpretation and the main Context
+     */
+    public static Tuple<Context, Error> runInternal(String fn, String text, boolean setOnlySymbols) {
+        Context context = new Context(fn, null, null);
+        context.setSymbolTable(new SymbolTable(GLOBAL_SYMBOL_TABLE));
+        Lexer lexer = new Lexer(fn, text);
+        Tuple<List<Token>, Error> tkns = lexer.make_tokens();
+        if (tkns.getRight() != null)
+            return Tuple.of(null, tkns.getRight());
+        List<Token> tokens = tkns.getLeft();
+
+        Parser parser = new Parser(tokens);
+        ParseResult ast = parser.parse();
+        if (ast.hasError()) return Tuple.of(null, ast.getError());
+
+        Interpreter interpreter = Interpreter.getInstance();
+        Interpreter.setOnlySymbols(setOnlySymbols);
+        RTResult result = interpreter.visit(ast.getNode(), context);
+        Interpreter.setOnlySymbols(false);
+        if (result.hasError()) return Tuple.of(null, result.getError());
+
+        return Tuple.of(context, null);
     }
 }

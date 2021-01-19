@@ -5,6 +5,7 @@ import lscript.interpreting.types.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A table of variable names and values for accessing.
@@ -28,6 +29,13 @@ public class SymbolTable {
     public SymbolTable(SymbolTable parent) {
         symbols = new ArrayList<>();
         this.parent = parent;
+    }
+
+    /**
+     * @return This SymbolTable's stored list of Symbols.
+     */
+    public List<Symbol> getSymbols() {
+        return symbols;
     }
 
     /**
@@ -77,9 +85,22 @@ public class SymbolTable {
      * @return Null if the variable is stored successfully, or a String representing the expected type of the variable if it conflicts with the provided one.
      */
     public Error set(String type, String var_name, Value value, boolean immutable) {
+        return set(type, var_name, value, immutable, false);
+    }
+
+    /**
+     * Checks against the current set of variables, and sets a variable based on type, name, value, and mutability.
+     * @param type - A Token representing the type of the variable.
+     * @param var_name - The name of the variable to store or update.
+     * @param value - The value to store with the variable name.
+     * @param immutable - A boolean representing whether the variable can be changed in the future.
+     * @param ignoreRedefine - A boolean representing whether to ignore redefinition of variables.
+     * @return Null if the variable is stored successfully, or a String representing the expected type of the variable if it conflicts with the provided one.
+     */
+    public Error set(String type, String var_name, Value value, boolean immutable, boolean ignoreRedefine) {
         Symbol symbol = getSymbol(var_name);
         if (symbol != null && symbol.canEdit()) {
-            if (type == null) {
+            if (type == null || (ignoreRedefine && symbol.typeEquals(type))) {
                 if (symbol.typeEquals(value.getType())) {
                     symbol.setValue(value);
                     return null;
@@ -105,6 +126,14 @@ public class SymbolTable {
      */
     public void remove(String var_name) {
         symbols.remove(getSymbolByName(var_name));
+    }
+
+    /**
+     * Removes a collection of variables from the SymbolTable by name.
+     * @param names - A list of the names of the variables to remove.
+     */
+    public void removeAll(List<String> names) {
+        symbols.removeAll(names.stream().map(this::getSymbolByName).collect(Collectors.toList()));
     }
 
     /**

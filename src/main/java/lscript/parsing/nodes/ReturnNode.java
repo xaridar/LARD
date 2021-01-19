@@ -26,4 +26,11 @@ public class ReturnNode extends Node {
     public List<Node> getNodesToCall() {
         return nodesToCall;
     }
+
+    /**
+     * @param node - a Node to addto this return statement.
+     */
+    public void addNodeToCall(Node node) {
+        nodesToCall.add(node);
+    }
 }

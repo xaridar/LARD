@@ -93,4 +93,10 @@ public class Error {
             super(posStart, posEnd, "File Access Error", details, context);
         }
     }
+
+    public static class ImportError extends RunTimeError {
+        public ImportError(Position posStart, Position posEnd, String details, Context context) {
+            super(posStart, posEnd, "Import Error", details, context);
+        }
+    }
 }

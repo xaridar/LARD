@@ -52,7 +52,7 @@ public class Constants {
 
         DESIGNATED_KEYWORDS = new ArrayList<>();
         DESIGNATED_KEYWORDS.addAll(TYPES.keySet());
-        DESIGNATED_KEYWORDS.addAll(List.of("if", "elif", "else", "while", "for", "func", "switch", "case", "default", "return", "continue", "break"));
+        DESIGNATED_KEYWORDS.addAll(List.of("if", "elif", "else", "while", "for", "func", "return", "continue", "break", "import", "from", "as"));
 
         EQUAL_MODS = new HashMap<>();
         HashMap<String, TokenEnum> plusMod = new HashMap<>();

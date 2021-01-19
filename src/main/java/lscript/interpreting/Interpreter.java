@@ -1,6 +1,7 @@
 package lscript.interpreting;
 
 import lscript.Constants;
+import lscript.Shell;
 import lscript.Tuple;
 import lscript.errors.Error;
 import lscript.lexing.Token;
@@ -8,9 +9,14 @@ import lscript.parsing.nodes.*;
 import lscript.interpreting.types.*;
 import lscript.interpreting.types.LFloat;
 
+import java.io.IOException;
 import java.lang.Boolean;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +30,7 @@ import static lscript.TokenEnum.*;
  */
 @SuppressWarnings("unused")
 public class Interpreter {
+    public static boolean setOnlySymbols = false;
 
     private static Interpreter INSTANCE;
 
@@ -34,6 +41,14 @@ public class Interpreter {
     public static Interpreter getInstance() {
         if (INSTANCE == null) INSTANCE = new Interpreter();
         return INSTANCE;
+    }
+
+    /**
+     * Sets the Interpreter to SetOnlySymbols mode, in which it will not run scripts, but only create Symbols.
+     * @param setOnlySymbols - Toggle for SetOnlySymbolsMode.
+     */
+    public static void setOnlySymbols(boolean setOnlySymbols) {
+        Interpreter.setOnlySymbols = setOnlySymbols;
     }
 
     /**
@@ -73,6 +88,21 @@ public class Interpreter {
         RTResult res = new RTResult();
         List<Value> vals = new ArrayList<>();
         for (Node n : node.getNodes()) {
+            vals.add(res.register(visit(n, context)));
+            if (res.shouldReturn()) return res;
+        }
+        return res.success(new LList(vals).setPos(node.getPosStart(), node.getPosEnd()));
+    }
+
+    public RTResult visitMultilineNode(MultilineNode node, Context context) {
+        RTResult res = new RTResult();
+        List<Value> vals = new ArrayList<>();
+        for (Node n : node.getNodes()) {
+            if (setOnlySymbols && context.getParent() == null) {
+                if (!(n instanceof FuncDefNode || n instanceof VarAssignNode)) {
+                    continue;
+                }
+            }
             vals.add(res.register(visit(n, context)));
             if (res.shouldReturn()) return res;
         }
@@ -143,7 +173,7 @@ public class Interpreter {
         }
         if (expectedType != null) {
             if (Constants.getInstance().TYPES.get(expectedType) == null || Constants.getInstance().TYPES.get(value.getType()).contains(expectedType) || value.getType().equals("nullType")) {
-                Error err = context.getSymbolTable().set(((String) expectedType), varName, value, false);
+                Error err = context.getSymbolTable().set(expectedType, varName, value, false);
                 if (err != null)
                     return res.failure(err);
                 return res.success(value);
@@ -275,6 +305,9 @@ public class Interpreter {
 
     public RTResult visitFuncDefNode(FuncDefNode node, Context context) {
         RTResult res = new RTResult();
+        List<ReturnNode> retNodes = node.getBodyNode().getNodes().stream().filter(n -> n instanceof ReturnNode).map(n -> (ReturnNode) n).collect(Collectors.toList());
+        List<String> retTypes = node.getReturnTypes();
+
         String funcName = null;
         if (node.getVarNameToken() != null)
             funcName = (String) node.getVarNameToken().getValue();
@@ -285,6 +318,29 @@ public class Interpreter {
 
         if (funcName != null)
             context.getSymbolTable().set("function", funcName, funcValue, false);
+        for (ReturnNode retNode : retNodes) {
+            if (retNode.getNodesToCall().size() != retTypes.size() && !(retNode.getNodesToCall().size() == 0 && retTypes.size() == 1 && retTypes.get(0).equals("void"))) {
+                context.getSymbolTable().remove(funcName);
+                return res.failure(new Error.RunTimeError(retNode.getPosStart(), retNode.getPosEnd(), "Wrong number of return types; Expected " + retTypes.size() + ", got " + retNodes.size(), context));
+            }
+            List<Node> sampleParams = node.getArgTokens().stream().map(tokenTokenTuple -> BasicType.getDefaultValue(tokenTokenTuple.getLeft().getValue().toString(), retNode.getPosStart())).collect(Collectors.toList());
+            Value val = res.register(visit(new CallNode(new VarAccessNode(new Token(TT_IDENTIFIER, funcName, funcValue.getPosStart(), funcValue.getPosEnd(), null)), sampleParams), context));
+            List<Value> vals = new ArrayList<>();
+            if (val instanceof LList)
+                vals.addAll(((LList) val).getElements());
+            else vals.add(val);
+            for (int i = 0, retValSize = retNode.getNodesToCall().size(); i < retValSize; i++) {
+                Node n = retNode.getNodesToCall().get(i);
+                if (!(Constants.getInstance().TYPES.get(retTypes.get(i)) == null || Constants.getInstance().TYPES.get(vals.get(i).getType()).contains(retTypes.get(i)))) {
+                    context.getSymbolTable().remove(funcName);
+                    return res.failure(new Error.RunTimeError(n.getPosStart(), n.getPosEnd(), "Wrong type; Expected '" + retTypes.get(i) + "', got '" + vals.get(i).getType() + "'", context));
+                }
+            }
+        }
+        if (retNodes.size() == 0 && (retTypes.size() > 1 && retTypes.get(0).equals("void"))) {
+            context.getSymbolTable().remove(funcName);
+            return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "Wrong number of return types; Expected " + retTypes.size() + ", got 0", context));
+        }
 
         return res.success(funcValue);
     }
@@ -358,5 +414,36 @@ public class Interpreter {
 
     public RTResult visitBreakNode(BreakNode node, Context context) {
         return new RTResult().successBreak();
+    }
+
+    public RTResult visitImportNode(ImportNode node, Context context) {
+        RTResult res = new RTResult();
+        Path path = Paths.get(node.getFileName().getValue() + ".ls");
+        if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
+        try {
+            Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), Files.readString(path), true);
+            if (resCtx.getRight() != null) return res.failure(resCtx.getRight());
+            if (node.importAll()) {
+                resCtx.getLeft().getSymbolTable().symbols.forEach(symbol -> {
+                    if (!Shell.GLOBAL_SYMBOL_TABLE.hasVar(symbol.getName())) {
+                        context.getSymbolTable().set(symbol.getType(), symbol.getName(), symbol.getValue(), !symbol.canEdit());
+                    }
+                });
+            } else {
+                Context extCtx = resCtx.getLeft();
+                List<Token> tokensToImport = node.getTokensToImport();
+                for (int i = 0, tokensToImportSize = tokensToImport.size(); i < tokensToImportSize; i++) {
+                    Token token = tokensToImport.get(i);
+                    Value val = extCtx.getSymbolTable().get(token.getValue().toString());
+                    if (val == null)
+                        return res.failure(new Error.ImportError(token.getPosStart(), token.getPosEnd(), "No importable variable found from file '" + node.getFileName() + "' with name '" + token.getValue().toString() + "':", context));
+                    Error err = context.getSymbolTable().set(val.getType(), node.getNames().get(i), val, true);
+                    if (err != null) return res.failure(err);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res.success(NullType.Void);
     }
 }
