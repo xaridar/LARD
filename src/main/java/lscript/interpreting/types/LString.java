@@ -104,7 +104,7 @@ public class LString extends BasicType {
             endNum = endNum + value.length();
         if (endNum > value.length()) return Tuple.of(null, new Error.IndexOutOfBoundsError(endIndex.getPosStart(), endIndex.getPosEnd(), "Index " + endIndex.getValue() + " out of range for length " + value.length(), context));
         if (startNum > endNum) return Tuple.of(null, new Error.RunTimeError(startIndex.getPosStart(), endIndex.getPosEnd(), "Start index cannot be greater than end index", context));
-        if (startIndex == endIndex) {
+        if (startNum == endNum) {
             return Tuple.of(new LString(String.valueOf(value.charAt(startNum))), null);
         } else {
             return Tuple.of(new LString(value.substring(startNum, endNum)), null);
