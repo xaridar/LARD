@@ -1,10 +1,11 @@
-package lscript.interpreting.types.builtins;
+package lscript.interpreting.types.builtins.input;
 
 import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.*;
 import lscript.interpreting.types.LFloat;
+import lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.List;
 import java.util.Scanner;

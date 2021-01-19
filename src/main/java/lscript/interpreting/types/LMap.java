@@ -19,7 +19,7 @@ public class LMap extends BasicType {
 
     @Override
     public String toString() {
-        return map.toString();
+        return map.toString().replace("=", ":");
     }
 
     @Override

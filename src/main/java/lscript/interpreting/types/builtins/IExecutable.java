@@ -7,7 +7,12 @@ import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.builtins.files.OpenBuiltin;
 import lscript.interpreting.types.builtins.files.ReadFileBultin;
 import lscript.interpreting.types.builtins.files.WriteFileBuiltin;
+import lscript.interpreting.types.builtins.input.InputBuiltin;
+import lscript.interpreting.types.builtins.input.NumInputBuiltin;
+import lscript.interpreting.types.builtins.lists.*;
 import lscript.interpreting.types.builtins.math.*;
+import lscript.interpreting.types.builtins.random.RandBuiltin;
+import lscript.interpreting.types.builtins.random.RandIntBuiltin;
 
 import java.util.List;
 
@@ -37,32 +42,39 @@ public interface IExecutable {
 
     List<IExecutable> builtins = List.of(
             new PrintBuiltin(),
+            new ClsBuiltin(),
+            new QuitBuiltin(),
+            new EvalBuiltin(),
+
             new InputBuiltin(),
+            new NumInputBuiltin(),
             new TypeofBuiltin(),
             new StrBuiltin(),
+            new FormatBuiltin(),
+            new SplitBuiltin(),
+
             new RemoveBuiltin(),
             new AppendBuiltin(),
-            new ClsBuiltin(),
             new PopBuiltin(),
+            new LenBuiltin(),
+            new ContainsBuiltin(),
+            new IndexBuiltin(),
+            new LastIndexBuiltin(),
+            new JoinBuiltin(),
+
             new SqrtBuiltin(),
             new RootBuiltin(),
             new CeilBuiltin(),
             new FloorBuiltin(),
             new RoundBuiltin(),
             new AbsBuiltin(),
-            new NumInputBuiltin(),
             new MinBuiltin(),
             new MaxBuiltin(),
-            new LenBuiltin(),
-            new FormatBuiltin(),
+
             new OpenBuiltin(),
             new ReadFileBultin(),
             new WriteFileBuiltin(),
-            new EvalBuiltin(),
-            new QuitBuiltin(),
-            new ContainsBuiltin(),
-            new IndexBuiltin(),
-            new LastIndexBuiltin(),
+
             new RandBuiltin(),
             new RandIntBuiltin()
     );

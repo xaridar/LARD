@@ -1,10 +1,11 @@
-package lscript.interpreting.types.builtins;
+package lscript.interpreting.types.builtins.random;
 
 import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.LFloat;
+import lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.List;
 import java.util.Random;
