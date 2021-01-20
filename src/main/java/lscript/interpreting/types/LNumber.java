@@ -21,16 +21,15 @@ public abstract class LNumber extends BasicType {
 
     @Override
     public Tuple<BasicType, Error> addedTo(BasicType other) {
-        if (other instanceof LNumber) {
+        if (other instanceof LNumber || other instanceof LByte) {
             LNumber num;
-            if (this instanceof LInt && other instanceof LInt)
+            if (this instanceof LInt && (other instanceof LInt || other instanceof LByte))
                 num = new LInt(value.intValue() + ((LNumber) other).getValue().intValue());
             else
                 num = new LFloat(value.floatValue() + ((LNumber) other).getValue().floatValue());
             return Tuple.of(num.setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
         }
         return null;
-
     }
 
     @Override

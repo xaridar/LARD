@@ -181,14 +181,15 @@ public class Interpreter {
         }
         if (expectedType != null) {
             if (Constants.getInstance().TYPES.get(expectedType) == null || Constants.getInstance().TYPES.get(value.getType()).contains(expectedType) || value.getType().equals("nullType")) {
+                value.setType(expectedType);
                 Error err = context.getSymbolTable().set(expectedType, varName, value, false);
                 if (err != null)
                     return res.failure(err);
                 return res.success(value);
             } else if (Constants.getInstance().CONVERT_CLASSES.containsKey(expectedType)) {
                 try {
-                    value = (BasicType) Constants.getInstance().CONVERT_CLASSES.get(expectedType).getMethod("from", Value.class).invoke(null, value);
-
+                    value = res.register((RTResult) Constants.getInstance().CONVERT_CLASSES.get(expectedType).getMethod("from", Value.class).invoke(null, value));
+                    if (res.shouldReturn()) return res;
                     Error err = context.getSymbolTable().set(expectedType, varName, value, false);
                     if (err != null)
                         return res.failure(err);
@@ -201,8 +202,22 @@ public class Interpreter {
         } else if (context.getSymbolTable().hasVar(varName)) {
 
             Error err = context.getSymbolTable().set(null, varName, value, false);
-            if (err != null)
+            if (err != null) {
+                if (Constants.getInstance().CONVERT_CLASSES.containsKey(
+                        context.getSymbolTable().getSymbol(varName).getType())) {
+                    try {
+                        value = res.register((RTResult) Constants.getInstance().CONVERT_CLASSES.get(context.getSymbolTable().getSymbol(varName).getType()).getMethod("from", Value.class).invoke(null, value));
+                        if (res.shouldReturn()) return res;
+                        err = context.getSymbolTable().set(null, varName, value, false);
+                        if (err != null)
+                            return res.failure(err);
+                        return res.success(value);
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
+                }
                 return res.failure(err);
+            }
             return res.success(value);
         }
         return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "Type not defined. Use 'var' or 'const' for dynamic typing.", context));

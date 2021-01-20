@@ -48,7 +48,9 @@ public class Lexer {
             if (" \t\n\r".contains(current_char.toString())) {
                 advance();
             } else if ((current_char.toString().matches("[0-9]"))) {
-                tokens.add(make_number());
+                Tuple<Token, Error> num = make_number();
+                if(num.getRight() != null) return Tuple.of(null, num.getRight());
+                tokens.add(num.getLeft());
             } else if (current_char.toString().matches("[a-zA-Z_]")) {
                 tokens.add(make_id());
             } else if (current_char == '/') {
@@ -228,22 +230,20 @@ public class Lexer {
         if (!str.toString().endsWith(endStr) && endRequired) {
             return new Error.ExpectedCharError(pos, pos.copy().advance(null), "Expected " + endStr);
         }
-//        if (current_char != null) {
-//            advance();
-//        }
         return null;
     }
 
     /**
      * Lexes a number Token of either type Int or Float.
-     * @return a new Token, with type Int or Float.
+     * @return a new Token, with type Int or Float. May also return an Error in the case of a failed hexadecimal lex.
      */
-    public Token make_number() {
+    public Tuple<Token, Error> make_number() {
         StringBuilder num_str = new StringBuilder();
         int period_count = 0;
         Position pos_start = pos.copy();
+        String regexContained = ".0-9";
 
-        while (current_char != null && current_char.toString().matches("[.0-9]")) {
+        while (current_char != null && current_char.toString().matches("[" + regexContained + "]")) {
             if (current_char == '.') {
                 if (period_count == 1) {
                     break;
@@ -255,12 +255,55 @@ public class Lexer {
                 num_str.append(current_char);
             }
             advance();
+            if (current_char == 'x' && (num_str.toString().matches("^0*$") && num_str.length() == 1)) {
+                Tuple<Token, Error> hexToken = makeHex(pos_start);
+                if (hexToken.getRight() != null) return Tuple.of(null, hexToken.getRight());
+                else return Tuple.of(hexToken.getLeft(), null);
+            }
         }
 
+        if (Float.parseFloat(num_str.toString()) > 2147483647) {
+            return Tuple.of(null, new Error.InvalidSyntaxError(pos_start, pos, "Integer overflow."));
+        }
         if (period_count == 0)
-            return new Token(TT_INT, Integer.parseInt(num_str.toString()), pos_start, pos.copy(), null);
+            return Tuple.of(new Token(TT_INT, Integer.parseInt(num_str.toString()), pos_start, pos.copy(), null), null);
         else
-            return new Token(TT_FLOAT, Float.parseFloat(num_str.toString()), pos_start, pos.copy(), null);
+            return Tuple.of(new Token(TT_FLOAT, Float.parseFloat(num_str.toString()), pos_start, pos.copy(), null), null);
+    }
+
+    /**
+     * Lexes a number Token after a '0x' or '00x' is read.
+     * @param posStart - The start Position of the hex Token.
+     * @return a new Token, with type Int, or an Error.
+     */
+    private Tuple<Token, Error> makeHex(Position posStart) {
+        advance();
+        StringBuilder hex = new StringBuilder();
+        if (!current_char.toString().matches("[0-9a-fA-F]")) {
+            return Tuple.of(null, new Error.InvalidSyntaxError(posStart, pos, "Expected hexadecimal character; got '" + current_char + "'"));
+        }
+        while (current_char != null && current_char.toString().matches("[0-9a-fA-F]")) {
+            hex.append(current_char);
+            advance();
+        }
+        if (hex.length() > 8) {
+            return Tuple.of(null, new Error.InvalidSyntaxError(posStart, pos, "Integer overflow."));
+        }
+        int converted = 0;
+        String finishedHex = hex.toString();
+        finishedHex = String.format("%1$8s", finishedHex).replace(" ", "0");
+        char[] charArray = finishedHex.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char chara = charArray[8- i - 1];
+            int val;
+            if (Character.toString(chara).matches("[a-fA-F]")) {
+                val = "abcdef".indexOf(Character.toLowerCase(chara)) + 10;
+            } else {
+                val = Integer.parseInt(Character.toString(chara));
+            }
+            converted += val * Math.pow(16, i);
+        }
+        return Tuple.of(new Token(TT_INT, converted, posStart, pos.copy(), null), null);
     }
 
     /**

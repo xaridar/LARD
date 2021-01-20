@@ -7,6 +7,7 @@ import lscript.interpreting.RTResult;
 import lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BuiltInFunction extends BaseFunction {
 
@@ -33,6 +34,7 @@ public class BuiltInFunction extends BaseFunction {
                 execNum = i;
                 break;
             }
+            execCtx.getSymbolTable().removeAll(list.stream().map(Tuple::getRight).collect(Collectors.toList()));
         }
         if (execNum == -1) return res;
 

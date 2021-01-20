@@ -49,7 +49,7 @@ public class BaseFunction extends BasicType {
                 return res.failure(new Error.RunTimeError(argValue.getPosStart(), argValue.getPosEnd(),
                         String.format("Wrong type passed as argument; Expected %s, got %s", argType, argValue.getType()), getContext()));
             argValue.setContext(execCtx);
-            Error err = execCtx.getSymbolTable().set(argType, argName, argValue, false);
+            Error err = execCtx.getSymbolTable().set(argType, argName, argValue, false, true);
             if (err != null)
                 return res.failure(err);
         }

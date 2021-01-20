@@ -34,12 +34,17 @@ public class OpenBuiltin implements IExecutable {
         File file = new File(path.toString());
         switch (mode.getValue()) {
             case "a":
+            case "ab":
             case "r":
+            case "rb":
                 if (!Files.exists(file.toPath())) {
                     return new RTResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot open file '" + path.getValue() + "' - does not exist", execCtx));
                 }
                 break;
+            case "wb":
             case "w":
+            case "+":
+            case "b+":
                 if (!Files.exists(file.toPath())) {
                     try {
                         Files.createFile(file.toPath());
@@ -49,7 +54,7 @@ public class OpenBuiltin implements IExecutable {
                 }
                 break;
             default:
-                return new RTResult().failure(new Error.InvalidSyntaxError(fun.getPosStart(), fun.getPosEnd(), "Expected file mode: either 'a', 'r', or 'w'"));
+                return new RTResult().failure(new Error.InvalidSyntaxError(fun.getPosStart(), fun.getPosEnd(), "Expected file mode: either 'a', 'r', 'w', 'ab', 'rb', 'wb', '+', or 'b+'"));
         }
         f = new LFile(Paths.get(path.getValue()).toAbsolutePath().toString(), mode.getValue());
         return new RTResult().success(f.setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));

@@ -48,6 +48,10 @@ public abstract class Value {
                 return new StringNode(new Token(TT_STR, "", posStart, posStart.copy(), null));
             case "list":
                 return new ListNode(List.of(), posStart, posStart.copy());
+            case "bool":
+                return new VarAccessNode(new Token(TT_KW, "false", posStart, posStart.copy().advance(null).advance(null).advance(null).advance(null).advance(null), null));
+            case "byte":
+                return new NumberNode(new Token(TT_INT, 0x00, posStart, posStart.copy().advance(null), null));
             case "map":
                 return new MapNode(List.of(), posStart, posStart.copy());
             default:

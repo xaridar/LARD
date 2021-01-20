@@ -1,6 +1,7 @@
 package lscript;
 
 import lscript.interpreting.types.BasicType;
+import lscript.interpreting.types.LByte;
 import lscript.interpreting.types.LList;
 import lscript.interpreting.types.LString;
 
@@ -45,10 +46,12 @@ public class Constants {
         TYPES.put("map", List.of("map"));
         TYPES.put("num", List.of("float"));
         TYPES.put("file", List.of("file"));
+        TYPES.put("byte", List.of("int", "float", "num"));
 
         CONVERT_CLASSES = new HashMap<>();
         CONVERT_CLASSES.put("str", LString.class);
         CONVERT_CLASSES.put("list", LList.class);
+        CONVERT_CLASSES.put("byte", LByte.class);
 
         DESIGNATED_KEYWORDS = new ArrayList<>();
         DESIGNATED_KEYWORDS.addAll(TYPES.keySet());

@@ -35,15 +35,19 @@ public class LFile extends Value {
     }
 
     public boolean canRead() {
-        return accessMode.equals("r");
+        return accessMode.equals("r") || accessMode.equals("rb") || accessMode.equals("+") || accessMode.equals("b+");
     }
 
     public boolean canWrite() {
-        return accessMode.equals("a") || accessMode.equals("w");
+        return accessMode.equals("a") || accessMode.equals("ab") || accessMode.equals("w") || accessMode.equals("wb") || accessMode.equals("+") || accessMode.equals("b+");
     }
 
     public boolean shouldOverwrite() {
-        return accessMode.equals("w");
+        return accessMode.equals("w") || accessMode.equals("wb") || accessMode.equals("+") || accessMode.equals("b+");
+    }
+
+    public boolean binaryAccess() {
+        return accessMode.equals("rb") || accessMode.equals("wb") || accessMode.equals("ab") || accessMode.equals("b+");
     }
 
     @Override

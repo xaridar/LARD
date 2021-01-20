@@ -2,6 +2,7 @@ package lscript.interpreting.types;
 
 import lscript.Tuple;
 import lscript.errors.Error;
+import lscript.interpreting.RTResult;
 
 import java.util.stream.Collectors;
 
@@ -27,8 +28,8 @@ public class LList extends BasicType {
         return l;
     }
 
-    public static LList from(Value val) {
-        return new LList(java.util.List.of(val));
+    public static RTResult from(Value val) {
+        return new RTResult().success(new LList(java.util.List.of(val)).setContext(val.getContext()).setPos(val.getPosStart(), val.getPosEnd()));
     }
 
     @Override

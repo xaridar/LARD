@@ -3,6 +3,7 @@ package lscript.interpreting.types;
 import lscript.Tuple;
 import lscript.interpreting.Context;
 import lscript.errors.Error;
+import lscript.interpreting.RTResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +67,8 @@ public class LString extends BasicType {
     }
 
     @SuppressWarnings("unused")
-    public static LString from(Value val) {
-        return new LString(val.getValue().toString());
+    public static RTResult from(Value val) {
+        return new RTResult().success(new LString(val.getValue().toString()).setContext(val.getContext()).setPos(val.getPosStart(), val.getPosEnd()));
     }
 
     @Override
