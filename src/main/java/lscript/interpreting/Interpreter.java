@@ -155,7 +155,15 @@ public class Interpreter {
     public RTResult visitVarAccessNode(VarAccessNode node, Context context) {
         RTResult res = new RTResult();
         String varName = (String) node.getToken().getValue();
-        Value value = context.getSymbolTable().get(varName);
+        Value value;
+        if (node.getContext() == null)
+            value = context.getSymbolTable().get(varName);
+        else {
+            if (context.getContainedByName(node.getContext().getValue().toString()) == null) {
+                return res.failure(new Error.RunTimeError(node.getContext().getPosStart(), node.getContext().getPosEnd(), "'" + node.getContext().getValue().toString() + "' is not defined", context));
+            }
+            value = context.getContainedByName(node.getContext().getValue().toString()).getSymbolTable().get(varName);
+        }
         if (value == null) return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "'" + varName + "' is not defined", context));
         value = value.copy().setPos(node.getPosStart(), node.getPosEnd()).setContext(context);
         return res.success(value);
@@ -324,7 +332,7 @@ public class Interpreter {
                 return res.failure(new Error.RunTimeError(retNode.getPosStart(), retNode.getPosEnd(), "Wrong number of return types; Expected " + retTypes.size() + ", got " + retNodes.size(), context));
             }
             List<Node> sampleParams = node.getArgTokens().stream().map(tokenTokenTuple -> BasicType.getDefaultValue(tokenTokenTuple.getLeft().getValue().toString(), retNode.getPosStart())).collect(Collectors.toList());
-            Value val = res.register(visit(new CallNode(new VarAccessNode(new Token(TT_IDENTIFIER, funcName, funcValue.getPosStart(), funcValue.getPosEnd(), null)), sampleParams), context));
+            Value val = res.register(visit(new CallNode(new VarAccessNode(new Token(TT_IDENTIFIER, funcName, funcValue.getPosStart(), funcValue.getPosEnd().copy(), null)), sampleParams), context));
             List<Value> vals = new ArrayList<>();
             if (val instanceof LList)
                 vals.addAll(((LList) val).getElements());
@@ -441,6 +449,20 @@ public class Interpreter {
                     if (err != null) return res.failure(err);
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res.success(NullType.Void);
+    }
+
+    public RTResult visitFileImportNode(FileImportNode node, Context context) {
+        RTResult res = new RTResult();
+        Path path = Paths.get(node.getFileName().getValue() + ".ls");
+        if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
+        try {
+            Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), Files.readString(path), true);
+            if (resCtx.getRight() != null) return res.failure(resCtx.getRight());
+            context.addContainedContext(node.getName(), resCtx.getLeft());
         } catch (IOException e) {
             e.printStackTrace();
         }

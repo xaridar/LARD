@@ -5,6 +5,9 @@ import lscript.lexing.Token;
 
 import java.util.List;
 
+/**
+ * A Node that represents a 'from' token followed by a filename and variables to import.
+ */
 public class ImportNode extends Node {
     private final Token fileName;
     private final List<Token> tokensToImport;
@@ -16,7 +19,7 @@ public class ImportNode extends Node {
      * @param names - A list of names to import variables and methods as.
      */
     public ImportNode(Token fileName, List<Token> tokensToImport, List<String> names) {
-        super(fileName.getPosStart(), tokensToImport == null ? fileName.getPosEnd() : tokensToImport.get(tokensToImport.size() - 1).getPosEnd());
+        super(fileName.getPosStart(), tokensToImport == null ? fileName.getPosEnd().copy() : tokensToImport.get(tokensToImport.size() - 1).getPosEnd().copy());
         this.fileName = fileName;
         this.tokensToImport = tokensToImport;
         this.names = names;

@@ -1,12 +1,10 @@
-from "sampleimport" import add as addStrs;
+// Made by Xaridar
+import "sampleimport" as util;
 
 func add(int i, int n) : int {
     return (i + n);
 }
 
-func openFile (str name) : void {
-    return;
-}
-print(openFile(""));
-print(addStrs(2, 3));
-print(add(2, 3));
+
+print(util.add(2, 3));
+print(util.x);

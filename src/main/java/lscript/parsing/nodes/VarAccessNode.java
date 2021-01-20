@@ -7,14 +7,24 @@ import lscript.lexing.Token;
  */
 public class VarAccessNode extends Node {
 
+    private final Token context;
     private final Token token;
 
     /**
+     * @param context - A String representing the Context name to access the variable from (separated by '.').
+     * @param token - The Token containing the variable name to be accessed.
+     */
+    public VarAccessNode(Token context, Token token) {
+        super(context != null ? context.getPosStart().copy() : token.getPosStart().copy(), token.getPosEnd().copy());
+        this.context = context;
+        this.token = token;
+    }
+    /**
+     * Overloaded constructor without a context String.
      * @param token - The Token containing the variable name to be accessed.
      */
     public VarAccessNode(Token token) {
-        super(token.getPosStart(), token.getPosEnd());
-        this.token = token;
+        this(null, token);
     }
 
     /**
@@ -22,5 +32,12 @@ public class VarAccessNode extends Node {
      */
     public Token getToken() {
         return token;
+    }
+
+    /**
+     * @return A String representing the Context name to access the variable from (separated by '.').
+     */
+    public Token getContext() {
+        return context;
     }
 }

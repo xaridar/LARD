@@ -76,7 +76,7 @@ public class Parser {
                         "Expected ';', '+', '-', '*', '/', '^', '%', '==', '!', '!=', '<', '>', '<=', '>=', '+=', '-=', '*=', '/=', '&', or '|'"));
             return res;
         }
-        return new ParseResult().success(new MultilineNode(new ArrayList<>(), currentToken.getPosStart(), currentToken.getPosEnd()));
+        return new ParseResult().success(new MultilineNode(new ArrayList<>(), currentToken.getPosStart().copy(), currentToken.getPosEnd().copy()));
     }
 
     /**
@@ -108,6 +108,14 @@ public class Parser {
         } else if (tok.getType().equals(TT_IDENTIFIER)) {
             res.registerAdvancement();
             advance();
+            if (currentToken.getType() == TT_DOT) {
+                res.registerAdvancement();
+                advance();
+                Token varTok = currentToken;
+                res.registerAdvancement();
+                advance();
+                return res.success(new VarAccessNode(tok, varTok));
+            }
             return res.success(new VarAccessNode(tok));
         } else if (tok.getType().equals(TT_LEFT_PAREN)) {
             res.registerAdvancement();
@@ -145,6 +153,10 @@ public class Parser {
             if (res.hasError()) return res;
             return res.success(funcDef);
         } else if (currentToken.matches(TT_KW, "from")) {
+            Node importNode = res.register(importFrom());
+            if (res.hasError()) return res;
+            return res.success(importNode);
+        } else if (currentToken.matches(TT_KW, "import")) {
             Node importNode = res.register(importLine());
             if (res.hasError()) return res;
             return res.success(importNode);
@@ -154,6 +166,35 @@ public class Parser {
     }
 
     private ParseResult importLine() {
+        ParseResult res = new ParseResult();
+        if (!currentToken.matches(TT_KW, "import"))
+            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected 'import'"));
+        res.registerAdvancement();
+        advance();
+
+        if (currentToken.getType() != TT_STR) {
+            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected string"));
+        }
+        Token importString = currentToken;
+        res.registerAdvancement();
+        advance();
+
+        String name = null;
+        if (currentToken.matches(TT_KW, "as")) {
+            res.registerAdvancement();
+            advance();
+            if (currentToken.getType() != TT_IDENTIFIER) {
+                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected identifier"));
+            }
+            name = currentToken.getValue().toString();
+            res.registerAdvancement();
+            advance();
+        }
+
+        return res.success(new FileImportNode(importString, name));
+    }
+
+    private ParseResult importFrom() {
         ParseResult res = new ParseResult();
         if (!currentToken.matches(TT_KW, "from"))
             return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected 'from'"));
@@ -177,14 +218,13 @@ public class Parser {
             if (currentToken.getType() == TT_MUL) {
                 res.registerAdvancement();
                 advance();
-                toImport = null;
+                List<String> names = List.of(importString.getValue().toString().split("[./]")[importString.getValue().toString().split("[./]").length - 1]);
+                return res.success(new ImportNode(importString, null, names));
             } else return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected identifier"));
         }
-        if (toImport != null) {
-            toImport.add(currentToken);
-            res.registerAdvancement();
-            advance();
-        }
+        toImport.add(currentToken);
+        res.registerAdvancement();
+        advance();
 
         while (currentToken.getType() == TT_COMMA) {
             res.registerAdvancement();
@@ -192,10 +232,7 @@ public class Parser {
             if (currentToken.getType() != TT_IDENTIFIER) {
                 return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected identifier"));
             }
-            if (toImport != null)
-                toImport.add(currentToken);
-            else
-                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosEnd(), currentToken.getPosEnd(), "Expected no identifiers after '*'"));
+            toImport.add(currentToken);
             res.registerAdvancement();
             advance();
         }
@@ -222,11 +259,8 @@ public class Parser {
                 advance();
             }
         }
-        if (names == null && toImport != null) {
+        if (names == null) {
             names = toImport.stream().map(token -> token.getValue().toString()).collect(Collectors.toList());
-        } else if (toImport == null) {
-            names = List.of(importString.getValue().toString().split("[./]")[importString.getValue().toString().split("[./]").length - 1]);
-            return res.success(new ImportNode(importString, null, names));
         }
         if (names.size() != toImport.size()) {
             return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected " + toImport.size() + "names, got " + names.size()));
@@ -825,7 +859,7 @@ public class Parser {
             }
         }
 
-        return res.success(new MultilineNode(statements, posStart, currentToken.getPosEnd()));
+        return res.success(new MultilineNode(statements, posStart, currentToken.getPosEnd().copy()));
     }
 
     /**

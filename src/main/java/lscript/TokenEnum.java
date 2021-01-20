@@ -23,6 +23,7 @@ public enum TokenEnum {
     TT_POW,
     TT_EQ,
     TT_COMMA,
+    TT_DOT,
     TT_BANG,
     TT_SEMICOLON,
     TT_AND,
