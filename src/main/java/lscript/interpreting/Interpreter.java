@@ -204,9 +204,9 @@ public class Interpreter {
             Error err = context.getSymbolTable().set(null, varName, value, false);
             if (err != null) {
                 if (Constants.getInstance().CONVERT_CLASSES.containsKey(
-                        context.getSymbolTable().getSymbol(varName).getType())) {
+                        context.getSymbolTable().getSymbolByName(varName).getType())) {
                     try {
-                        value = res.register((RTResult) Constants.getInstance().CONVERT_CLASSES.get(context.getSymbolTable().getSymbol(varName).getType()).getMethod("from", Value.class).invoke(null, value));
+                        value = res.register((RTResult) Constants.getInstance().CONVERT_CLASSES.get(context.getSymbolTable().getSymbolByName(varName).getType()).getMethod("from", Value.class).invoke(null, value));
                         if (res.shouldReturn()) return res;
                         err = context.getSymbolTable().set(null, varName, value, false);
                         if (err != null)
