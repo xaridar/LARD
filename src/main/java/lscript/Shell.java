@@ -52,6 +52,8 @@ public class Shell {
             fn = "<stdin>";
             Scanner scanner = new Scanner(in);
             boolean listening = true;
+            Context context = new Context(fn, null, null);
+            context.setSymbolTable(GLOBAL_SYMBOL_TABLE);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     System.out.println("\nClosing LScript...");
@@ -69,7 +71,7 @@ public class Shell {
                     listening = false;
                 }
                 if (text.strip().equals("")) continue;
-                Tuple<Object, Error> result = run(fn, text);
+                Tuple<Object, Error> result = run(fn, text, context);
 
                 if (result.right != null) {
                     System.out.println(result.right.toString());
@@ -99,7 +101,9 @@ public class Shell {
             fn = args[0];
             String text = Files.readString(p);
             if (text.strip().equals("")) System.exit(0);
-            Tuple<Object, Error> result = run(fn, text);
+            Context context = new Context(fn, null, null);
+            context.setSymbolTable(GLOBAL_SYMBOL_TABLE);
+            Tuple<Object, Error> result = run(fn, text, context);
 
             if (result.right != null) {
                 System.out.println(result.right.toString());
@@ -114,9 +118,7 @@ public class Shell {
      * @param text - the input text
      * @return a Tuple which holds the results of the interpretation
      */
-    public static Tuple<Object, Error> run(String fn, String text) {
-        Context context = new Context(fn, null, null);
-        context.setSymbolTable(GLOBAL_SYMBOL_TABLE);
+    public static Tuple<Object, Error> run(String fn, String text, Context context) {
         Lexer lexer = new Lexer(fn, text);
         Tuple<List<Token>, Error> tkns = lexer.make_tokens();
         if (tkns.getRight() != null)

@@ -74,6 +74,7 @@ public interface IExecutable {
             new OpenBuiltin(),
             new ReadFileBultin(),
             new WriteFileBuiltin(),
+            new GetBytesBuiltin(),
 
             new RandBuiltin(),
             new RandIntBuiltin()

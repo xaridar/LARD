@@ -8,6 +8,7 @@ import lscript.interpreting.RTResult;
 import lscript.interpreting.SymbolTable;
 import lscript.lexing.Token;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class BaseFunction extends BasicType {

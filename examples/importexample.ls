@@ -2,7 +2,7 @@
 import "sampleimport" as util;
 
 func add(int i, int n) : int {
-    return (i + n);
+    return (i - n);
 }
 
 
