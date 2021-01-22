@@ -4,8 +4,8 @@ A custom interpreted scripting language, written in Java.
 LScript is a primarily statically-typed scripting language, with the ability to use dynamic typing in most cases, as well.
 It is written fully in Java.
 
-To run LScript, download an .exe file from [releases], which contains the commandline interface.
-Easiest implementation: add the directory containing the .exe to your PATH to run from commandline anywhere.<br><br>
+To run LScript, download a full version directory from [releases], which contains the commandline interface, as well as an .exe to run files.
+Place this directory on your path, nd use the command 'lscript' i the command line to use the command line interface.
 
 To run the language in command line, compile all the classes provided. The Main method is located in [Shell.java].
 

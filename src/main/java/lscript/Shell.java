@@ -16,6 +16,7 @@ import lscript.interpreting.types.NullType;
 import lscript.interpreting.types.builtins.IExecutable;
 import lscript.interpreting.types.builtins.math.MathConstants;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
