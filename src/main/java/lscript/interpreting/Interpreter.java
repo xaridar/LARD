@@ -291,11 +291,11 @@ public class Interpreter {
 
              res.register(visit(node.getBodyNode(), loopContext));
              if (!res.isLoopBreak() && !res.isLoopCont() && res.shouldReturn()) return res;
+             loopContext.getSymbolTable().removeAll();
              if (res.isLoopCont())
                  continue;
              if (res.isLoopBreak())
                  break;
-             loopContext.getSymbolTable().removeAll();
 
          }
          context.getSymbolTable().remove((String) node.getVarNameToken().getValue());
@@ -315,11 +315,11 @@ public class Interpreter {
             if (!condition.isTrue()) break;
             res.register(visit(node.getBodyNode(), loopContext));
             if (!res.isLoopBreak() && !res.isLoopCont() && res.shouldReturn()) return res;
+            loopContext.getSymbolTable().removeAll();
             if (res.isLoopCont())
                 continue;
             if (res.isLoopBreak())
                 break;
-            loopContext.getSymbolTable().removeAll();
         }
 
         return res.success(NullType.Void);

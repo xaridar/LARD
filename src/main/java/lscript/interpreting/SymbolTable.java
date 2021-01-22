@@ -90,6 +90,9 @@ public class SymbolTable {
      */
     public Error set(String type, String var_name, Value value, boolean immutable, boolean ignoreRedefine) {
         Symbol symbol = getSymbolByName(var_name);
+        if (type == null && symbol == null) {
+            symbol = getParentSymbolByName(var_name);
+        }
         if (symbol != null && symbol.canEdit()) {
             if (type == null || (ignoreRedefine && symbol.typeEquals(type))) {
                 if (symbol.typeEquals(value.getType())) {
@@ -157,6 +160,18 @@ public class SymbolTable {
      * @return the first Symbol found in the list with the given name.
      */
     public Symbol getSymbolByName(String varName) {
+        return symbols.stream().filter(symbol -> symbol.getName().equals(varName)).findFirst().orElse(null);
+    }
+
+    /**
+     * Returns a Symbol from the List of Symbols via its name, checking all parents, or null if it does not exist.
+     * @param varName - The name of the variable to find.
+     * @return the first Symbol found in the list with the given name.
+     */
+    public Symbol getParentSymbolByName(String varName) {
+        if (parent != null) {
+            return parent.getParentSymbolByName(varName);
+        }
         return symbols.stream().filter(symbol -> symbol.getName().equals(varName)).findFirst().orElse(null);
     }
 
