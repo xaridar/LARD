@@ -62,6 +62,7 @@ public class Interpreter {
             Method method = getClass().getMethod("visit" + node.getClass().getSimpleName(), node.getClass(), Context.class);
             return (RTResult) method.invoke(this, node, context);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -441,7 +442,7 @@ public class Interpreter {
 
     public RTResult visitImportNode(ImportNode node, Context context) {
         RTResult res = new RTResult();
-        Path path = Paths.get(node.getFileName().getValue() + ".ls");
+        Path path = Paths.get(Shell.baseDir, node.getFileName().getValue() + ".ls");
         if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         try {
             Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), Files.readString(path), true);
@@ -472,7 +473,7 @@ public class Interpreter {
 
     public RTResult visitFileImportNode(FileImportNode node, Context context) {
         RTResult res = new RTResult();
-        Path path = Paths.get(node.getFileName().getValue() + ".ls");
+        Path path = Paths.get(Shell.baseDir, node.getFileName().getValue() + ".ls");
         if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         try {
             Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), Files.readString(path), true);

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class FileImportNode extends Node {
     private final Token fileName;
-    private final String name;
+    private String name;
 
     /**
      * @param fileName - The name of the desired file.
@@ -18,6 +18,9 @@ public class FileImportNode extends Node {
         super(fileName.getPosStart().copy(), fileName.getPosEnd().copy());
         this.fileName = fileName;
         this.name = name;
+        if (name == null) {
+            this.name = fileName.getValue().toString().split("[\\\\/]")[fileName.getValue().toString().split("[\\\\/]").length - 1];
+        }
     }
 
     /**

@@ -3,20 +3,19 @@ package lscript;
 import lscript.errors.Error;
 import lscript.interpreting.Context;
 import lscript.interpreting.Interpreter;
-import lscript.interpreting.SymbolTable;
-import lscript.interpreting.types.LList;
-import lscript.lexing.Lexer;
-import lscript.lexing.Token;
-import lscript.parsing.Parser;
-import lscript.parsing.ParseResult;
 import lscript.interpreting.RTResult;
-import lscript.interpreting.types.LBoolean;
+import lscript.interpreting.SymbolTable;
 import lscript.interpreting.types.BuiltInFunction;
+import lscript.interpreting.types.LBoolean;
+import lscript.interpreting.types.LList;
 import lscript.interpreting.types.NullType;
 import lscript.interpreting.types.builtins.IExecutable;
 import lscript.interpreting.types.builtins.math.MathConstants;
+import lscript.lexing.Lexer;
+import lscript.lexing.Token;
+import lscript.parsing.ParseResult;
+import lscript.parsing.Parser;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
@@ -32,6 +31,7 @@ import java.util.Scanner;
  */
 public class Shell {
     public static SymbolTable GLOBAL_SYMBOL_TABLE = new SymbolTable();
+    public static String baseDir = "";
 
     /**
      * @param args - cmd line arguments - if none are passed, it reads from cmd; otherwise, it looks for a file to read with the specified path
@@ -49,6 +49,11 @@ public class Shell {
         InputStream in;
         String fn;
         if (args.length == 0) {
+            baseDir = System.getProperty("user.dir");
+        } else if (Files.isDirectory(Path.of(args[0]))) {
+            baseDir = args[0];
+        }
+        if (!baseDir.equals("")) {
             in = System.in;
             fn = "<stdin>";
             Scanner scanner = new Scanner(in);
@@ -100,6 +105,7 @@ public class Shell {
                 System.exit(0);
             }
             fn = args[0];
+            baseDir = fn.replace("/", "\\").substring(0, fn.lastIndexOf("\\"));
             String text = Files.readString(p);
             if (text.strip().equals("")) System.exit(0);
             Context context = new Context(fn, null, null);

@@ -1,2 +1,2 @@
-@echo on
-IF "%~1" == "" (lscript-1.0.0) ELSE (lscript-1.0.0 %CD%\%1)
+@echo off
+IF "%~1" == "" (lscript-1.0.0 %CD%) ELSE (lscript-1.0.0 %CD% %CD%\%1)
