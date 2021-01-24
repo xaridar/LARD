@@ -19,6 +19,7 @@ import lscript.parsing.Parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -104,7 +105,7 @@ public class Shell {
             fn = args[0];
             baseDir = "";
             if (fn.contains("/") || fn.contains("\\"))
-                baseDir = fn.replace("/", "\\").substring(0, fn.lastIndexOf("\\"));
+                baseDir = fn.replace("/", "\\").substring(0, fn.replace("/", "\\").lastIndexOf("\\"));
             String text = String.join("\n", Files.readAllLines(p));
             if (text.trim().equals("")) System.exit(0);
             Context context = new Context(fn, null, null);
