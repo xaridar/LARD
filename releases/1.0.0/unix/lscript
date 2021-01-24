@@ -1,6 +1,5 @@
 #!/bin/bash
 JAR_PATH=`find ~ -name "LScript.jar" | head -n 1`
-echo $JAR_PATH
 if [[ "$1" == "" ]];
 	then
 		java -jar $JAR_PATH
