@@ -7,12 +7,13 @@ import lscript.interpreting.types.*;
 import lscript.interpreting.types.LBoolean;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ContainsBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("str", "container"), Tuple.of("str", "element")), List.of(Tuple.of("list", "container"), Tuple.of("var", "element")), List.of(Tuple.of("map", "container"), Tuple.of("var", "element")));
+        return Arrays.asList(Arrays.asList(Tuple.of("str", "container"), Tuple.of("str", "element")), Arrays.asList(Tuple.of("list", "container"), Tuple.of("var", "element")), Arrays.asList(Tuple.of("map", "container"), Tuple.of("var", "element")));
     }
 
     @Override

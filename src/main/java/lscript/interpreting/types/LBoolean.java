@@ -24,7 +24,7 @@ public class LBoolean extends BasicType {
 
     @Override
     public java.lang.Boolean getValue() {
-        return value;
+        return Boolean.valueOf(value);
     }
 
     @Override

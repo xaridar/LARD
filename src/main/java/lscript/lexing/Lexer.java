@@ -6,6 +6,7 @@ import lscript.Tuple;
 import lscript.errors.Error;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static lscript.TokenEnum.*;
@@ -60,7 +61,7 @@ public class Lexer {
                 } else if (current_char != null && current_char == '*') {
                     makeComment("*/", TT_ML_COMMENT, true);
                 } else {
-                    Tuple<Token, Error> tup = parse_eq(Constants.getInstance().EQUAL_MODS.get('/').get("with"), Constants.getInstance().EQUAL_MODS.get('/').get("without"), current_char.toString(), false);
+                    Tuple<Token, Error> tup = parse_eq(Constants.getInstance().EQUAL_MODS.get(Character.valueOf('/')).get("with"), Constants.getInstance().EQUAL_MODS.get(Character.valueOf('/')).get("without"), current_char.toString(), false);
                     if (tup.getRight() != null)
                         return Tuple.of(new ArrayList<>(), tup.getRight());
                     tokens.add(tup.getLeft());
@@ -161,7 +162,7 @@ public class Lexer {
         boolean escapeChar = false;
         advance();
 
-        List<Tuple<Character, Character>> escChars = List.of(
+        List<Tuple<Character, Character>> escChars = Arrays.asList(
                 Tuple.of('n', '\n'),
                 Tuple.of('t', '\t')
         );
@@ -266,9 +267,9 @@ public class Lexer {
             return Tuple.of(null, new Error.InvalidSyntaxError(pos_start, pos, "Integer overflow."));
         }
         if (period_count == 0)
-            return Tuple.of(new Token(TT_INT, Integer.parseInt(num_str.toString()), pos_start, pos.copy(), null), null);
+            return Tuple.of(new Token(TT_INT, Integer.valueOf(num_str.toString()), pos_start, pos.copy(), null), null);
         else
-            return Tuple.of(new Token(TT_FLOAT, Float.parseFloat(num_str.toString()), pos_start, pos.copy(), null), null);
+            return Tuple.of(new Token(TT_FLOAT, Float.valueOf(num_str.toString()), pos_start, pos.copy(), null), null);
     }
 
     /**
@@ -303,7 +304,7 @@ public class Lexer {
             }
             converted += val * Math.pow(16, i);
         }
-        return Tuple.of(new Token(TT_INT, converted, posStart, pos.copy(), null), null);
+        return Tuple.of(new Token(TT_INT, Integer.valueOf(converted), posStart, pos.copy(), null), null);
     }
 
     /**

@@ -87,7 +87,7 @@ public class LString extends BasicType {
     @Override
     public Tuple<BasicType, Error> multipliedBy(BasicType other) {
         if (other instanceof LInt) {
-            return Tuple.of(new LString(value.repeat(((LInt) other).getValue())).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
+            return Tuple.of(new LString(new String(new char[(((LInt) other).getValue())]).replace("\0", value)).setContext(getContext()).setPos(getPosStart(), getPosEnd()), null);
         }
         return null;
     }

@@ -6,12 +6,13 @@ import lscript.interpreting.RTResult;
 import lscript.interpreting.types.*;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class RemoveBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("list", "container"), Tuple.of("var", "value")), List.of(Tuple.of("map", "container"), Tuple.of("var", "value")));
+        return Arrays.asList(Arrays.asList(Tuple.of("list", "container"), Tuple.of("var", "value")), Arrays.asList(Tuple.of("map", "container"), Tuple.of("var", "value")));
     }
 
     @Override

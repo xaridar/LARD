@@ -14,6 +14,7 @@ import lscript.interpreting.types.builtins.math.*;
 import lscript.interpreting.types.builtins.random.RandBuiltin;
 import lscript.interpreting.types.builtins.random.RandIntBuiltin;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public interface IExecutable {
      */
     RTResult execute(Context execCtx, int execNum, BuiltInFunction fun);
 
-    List<IExecutable> builtins = List.of(
+    List<IExecutable> builtins = Arrays.asList(
             new PrintBuiltin(),
             new ClsBuiltin(),
             new QuitBuiltin(),

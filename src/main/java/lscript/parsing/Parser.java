@@ -9,9 +9,7 @@ import lscript.Tuple;
 import lscript.lexing.Token;
 import lscript.parsing.nodes.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -97,7 +95,7 @@ public class Parser {
     public ParseResult atom() {
         ParseResult res = new ParseResult();
         Token tok = currentToken;
-        if (List.of(TT_INT, TT_FLOAT).contains(tok.getType())) {
+        if (Arrays.asList(TT_INT, TT_FLOAT).contains(tok.getType())) {
             res.registerAdvancement();
             advance();
             return res.success(new NumberNode(tok));
@@ -218,7 +216,7 @@ public class Parser {
             if (currentToken.getType() == TT_MUL) {
                 res.registerAdvancement();
                 advance();
-                List<String> names = List.of(importString.getValue().toString().split("[./]")[importString.getValue().toString().split("[./]").length - 1]);
+                List<String> names = Collections.singletonList(importString.getValue().toString().split("[./]")[importString.getValue().toString().split("[./]").length - 1]);
                 return res.success(new ImportNode(importString, null, names));
             } else return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected identifier"));
         }
@@ -751,7 +749,7 @@ public class Parser {
      * @return a ParseResult holding either a Node or Error.
      */
     public ParseResult power() {
-        return bin_op(unused -> call(), List.of(TT_POW), (unused -> factor()));
+        return bin_op(unused -> call(), Collections.singletonList(TT_POW), (unused -> factor()));
     }
 
     /**
@@ -801,7 +799,7 @@ public class Parser {
         ParseResult res = new ParseResult();
         Token tok = currentToken;
 
-        if (List.of(TT_PLUS, TT_MINUS).contains(tok.getType())) {
+        if (Arrays.asList(TT_PLUS, TT_MINUS).contains(tok.getType())) {
             res.registerAdvancement();
             advance();
             Node factor = res.register(factor());
@@ -817,7 +815,7 @@ public class Parser {
      * @return a ParseResult holding either a Node or Error.
      */
     public ParseResult term() {
-        return bin_op(unused -> factor(), List.of(TT_MUL, TT_DIV, TT_MOD), null);
+        return bin_op(unused -> factor(), Arrays.asList(TT_MUL, TT_DIV, TT_MOD), null);
     }
 
     /**
@@ -1024,9 +1022,9 @@ public class Parser {
                     Node expression = res.register(expression());
                     if (res.hasError()) return res;
                     return res.success(new VarAssignNode(null, var_name, expression));
-                } else if (List.of(TT_PLUS, TT_MINUS).contains(nextToken.getType())) {
+                } else if (Arrays.asList(TT_PLUS, TT_MINUS).contains(nextToken.getType())) {
                     if (tokens.size() >= tokenIndex + 2 && tokens.get(tokenIndex + 2).getType().equals(nextToken.getType())) {
-                        tokens.set(tokenIndex + 2, new Token(TT_INT, 1, nextToken.getPosStart(), null, null));
+                        tokens.set(tokenIndex + 2, new Token(TT_INT, Integer.valueOf(1), nextToken.getPosStart(), null, null));
                         Node assignment = res.register(expression());
                         if (res.hasError()) return res;
                         return res.success(new VarAssignNode(null, var_name, assignment));
@@ -1042,7 +1040,7 @@ public class Parser {
                 }
             }
         }
-        Node node = res.register(bin_op(unused -> comp(), List.of(TT_PIPE, TT_AND), null));
+        Node node = res.register(bin_op(unused -> comp(), Arrays.asList(TT_PIPE, TT_AND), null));
         if (res.hasError()) return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type, 'if', 'for', 'while', 'func', value, identifier, '+', '-', '(', '[', '{', or '!'"));
         return res.success(node);
     }
@@ -1062,7 +1060,7 @@ public class Parser {
             if (res.hasError()) return res;
             return res.success(new UnaryOperationNode(opToken, node));
         }
-        Node node = res.register(bin_op(unused -> arith(), List.of(TT_NEQ, TT_GEQ, TT_LEQ, TT_LT, TT_GT, TT_BOOLEQ), null));
+        Node node = res.register(bin_op(unused -> arith(), Arrays.asList(TT_NEQ, TT_GEQ, TT_LEQ, TT_LT, TT_GT, TT_BOOLEQ), null));
         if (res.hasError()) return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected value, identifier, '+', '-', '(', '[', '{', or '!'"));
         return res.success(node);
     }
@@ -1072,7 +1070,7 @@ public class Parser {
      * @return a ParseResult holding either a Node or Error.
      */
     public ParseResult arith() {
-        return bin_op(usused -> term(), List.of(TT_PLUS, TT_MINUS), null);
+        return bin_op(usused -> term(), Arrays.asList(TT_PLUS, TT_MINUS), null);
     }
 
     /**

@@ -13,12 +13,13 @@ import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WriteFileBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("file", "f"), Tuple.of("str", "text")), List.of(Tuple.of("file", "f"), Tuple.of("list", "bytes")));
+        return Arrays.asList(Arrays.asList(Tuple.of("file", "f"), Tuple.of("str", "text")), Arrays.asList(Tuple.of("file", "f"), Tuple.of("list", "bytes")));
     }
 
     @Override
@@ -44,7 +45,7 @@ public class WriteFileBuiltin implements IExecutable {
                 if (f.binaryAccess()) {
                     return new RTResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot write a string to a file in '" + f.getAccessMode() + "' mode.", execCtx));
                 }
-                Files.writeString(Paths.get(f.getPath()), text.getValue(), option);
+                Files.write(Paths.get(f.getPath()), Arrays.asList(text.getValue().split("\n")), option);
             } else if (execNum == 1) {
                 LList bytes = (LList) execCtx.getSymbolTable().get("bytes");
                 if (!f.canWrite()) {

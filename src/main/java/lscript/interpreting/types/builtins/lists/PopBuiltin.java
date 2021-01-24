@@ -8,12 +8,14 @@ import lscript.interpreting.types.LInt;
 import lscript.interpreting.types.LList;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PopBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("list", "container"), Tuple.of("int", "index")));
+        return Collections.singletonList(Arrays.asList(Tuple.of("list", "container"), Tuple.of("int", "index")));
     }
 
     @Override

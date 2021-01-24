@@ -6,12 +6,13 @@ import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.NullType;
 
+import java.util.Collections;
 import java.util.List;
 
 public class QuitBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of());
+        return Collections.singletonList(Collections.emptyList());
     }
 
     @Override

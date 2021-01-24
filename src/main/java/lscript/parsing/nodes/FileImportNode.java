@@ -1,7 +1,6 @@
 package lscript.parsing.nodes;
 
 import lscript.lexing.Token;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A Node that represents an 'import' token followed by a filename.
@@ -14,7 +13,7 @@ public class FileImportNode extends Node {
      * @param fileName - The name of the desired file.
      * @param name - A symbol name to import the file as. Can be null.
      */
-    public FileImportNode(Token fileName, @Nullable String name) {
+    public FileImportNode(Token fileName, String name) {
         super(fileName.getPosStart().copy(), fileName.getPosEnd().copy());
         this.fileName = fileName;
         this.name = name;

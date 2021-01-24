@@ -4,6 +4,7 @@ import lscript.Tuple;
 import lscript.errors.Error;
 import lscript.interpreting.RTResult;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class LList extends BasicType {
@@ -29,7 +30,7 @@ public class LList extends BasicType {
     }
 
     public static RTResult from(Value val) {
-        return new RTResult().success(new LList(java.util.List.of(val)).setContext(val.getContext()).setPos(val.getPosStart(), val.getPosEnd()));
+        return new RTResult().success(new LList(Collections.singletonList(val)).setContext(val.getContext()).setPos(val.getPosStart(), val.getPosEnd()));
     }
 
     @Override

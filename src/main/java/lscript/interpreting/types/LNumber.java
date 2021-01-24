@@ -81,7 +81,7 @@ public abstract class LNumber extends BasicType {
     public Tuple<BasicType, Error> toThePowerOf(BasicType other) {
         if (other instanceof LNumber) {
             LNumber num;
-            java.lang.Number endResult = Math.pow(value.floatValue(), ((LNumber) other).getValue().floatValue());
+            java.lang.Number endResult = Double.valueOf(Math.pow(value.floatValue(), ((LNumber) other).getValue().floatValue()));
             if (this instanceof LInt && endResult.floatValue() == endResult.intValue())
                 num = new LInt(endResult.intValue());
             else

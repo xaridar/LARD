@@ -5,12 +5,12 @@ public class LFloat extends LNumber {
     private final float value;
 
     public LFloat(float value) {
-        super("float", value);
+        super("float", Float.valueOf(value));
         this.value = value;
     }
 
     public LFloat(int value) {
-        super("float", value);
+        super("float", Float.valueOf(value));
         this.value = value;
     }
 
@@ -24,7 +24,7 @@ public class LFloat extends LNumber {
 
     @Override
     public java.lang.Float getValue() {
-        return value;
+        return Float.valueOf(value);
     }
 
     @Override

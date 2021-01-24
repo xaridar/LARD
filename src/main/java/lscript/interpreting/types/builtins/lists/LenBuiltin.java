@@ -6,12 +6,14 @@ import lscript.interpreting.RTResult;
 import lscript.interpreting.types.*;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class LenBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("str", "string")), List.of(Tuple.of("list", "collection")), List.of(Tuple.of("map", "collection")));
+            return Arrays.asList(Collections.singletonList(Tuple.of("str", "string")), Collections.singletonList(Tuple.of("list", "collection")), Collections.singletonList(Tuple.of("map", "collection")));
     }
 
     @Override

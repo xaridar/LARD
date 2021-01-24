@@ -22,11 +22,11 @@ public class SetIndexNode extends Node {
         super(left.getPosStart(), endIndex != null ? endIndex.getPosEnd() : startIndex != null ? startIndex.getPosEnd() : left.getPosEnd());
         this.left = left;
         if (startIndex == null && endIndex != null) {
-            this.startIndex = new NumberNode(new Token(TokenEnum.TT_INT, 0, endIndex.getPosStart(), endIndex.getPosEnd(), null));
+            this.startIndex = new NumberNode(new Token(TokenEnum.TT_INT, Integer.valueOf(0), endIndex.getPosStart(), endIndex.getPosEnd(), null));
             this.endIndex = endIndex;
         } else if (startIndex != null && endIndex == null) {
             this.startIndex = startIndex;
-            this.endIndex = new NumberNode(new Token(TokenEnum.TT_INT, -1, startIndex.getPosStart(), startIndex.getPosEnd(), null));
+            this.endIndex = new NumberNode(new Token(TokenEnum.TT_INT, Integer.valueOf(-1), startIndex.getPosStart(), startIndex.getPosEnd(), null));
         } else {
             this.startIndex = startIndex;
             this.endIndex = endIndex;

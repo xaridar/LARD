@@ -8,12 +8,14 @@ import lscript.interpreting.types.LFloat;
 import lscript.interpreting.types.LInt;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class AbsBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("int", "val")), List.of(Tuple.of("float", "val")));
+        return Arrays.asList(Collections.singletonList(Tuple.of("int", "val")), Collections.singletonList(Tuple.of("float", "val")));
     }
 
     @Override

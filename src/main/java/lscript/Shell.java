@@ -18,10 +18,7 @@ import lscript.parsing.Parser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
+import java.nio.file.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -50,7 +47,7 @@ public class Shell {
         String fn;
         if (args.length == 0) {
             baseDir = System.getProperty("user.dir");
-        } else if (Files.isDirectory(Path.of(args[0]))) {
+        } else if (Files.isDirectory(Paths.get(args[0]))) {
             baseDir = args[0];
         }
         if (!baseDir.equals("")) {
@@ -76,7 +73,7 @@ public class Shell {
                 } catch (NoSuchElementException ignored) {
                     listening = false;
                 }
-                if (text.strip().equals("")) continue;
+                if (text.trim().equals("")) continue;
                 Tuple<Object, Error> result = run(fn, text, context);
 
                 if (result.right != null) {
@@ -94,7 +91,7 @@ public class Shell {
                 System.out.println("Commandline arguments are not currently supported for LScript.");
                 System.exit(0);
             }
-            Path p = Path.of(args[0]);
+            Path p = Paths.get(args[0]);
             if (!Files.exists(p)) {
                 System.out.println("File does not exist.");
                 System.exit(0);
@@ -105,9 +102,11 @@ public class Shell {
                 System.exit(0);
             }
             fn = args[0];
-            baseDir = fn.replace("/", "\\").substring(0, fn.lastIndexOf("\\"));
-            String text = Files.readString(p);
-            if (text.strip().equals("")) System.exit(0);
+            baseDir = "";
+            if (fn.contains("/") || fn.contains("\\"))
+                baseDir = fn.replace("/", "\\").substring(0, fn.lastIndexOf("\\"));
+            String text = String.join("\n", Files.readAllLines(p));
+            if (text.trim().equals("")) System.exit(0);
             Context context = new Context(fn, null, null);
             context.setSymbolTable(GLOBAL_SYMBOL_TABLE);
             Tuple<Object, Error> result = run(fn, text, context);

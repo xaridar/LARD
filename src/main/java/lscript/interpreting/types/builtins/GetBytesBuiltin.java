@@ -8,12 +8,14 @@ import lscript.interpreting.types.*;
 import lscript.parsing.Parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GetBytesBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("str", "string")), List.of(Tuple.of("num", "number")), List.of(Tuple.of("list", "l")));
+        return Arrays.asList(Collections.singletonList(Tuple.of("str", "string")), Collections.singletonList(Tuple.of("num", "number")), Collections.singletonList(Tuple.of("list", "l")));
     }
 
     @Override

@@ -8,12 +8,13 @@ import lscript.interpreting.types.LInt;
 import lscript.interpreting.types.LNumber;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class RoundBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("num", "val")));
+        return Collections.singletonList(Collections.singletonList(Tuple.of("num", "val")));
     }
 
     @Override

@@ -7,14 +7,16 @@ import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.LList;
 import lscript.interpreting.types.LString;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SplitBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("str", "toSplit")), List.of(Tuple.of("str", "toSplit"), Tuple.of("str", "splitBy")));
+        return Arrays.asList(Collections.singletonList(Tuple.of("str", "toSplit")), Arrays.asList(Tuple.of("str", "toSplit"), Tuple.of("str", "splitBy")));
     }
 
     @Override

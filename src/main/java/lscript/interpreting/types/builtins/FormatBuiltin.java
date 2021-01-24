@@ -8,12 +8,14 @@ import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.LList;
 import lscript.interpreting.types.LString;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FormatBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("str", "text"), Tuple.of("list", "args")));
+        return Collections.singletonList(Arrays.asList(Tuple.of("str", "text"), Tuple.of("list", "args")));
     }
 
     @Override

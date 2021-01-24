@@ -9,12 +9,13 @@ import lscript.interpreting.types.LInt;
 import lscript.interpreting.types.LNumber;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MaxBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("int", "val1"), Tuple.of("int", "val2")), List.of(Tuple.of("float", "val1"), Tuple.of("float", "val2")), List.of(Tuple.of("int", "val1"), Tuple.of("float", "val2")), List.of(Tuple.of("float", "val1"), Tuple.of("int", "val2")));
+        return Arrays.asList(Arrays.asList(Tuple.of("int", "val1"), Tuple.of("int", "val2")), Arrays.asList(Tuple.of("float", "val1"), Tuple.of("float", "val2")), Arrays.asList(Tuple.of("int", "val1"), Tuple.of("float", "val2")), Arrays.asList(Tuple.of("float", "val1"), Tuple.of("int", "val2")));
     }
 
     @Override

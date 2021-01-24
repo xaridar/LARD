@@ -37,7 +37,7 @@ public class LByte extends BasicType {
 
     @Override
     public Byte getValue() {
-        return val;
+        return Byte.valueOf(val);
     }
 
     @Override

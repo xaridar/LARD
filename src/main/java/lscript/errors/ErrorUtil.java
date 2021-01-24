@@ -20,7 +20,7 @@ public class ErrorUtil {
             int col_end = i == line_count - 1 ? pos_end.getCol() : line.length() - 1;
 
             result.append(line).append('\n');
-            result.append(" ".repeat(col_start)).append("^".repeat(col_end - col_start));
+            result.append(new String(new char[col_start]).replace("\0", " ")).append(new String(new char[col_end - col_start]).replace("\0", "^"));
 
             idx_start = idx_end;
             idx_end = text.indexOf('\n', idx_start + 1);

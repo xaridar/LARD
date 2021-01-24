@@ -7,13 +7,15 @@ import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.LString;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
 public class InputBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(), List.of(Tuple.of("str", "prompt")));
+        return Arrays.asList(Collections.emptyList(), Collections.singletonList(Tuple.of("str", "prompt")));
     }
 
     @Override

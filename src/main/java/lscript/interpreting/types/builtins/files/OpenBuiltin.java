@@ -13,12 +13,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class OpenBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("str", "path"), Tuple.of("str", "mode")));
+        return Collections.singletonList(Arrays.asList(Tuple.of("str", "path"), Tuple.of("str", "mode")));
     }
 
     @Override

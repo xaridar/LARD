@@ -18,7 +18,7 @@ public class Error {
 
     @Override
     public String toString() {
-        String result = String.format("%s: %s\nFile %s, line %d", error_name, details, pos_start.getFn(), pos_start.getLn() + 1);
+        String result = String.format("%s: %s\nFile %s, line %d", error_name, details, pos_start.getFn(), Integer.valueOf(pos_start.getLn() + 1));
         result += "\n\n" + ErrorUtil.string_with_arrows(pos_start.getFtxt(), pos_start, pos_end);
         return result;
     }
@@ -66,7 +66,7 @@ public class Error {
             Position pos = pos_start;
 
             while (context != null) {
-                result.insert(0, String.format("\tFile %s, line %d, in %s\n", pos.getFn(), pos.getLn() + 1, context.getDisplayName()));
+                result.insert(0, String.format("\tFile %s, line %d, in %s\n", pos.getFn(), Integer.valueOf(pos.getLn() + 1), context.getDisplayName()));
                 pos = context.getParentEntryPos();
                 context = context.getParent();
             }

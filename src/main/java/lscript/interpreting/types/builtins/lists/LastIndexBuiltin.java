@@ -7,6 +7,7 @@ import lscript.interpreting.RTResult;
 import lscript.interpreting.types.*;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,10 +16,10 @@ import java.util.stream.Stream;
 public class LastIndexBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(
-                List.of(Tuple.of("str", "toIndex"), Tuple.of("str", "val")),
-                List.of(Tuple.of("list", "toIndex"), Tuple.of("var", "val")),
-                List.of(Tuple.of("map", "toIndex"), Tuple.of("var", "val"))
+        return Arrays.asList(
+                Arrays.asList(Tuple.of("str", "toIndex"), Tuple.of("str", "val")),
+                Arrays.asList(Tuple.of("list", "toIndex"), Tuple.of("var", "val")),
+                Arrays.asList(Tuple.of("map", "toIndex"), Tuple.of("var", "val"))
         );
     }
 

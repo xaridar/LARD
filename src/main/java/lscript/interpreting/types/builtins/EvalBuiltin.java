@@ -9,12 +9,13 @@ import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.NullType;
 import lscript.interpreting.types.LString;
 
+import java.util.Collections;
 import java.util.List;
 
 public class EvalBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("str", "text")));
+        return Collections.singletonList(Collections.singletonList(Tuple.of("str", "text")));
     }
 
     @Override

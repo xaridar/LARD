@@ -445,7 +445,7 @@ public class Interpreter {
         Path path = Paths.get(Shell.baseDir, node.getFileName().getValue() + ".ls");
         if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         try {
-            Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), Files.readString(path), true);
+            Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), String.join("\n", Files.readAllLines(path)), true);
             if (resCtx.getRight() != null) return res.failure(resCtx.getRight());
             if (node.importAll()) {
                 resCtx.getLeft().getSymbolTable().symbols.forEach(symbol -> {
@@ -476,7 +476,7 @@ public class Interpreter {
         Path path = Paths.get(Shell.baseDir, node.getFileName().getValue() + ".ls");
         if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         try {
-            Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), Files.readString(path), true);
+            Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), String.join("\n", Files.readAllLines(path)), true);
             if (resCtx.getRight() != null) return res.failure(resCtx.getRight());
             context.addContainedContext(node.getName(), resCtx.getLeft());
         } catch (IOException e) {

@@ -5,7 +5,7 @@ public class LInt extends LNumber {
     private final int value;
 
     public LInt(int value) {
-        super("int", value);
+        super("int", Integer.valueOf(value));
         this.value = value;
     }
 
@@ -19,7 +19,7 @@ public class LInt extends LNumber {
 
     @Override
     public Integer getValue() {
-        return value;
+        return Integer.valueOf(value);
     }
 
     @Override

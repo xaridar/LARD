@@ -8,12 +8,13 @@ import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.NullType;
 import lscript.interpreting.types.Value;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PrintBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("var", "val")));
+        return Collections.singletonList(Collections.singletonList(Tuple.of("var", "val")));
     }
 
     @Override

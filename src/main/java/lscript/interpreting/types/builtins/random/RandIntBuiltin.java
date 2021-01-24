@@ -8,13 +8,15 @@ import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.LInt;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class RandIntBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(), List.of(Tuple.of("int", "bound")), List.of(Tuple.of("int", "lowerBound"), Tuple.of("int", "upperBound")));
+        return Arrays.asList(Collections.emptyList(), Collections.singletonList(Tuple.of("int", "bound")), Arrays.asList(Tuple.of("int", "lowerBound"), Tuple.of("int", "upperBound")));
     }
 
     @Override

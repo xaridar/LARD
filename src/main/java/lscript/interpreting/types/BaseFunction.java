@@ -6,9 +6,7 @@ import lscript.errors.Error;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.SymbolTable;
-import lscript.lexing.Token;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class BaseFunction extends BasicType {
@@ -31,10 +29,10 @@ public class BaseFunction extends BasicType {
 
         if (args.size() > argNames.size())
             return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(),
-                    String.format("%d too many args are passed into %s", args.size() - argNames.size(), name), getContext()));
+                    String.format("%d too many args are passed into %s", Integer.valueOf(args.size() - argNames.size()), name), getContext()));
         if (args.size() < argNames.size())
             return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(),
-                    String.format("%d too few args are passed into %s", argNames.size() - args.size(), name), getContext()));
+                    String.format("%d too few args are passed into %s", Integer.valueOf(argNames.size() - args.size()), name), getContext()));
 
         return res.success(null);
     }

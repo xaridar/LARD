@@ -7,12 +7,14 @@ import lscript.interpreting.types.BasicType;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.builtins.IExecutable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class AppendBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("list", "container"), Tuple.of("var", "value")));
+        return Collections.singletonList(Arrays.asList(Tuple.of("list", "container"), Tuple.of("var", "value")));
     }
 
     @Override

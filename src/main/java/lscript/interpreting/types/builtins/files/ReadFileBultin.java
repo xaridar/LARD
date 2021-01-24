@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 public class ReadFileBultin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return List.of(List.of(Tuple.of("file", "f")));
+        return Collections.singletonList(Collections.singletonList(Tuple.of("file", "f")));
     }
 
     @Override
@@ -35,14 +37,14 @@ public class ReadFileBultin implements IExecutable {
         }
         try {
             if (!f.binaryAccess()) {
-                String s = Files.readString(Path.of(f.getPath()), StandardCharsets.UTF_8);
+                String s = String.join("\n", Files.readAllLines(Paths.get(f.getPath()), StandardCharsets.UTF_8));
                 return new RTResult().success(new LString(s).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
             }
             else {
-                byte[] s = Files.readAllBytes(Path.of(f.getPath()));
+                byte[] s = Files.readAllBytes(Paths.get(f.getPath()));
                 Byte[] bytes = new Byte[s.length];
                 for (int i = 0; i < s.length; i++) {
-                    bytes[i] = s[i];
+                    bytes[i] = Byte.valueOf(s[i]);
                 }
                 return new RTResult().success(new LList(Arrays.stream(bytes).map(LByte::new).collect(Collectors.toList())));
             }
