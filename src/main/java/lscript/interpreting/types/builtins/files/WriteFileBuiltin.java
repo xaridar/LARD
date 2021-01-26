@@ -35,7 +35,7 @@ public class WriteFileBuiltin implements IExecutable {
             if (!f.shouldOverwrite()) {
                 option = StandardOpenOption.APPEND;
             } else {
-                option = StandardOpenOption.WRITE;
+                option = StandardOpenOption.TRUNCATE_EXISTING;
             }
             if (execNum == 0) {
                 LString text = (LString) execCtx.getSymbolTable().get("text");

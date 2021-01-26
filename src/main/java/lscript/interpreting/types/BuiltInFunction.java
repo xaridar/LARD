@@ -36,7 +36,7 @@ public class BuiltInFunction extends BaseFunction {
             }
             execCtx.getSymbolTable().removeAll(list.stream().map(Tuple::getRight).collect(Collectors.toList()));
         }
-        if (execNum == -1) return res;
+        if (execNum == -1) return res.failure(new Error.ArgumentError(posStart, posEnd, "Unexpected arguments", context));
 
         Value ret = res.register(builtin.execute(execCtx, execNum, this));
         if (res.shouldReturn()) return res;

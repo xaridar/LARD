@@ -1,11 +1,13 @@
 package lscript.interpreting.types.builtins.lists;
 
 import lscript.Tuple;
+import lscript.errors.Error;
 import lscript.interpreting.Context;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.LInt;
 import lscript.interpreting.types.LList;
+import lscript.interpreting.types.Value;
 import lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
@@ -25,7 +27,17 @@ public class PopBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+        RTResult res = new RTResult();
         LList list = (LList) execCtx.getSymbolTable().get("container");
-        return new RTResult().success(list.getElements().remove(((LInt) execCtx.getSymbolTable().get("index")).getValue().intValue()).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+        LInt index = (LInt) execCtx.getSymbolTable().get("index");
+        int idxVal = index.getValue();
+        if (idxVal < 0) {
+            idxVal += list.getElements().size();
+        }
+        if (idxVal < 0 || idxVal >= list.getElements().size()) {
+            return res.failure(new Error.IndexOutOfBoundsError(index.getPosStart(), index.getPosEnd(), "Index " + index.getValue() + " out of bounds for length " + list.getElements().size(), fun.getContext()));
+        }
+        Value val = list.getElements().remove(idxVal).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext());
+        return res.success(val);
     }
 }

@@ -53,6 +53,9 @@ public class OpenBuiltin implements IExecutable {
             accessModes++;
         }
         if (accessModes > 1) return res.failure(new Error.InvalidSyntaxError(fun.getPosStart(), fun.getPosEnd(), "Cannot use more than 1 of: 'a', 'r', 'w'. If you require both read and write access, use '+'."));
+        if (accessModes == 0 && !modeStr.contains("+")) {
+            return res.failure(new Error.InvalidSyntaxError(fun.getPosStart(), fun.getPosEnd(), "Must use at least 1 of: 'a', 'r', 'w', '+'."));
+        }
         Matcher typeMatcher = Pattern.compile("[tb]").matcher(modeStr);
         int typeModes = 0;
         while (typeMatcher.find()) {

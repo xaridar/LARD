@@ -45,7 +45,7 @@ public class GetBytesBuiltin implements IExecutable {
             for (Value val : list.getElements()) {
                 byte[] currBytes = getBytes(val);
                 if (currBytes == null)
-                    return new RTResult().failure(new Error.RunTimeError(val.getPosStart(), val.getPosEnd(), "Cannot get bytes of type '" + val.getType() + "'", execCtx));
+                    return new RTResult().failure(new Error.ArgumentError(val.getPosStart(), val.getPosEnd(), "Cannot get bytes of type '" + val.getType() + "'", execCtx));
                 LList l = new LList(new ArrayList<>());
                 for (byte aByte : currBytes) {
                     Tuple<BasicType, Error> tup = l.addedTo(new LByte(aByte));

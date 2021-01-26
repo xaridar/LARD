@@ -33,7 +33,7 @@ public class RandIntBuiltin implements IExecutable {
             case 1:
                 LInt bound = (LInt) execCtx.getSymbolTable().get("bound");
                 if (bound.getValue() < 0) {
-                    return res.failure(new Error.RunTimeError(bound.getPosStart(), bound.getPosEnd(), "Invalid argument: Bound must be greater than 0.", execCtx));
+                    return res.failure(new Error.ArgumentError(bound.getPosStart(), bound.getPosEnd(), "Invalid argument: Bound must be greater than 0.", execCtx));
                 }
                 return res.success(new LInt(new Random().nextInt(bound.getValue())).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
             case 2:

@@ -38,7 +38,7 @@ public class FormatBuiltin implements IExecutable {
                 lastIdx+=2;
             }
         }
-        if (list.getElements().size() != count) return new RTResult().failure(new Error.RunTimeError(fun.getPosStart(), fun.getPosEnd(), "Wrong number  of arguments passed into 'format': Expected " + count + ", got " + list.getElements().size(), execCtx));
+        if (list.getElements().size() != count) return new RTResult().failure(new Error.ArgumentError(fun.getPosStart(), fun.getPosEnd(), "Wrong number  of arguments passed into 'format': Expected " + count + ", got " + list.getElements().size(), execCtx));
         if (count == 0) return new RTResult().success(new LString(val));
         builder.append(val, 0, val.indexOf("{}"));
         int valIndex = 0;

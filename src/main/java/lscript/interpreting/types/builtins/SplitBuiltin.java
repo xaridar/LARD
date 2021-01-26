@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class SplitBuiltin implements IExecutable {
     @Override
     public List<List<Tuple<String, String>>> getArgNames() {
-        return Arrays.asList(Collections.singletonList(Tuple.of("str", "toSplit")), Arrays.asList(Tuple.of("str", "toSplit"), Tuple.of("str", "splitBy")));
+        return Arrays.asList(Collections.singletonList(Tuple.of("str", "toSplit")), Arrays.asList(Tuple.of("str", "toSplit"), Tuple.of("str", "regex")));
     }
 
     @Override
@@ -30,7 +30,7 @@ public class SplitBuiltin implements IExecutable {
         String toSplitStr = toSplit.getValue();
         String splitBy = "";
         if (execNum == 1) {
-            splitBy = ((LString) execCtx.getSymbolTable().get("splitBy")).getValue();
+            splitBy = ((LString) execCtx.getSymbolTable().get("regex")).getValue();
         }
         return new RTResult().success(new LList(Arrays.stream(toSplitStr.split(splitBy)).map(str -> new LString(str).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd())).collect(Collectors.toList())).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
     }

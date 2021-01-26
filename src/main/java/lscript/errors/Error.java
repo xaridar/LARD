@@ -99,4 +99,10 @@ public class Error {
             super(posStart, posEnd, "Import Error", details, context);
         }
     }
+
+    public static class ArgumentError extends RunTimeError {
+        public ArgumentError(Position posStart, Position posEnd, String details, Context context) {
+            super(posStart, posEnd, "Argument Error", details, context);
+        }
+    }
 }

@@ -29,10 +29,10 @@ public class BaseFunction extends BasicType {
 
         if (args.size() > argNames.size())
             return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(),
-                    String.format("%d too many args are passed into %s", Integer.valueOf(args.size() - argNames.size()), name), getContext()));
+                    String.format("%d too many args are passed into %s", args.size() - argNames.size(), name), getContext()));
         if (args.size() < argNames.size())
             return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(),
-                    String.format("%d too few args are passed into %s", Integer.valueOf(argNames.size() - args.size()), name), getContext()));
+                    String.format("%d too few args are passed into %s", argNames.size() - args.size(), name), getContext()));
 
         return res.success(null);
     }
@@ -45,7 +45,7 @@ public class BaseFunction extends BasicType {
             String argName = argNames.get(i).getRight();
             Value argValue = args.get(i);
             if (Constants.getInstance().TYPES.get(argType) != null && !Constants.getInstance().TYPES.get(argValue.getType()).contains(argType))
-                return res.failure(new Error.RunTimeError(argValue.getPosStart(), argValue.getPosEnd(),
+                return res.failure(new Error.ArgumentError(argValue.getPosStart(), argValue.getPosEnd(),
                         String.format("Wrong type passed as argument; Expected %s, got %s", argType, argValue.getType()), getContext()));
             argValue.setContext(execCtx);
             Error err = execCtx.getSymbolTable().set(argType, argName, argValue, false);

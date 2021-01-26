@@ -36,9 +36,12 @@ public class IndexBuiltin implements IExecutable {
         Value val = execCtx.getSymbolTable().get("val");
         LInt startIndex = null;
         if (execNum > 2) {
-            startIndex = (LInt) execCtx.getSymbolTable().get("val");
+            startIndex = (LInt) execCtx.getSymbolTable().get("startIndex");
             if (startIndex.getValue() == null) {
-                return res.failure(new Error.RunTimeError(startIndex.getPosStart(), startIndex.getPosEnd(), "Expected int, got null.", execCtx));
+                return res.failure(new Error.ArgumentError(startIndex.getPosStart(), startIndex.getPosEnd(), "Expected int, got null.", execCtx));
+            }
+            if (startIndex.getValue() < 0) {
+                return res.failure(new Error.IndexOutOfBoundsError(startIndex.getPosStart(), startIndex.getPosEnd(), "Cannot pass negative start value into indexof", fun.getContext()));
             }
         }
         int index = -1;
@@ -59,9 +62,11 @@ public class IndexBuiltin implements IExecutable {
             }
         } else if (execNum == 3) {
             String s = ((LString) toIndex).getValue();
+            if (startIndex.getValue() - 1 >= s.length()) return res.failure(new Error.IndexOutOfBoundsError(startIndex.getPosStart(), startIndex.getPosEnd(), "Index " + startIndex.getValue() + " too large for str of len " + s.length(), fun.getContext()));
             index = s.indexOf(((LString) val).getValue(), startIndex.getValue());
         } else if (execNum == 4) {
             List<Value> l = ((LList) toIndex).getValue();
+            if (startIndex.getValue() - 1 >= l.size()) return res.failure(new Error.IndexOutOfBoundsError(startIndex.getPosStart(), startIndex.getPosEnd(), "Index " + startIndex.getValue() + " too large for list of len " + l.size(), fun.getContext()));
             Optional<Value> v = l.subList(startIndex.getValue(), l.size()).stream().filter(value -> val.equalTo(value).isTrue()).findFirst();
             if (v.isPresent())
                 index = l.indexOf(v.get());
