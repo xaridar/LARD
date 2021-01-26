@@ -9,6 +9,7 @@ import lscript.Tuple;
 import lscript.lexing.Token;
 import lscript.parsing.nodes.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -998,17 +999,64 @@ public class Parser {
                 res.registerAdvancement();
                 advance();
 
+//                if (Constants.getInstance().TYPES_BRACKET.contains(str)) {
+//                    if (currentToken.getType() == TT_LEFT_BRACE) {
+//                        res.registerAdvancement();
+//                        advance();
+//                        Node statements = res.register(statements());
+//                        if (res.hasError()) return res;
+//                        return res.success(new VarAssignNode(type, var_name, statements));
+//                    }
+//                }
+                boolean list = false;
+                boolean allSameType = false;
+                List<Tuple<Token, Token>> vars = new ArrayList<>();
+                vars.add(Tuple.of(type, var_name));
+                if (currentToken.getType().equals(TT_COMMA)) {
+                    list = true;
+                    allSameType = !nextToken.getType().equals(TT_KW);
+                    while (currentToken.getType().equals(TT_COMMA)) {
+                        res.registerAdvancement();
+                        advance();
+                        if (!allSameType) {
+                            if (!currentToken.getType().equals(TT_KW))
+                                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
+                            String s = (String) currentToken.getValue();
+                            if (!Constants.getInstance().TYPES.containsKey(str))
+                                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
+                            type = currentToken;
+                            res.registerAdvancement();
+                            advance();
+                        } else {
+                            if (currentToken.getType().equals(TT_KW))
+                                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected no type"));
+                        }
+
+                        if (!currentToken.getType().equals(TT_IDENTIFIER))
+                            return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected identifier"));
+
+                        vars.add(Tuple.of(type, currentToken));
+                        res.registerAdvancement();
+                        advance();
+                    }
+                }
                 if (currentToken.getType().equals(TT_EQ)) {
                     res.registerAdvancement();
                     advance();
-                    Node expression = res.register(expression());
-                    if (res.hasError()) return res;
-                    return res.success(new VarAssignNode(type, var_name, expression));
+                    if (list) {
+                        Node valListNode = res.register(valList());
+                        if (res.hasError()) return res;
+                        return res.success(new VarListAssignNode(vars, valListNode, allSameType));
+                    } else {
+                        Node expression = res.register(expression());
+                        if (res.hasError()) return res;
+                        return res.success(new VarAssignNode(type, var_name, expression));
+                    }
                 } else if (currentToken.getType().equals(TT_SEMICOLON)) {
                     Node def = Value.getDefaultValue(((String) type.getValue()), currentToken.getPosEnd().copy());
                     return res.success(new VarAssignNode(type, var_name, def));
                 }
-                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '=' or ';'"));
+                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '=', ',', or ';'"));
             }
         } else if (currentToken.getType().equals(TT_IDENTIFIER)) {
             Token var_name = currentToken;
@@ -1043,6 +1091,27 @@ public class Parser {
         Node node = res.register(bin_op(unused -> comp(), Arrays.asList(TT_PIPE, TT_AND), null));
         if (res.hasError()) return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type, 'if', 'for', 'while', 'func', value, identifier, '+', '-', '(', '[', '{', or '!'"));
         return res.success(node);
+    }
+
+    /**
+     * Represents a list of nodes.
+     * @return a ParseResult holding either a Node or Error.
+     */
+    public ParseResult valList() {
+        ParseResult res = new ParseResult();
+
+        List<Node> nodes = new ArrayList<>();
+        Node n = res.register(expression());
+        if (res.hasError()) return res;
+        nodes.add(n);
+        while (currentToken.getType().equals(TT_COMMA)) {
+            res.registerAdvancement();
+            advance();
+            n = res.register(expression());
+            nodes.add(n);
+            if (res.hasError()) return res;
+        }
+        return res.success(new ValueListNode(nodes));
     }
 
     /**

@@ -1,3 +1,7 @@
+![](./LScript_logo.png)
+[Documentation](./docs)
+<br>
+
 # LScript
 A custom interpreted scripting language, written in Java.
 

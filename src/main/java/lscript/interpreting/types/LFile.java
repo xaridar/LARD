@@ -3,17 +3,17 @@ package lscript.interpreting.types;
 public class LFile extends Value {
 
     private final String path;
-    private final String accessMode;
+    private final String accessModes;
 
-    public LFile(String path, String accessMode) {
+    public LFile(String path, String accessModes) {
         super("file");
         this.path = path;
-        this.accessMode = accessMode;
+        this.accessModes = accessModes;
     }
 
     @Override
     public LFile copy() {
-        return (LFile) new LFile(path, accessMode).setContext(getContext()).setPos(getPosStart(), getPosEnd());
+        return (LFile) new LFile(path, accessModes).setContext(getContext()).setPos(getPosStart(), getPosEnd());
     }
 
     @Override
@@ -30,24 +30,24 @@ public class LFile extends Value {
         return path;
     }
 
-    public String getAccessMode() {
-        return accessMode;
+    public String getAccessModes() {
+        return accessModes;
     }
 
     public boolean canRead() {
-        return accessMode.equals("r") || accessMode.equals("rb") || accessMode.equals("+") || accessMode.equals("b+");
+        return accessModes.contains("r") || accessModes.contains("+");
     }
 
     public boolean canWrite() {
-        return accessMode.equals("a") || accessMode.equals("ab") || accessMode.equals("w") || accessMode.equals("wb") || accessMode.equals("+") || accessMode.equals("b+");
+        return accessModes.contains("a") || accessModes.contains("w") || accessModes.contains("+");
     }
 
     public boolean shouldOverwrite() {
-        return accessMode.equals("w") || accessMode.equals("wb") || accessMode.equals("+") || accessMode.equals("b+");
+        return accessModes.contains("w");
     }
 
     public boolean binaryAccess() {
-        return accessMode.equals("rb") || accessMode.equals("wb") || accessMode.equals("ab") || accessMode.equals("b+");
+        return accessModes.contains("b");
     }
 
     @Override
