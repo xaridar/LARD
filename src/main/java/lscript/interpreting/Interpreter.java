@@ -172,9 +172,15 @@ public class Interpreter {
 
     public RTResult visitVarAssignNode(VarAssignNode node, Context context) {
         RTResult res = new RTResult();
-        String varName = (String) node.getToken().getValue();
+
         Value value = res.register(visit(node.getValueNode(), context));
         if (res.shouldReturn()) return res;
+        return visitVarAssignNode(node, value, context);
+    }
+
+    public RTResult visitVarAssignNode(VarAssignNode node, Value value, Context context) {
+        RTResult res = new RTResult();
+        String varName = (String) node.getToken().getValue();
 
         String expectedType = null;
         if (node.getType() != null) {
@@ -222,6 +228,45 @@ public class Interpreter {
             return res.success(value);
         }
         return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "Type not defined. Use 'var' or 'const' for dynamic typing.", context));
+    }
+
+    public RTResult visitValueListNode(ValueListNode node, Context context) {
+        RTResult res = new RTResult();
+        List<Value> list = new ArrayList<>();
+        for (Node n : node.getNodes()) {
+            Value val = res.register(visit(n, context));
+            if (res.hasError()) return res;
+            list.add(val);
+        }
+        return res.success(new LList(list).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
+    }
+
+    public RTResult visitVarListAssignNode(VarListAssignNode node, Context context) {
+        RTResult res = new RTResult();
+        List<Tuple<Token, Token>> vars = node.getVars();
+        Value value = res.register(visit(node.getValueNode(), context));
+        if (res.shouldReturn()) return res;
+
+        if (value instanceof LList) {
+            if (((LList) value).getElements().get(0) instanceof LList) value = ((LList) value).getElements().get(0);
+            if (((LList) value).getElements().size() == 1 && node.isAllSameType()) {
+                for (int i = 0; i < node.getVars().size(); i++) {
+                    VarAssignNode n = new VarAssignNode(vars.get(i).getLeft(), vars.get(i).getRight(), null);
+                    res.register(visitVarAssignNode(n, ((LList) value).getElements().get(0), context));
+                    if (res.hasError()) return res;
+                }
+                return res.success(value.setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
+            }
+            if (((LList) value).getElements().size() != vars.size())
+                return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong number of values to set; Expected " + vars.size() + ", got " + ((LList) value).getElements().size(), context));
+            for (int i = 0; i < ((LList) value).getElements().size(); i++) {
+                VarAssignNode n = new VarAssignNode(vars.get(i).getLeft(), vars.get(i).getRight(), null);
+                res.register(visitVarAssignNode(n, ((LList) value).getElements().get(i), context));
+                if (res.hasError()) return res;
+            }
+            return res.success(value.setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
+        }
+        return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Expected either multiple values or a value matching a shared type of all variables.", context));
     }
 
     public RTResult visitConditionalNode(ConditionalNode node, Context context) {
