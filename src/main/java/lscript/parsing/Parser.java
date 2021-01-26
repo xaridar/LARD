@@ -445,6 +445,8 @@ public class Parser {
             if (!Constants.getInstance().TYPES.containsKey(str))
                 return res.failure( new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
             returnTypes.add((String) currentToken.getValue());
+            res.registerAdvancement();
+            advance();
             while (currentToken.getType().equals(TT_COMMA)) {
                 res.registerAdvancement();
                 advance();
