@@ -1,4 +1,4 @@
-![](./LScript_logo.png)
+![](./LScript_logo-small.png)  
 [Documentation](./docs)
 <br>
 
@@ -23,8 +23,11 @@ Some example LScript source files can be found in the [examples folder].
 <br><br>
 
 This language is based off of the [tutorial series] by CodePulse on Youtube titled "Create Your Own Programming Language," 
-with different syntax choices, capabilities, and quirks, as well as converted from Python to Java.
+with different syntax choices, capabilities, and quirks, as well as converted from Python to Java.  
 
+&nbsp;
+
+Thanks to [wdylanbibb](https://github.com/wdylanbibb) for the [logo](./LScript_logo.png).
 
 [Shell.java]: src/main/java/lscript/Shell.java
 [tutorial series]: https://www.youtube.com/watch?v=Eythq9848Fg&list=PLZQftyCk7_SdoVexSmwy_tBgs7P0b97yD
