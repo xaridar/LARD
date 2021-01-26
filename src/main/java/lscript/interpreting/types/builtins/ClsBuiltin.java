@@ -6,6 +6,7 @@ import lscript.interpreting.RTResult;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.NullType;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +24,13 @@ public class ClsBuiltin implements IExecutable {
 
     @Override
     public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        System.out.println("Sorry, cls is not supported in java implementation.");
-        return new RTResult().success(NullType.Null);
+        try {
+            if (System.getProperty("os.name").contains("Windows"))
+                new ProcessBuilder("cmd", "/c",
+                        "cls").inheritIO().start().waitFor();
+            else
+                Runtime.getRuntime().exec("clear");
+        } catch (IOException | InterruptedException ignored ) {};
+        return new RTResult().success(NullType.Void);
     }
 }
