@@ -18,7 +18,7 @@ public class LFile extends Value {
 
     @Override
     public Object getValue() {
-        return "path";
+        return path;
     }
 
     @Override

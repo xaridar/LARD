@@ -72,11 +72,11 @@ public class SymbolTable {
      * @param type - A Token representing the type of the variable.
      * @param var_name - The name of the variable to store or update.
      * @param value - The value to store with the variable name.
-     * @param immutable - A boolean representing whether the variable can be changed in the future.
+     * @param mods - A ModifierList containing all of the modifiers for the variable.
      * @return Null if the variable is stored successfully, or a String representing the expected type of the variable if it conflicts with the provided one.
      */
-    public Error set(String type, String var_name, Value value, boolean immutable) {
-        return set(type, var_name, value, immutable, false);
+    public Error set(String type, String var_name, Value value, ModifierList mods) {
+        return set(type, var_name, value, mods, false);
     }
 
     /**
@@ -84,11 +84,11 @@ public class SymbolTable {
      * @param type - A Token representing the type of the variable.
      * @param var_name - The name of the variable to store or update.
      * @param value - The value to store with the variable name.
-     * @param immutable - A boolean representing whether the variable can be changed in the future.
+     * @param mods - A ModifierList containing all of the modifiers for the variable.
      * @param ignoreRedefine - A boolean representing whether to ignore redefinition of variables.
      * @return Null if the variable is stored successfully, or a String representing the expected type of the variable if it conflicts with the provided one.
      */
-    public Error set(String type, String var_name, Value value, boolean immutable, boolean ignoreRedefine) {
+    public Error set(String type, String var_name, Value value, ModifierList mods, boolean ignoreRedefine) {
         Symbol symbol = getSymbolByName(var_name);
         if (type == null && symbol == null) {
             symbol = getParentSymbolByName(var_name);
@@ -104,10 +104,11 @@ public class SymbolTable {
             }
             return new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong type; Expected '" + symbol.getType() + "', got '" + value.getType() + "'", value.getContext());
         } else if (type != null) {
-            if (type.equals("const"))
-                moveUp(type, var_name, value);
+            if (mods.isStat()) {
+                moveUp(type, var_name, value, mods);
+            }
             else {
-                Symbol s = new Symbol(var_name, type, value, immutable);
+                Symbol s = new Symbol(var_name, type, value, mods.isFin(), mods.getPriv() == ModifierList.Privacy.PUBLIC, mods.isStat());
                 symbols.add(s);
             }
         }
@@ -144,12 +145,13 @@ public class SymbolTable {
      * @param type - A Token representing the type of the variable.
      * @param var_name - The name of the variable to store or update.
      * @param value - The value to store with the variable name.
+     * @param mods - A ModifierList containing all of the modifiers for the variable.
      */
-    public void moveUp(String type, String var_name, Value value) {
+    public void moveUp(String type, String var_name, Value value, ModifierList mods) {
         if (parent != null)
-            parent.moveUp(type, var_name, value);
+            parent.moveUp(type, var_name, value, mods);
         else {
-            Symbol s = new Symbol(var_name, type, value, true);
+            Symbol s = new Symbol(var_name, type, value, mods.isFin(), mods.getPriv() == ModifierList.Privacy.PUBLIC, true);
             symbols.add(s);
         }
     }

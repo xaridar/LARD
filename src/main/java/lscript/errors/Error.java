@@ -4,8 +4,8 @@ import lscript.interpreting.Context;
 import lscript.lexing.Position;
 
 public class Error {
-    Position pos_start;
-    Position pos_end;
+    public Position pos_start;
+    public Position pos_end;
     String error_name;
     String details;
 
@@ -105,4 +105,11 @@ public class Error {
             super(posStart, posEnd, "Argument Error", details, context);
         }
     }
+
+    public static class IllegalAccessError extends RunTimeError {
+        public IllegalAccessError(Position posStart, Position posEnd, String details, Context context) {
+            super(posStart, posEnd, "Illegal Access", details, context);
+        }
+    }
+
 }

@@ -12,6 +12,8 @@ public class Symbol {
     private final String type;
     private Value value;
     private final boolean immutable;
+    private final boolean accessible;
+    private final boolean stat;
 
     /**
      * Default constructor for Symbol.
@@ -19,12 +21,16 @@ public class Symbol {
      * @param type - The type of the variable stored.
      * @param value - The Value stored in the variable.
      * @param immutable - A boolean representing whether the variable's value can be changed.
+     * @param accessible - A boolean representing whether the variable's value can be accessed from other contexts.
+     * @param stat - A boolean representing whether the variable's value is static.
      */
-    public Symbol(String name, String type, Value value, boolean immutable) {
+    public Symbol(String name, String type, Value value, boolean immutable, boolean accessible, boolean stat) {
         this.name = name;
         this.type = type;
         this.value = value;
         this.immutable = immutable;
+        this.accessible = accessible;
+        this.stat = stat;
     }
 
     /**
@@ -34,7 +40,7 @@ public class Symbol {
      * @param value - The Value stored in the variable.
      */
     public Symbol(String name, String type, Value value) {
-        this(name, type, value, false);
+        this(name, type, value, false, true, false);
     }
 
     /**
@@ -80,5 +86,17 @@ public class Symbol {
      */
     public boolean canEdit() {
         return !immutable;
+    }
+
+    public boolean isAccessible() {
+        return accessible;
+    }
+
+    public boolean isImmutable() {
+        return immutable;
+    }
+
+    public boolean isStatic() {
+        return stat;
     }
 }

@@ -5,17 +5,19 @@ import lscript.*;
 import lscript.errors.Error;
 import lscript.interpreting.Context;
 import lscript.interpreting.Interpreter;
+import lscript.parsing.nodes.MultilineNode;
 import lscript.parsing.nodes.Node;
 import lscript.interpreting.RTResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LFunction extends BaseFunction {
 
-    private final Node bodyNode;
+    private Node bodyNode;
     private final List<Tuple<String, String>> argNames;
-    private final List<String> retTypes;
+    private List<String> retTypes;
 
     public LFunction(String name, Node bodyNode, List<Tuple<String, String>> argNames, List<String> retTypes) {
         super(name == null ? "<anonymous>" : name);

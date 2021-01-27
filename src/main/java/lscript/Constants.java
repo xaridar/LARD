@@ -14,7 +14,9 @@ public class Constants {
 
     public Map<String, List<String>> TYPES;
     public Map<String, Class<? extends BasicType>> CONVERT_CLASSES;
+    public List<String> TYPES_BRACKET;
 
+    public List<String> MODS_LIST;
     public List<String> DESIGNATED_KEYWORDS;
     public Map<Character, Map<String, TokenEnum>> EQUAL_MODS;
 
@@ -29,11 +31,14 @@ public class Constants {
      * Sets up maps in the singleton
      */
     private Constants() {
+
+        TYPES_BRACKET = new ArrayList<>();
+        TYPES_BRACKET.add("class");
+
         TYPES = new HashMap<>();
         TYPES.put("int", Arrays.asList("int", "float", "num"));
         TYPES.put("float", Arrays.asList("float", "num"));
         TYPES.put("var", null);
-        TYPES.put("const", null);
         TYPES.put("bool", Collections.singletonList("bool"));
         TYPES.put("function", Collections.singletonList("function"));
         TYPES.put("void", Collections.emptyList());
@@ -45,12 +50,24 @@ public class Constants {
         TYPES.put("file", Collections.singletonList("file"));
         TYPES.put("byte", Arrays.asList("int", "float", "num"));
 
+        for (String type : TYPES_BRACKET) {
+            TYPES.put(type, Collections.singletonList(type));
+        }
+
         CONVERT_CLASSES = new HashMap<>();
         CONVERT_CLASSES.put("str", LString.class);
         CONVERT_CLASSES.put("list", LList.class);
         CONVERT_CLASSES.put("byte", LByte.class);
 
+
+        MODS_LIST = new ArrayList<>();
+        MODS_LIST.add("pub");
+        MODS_LIST.add("priv");
+        MODS_LIST.add("stat");
+        MODS_LIST.add("fin");
+
         DESIGNATED_KEYWORDS = new ArrayList<>();
+        DESIGNATED_KEYWORDS.addAll(MODS_LIST);
         DESIGNATED_KEYWORDS.addAll(TYPES.keySet());
         DESIGNATED_KEYWORDS.addAll(Arrays.asList("if", "elif", "else", "while", "for", "func", "return", "continue", "break", "import", "from", "as"));
 
@@ -85,11 +102,12 @@ public class Constants {
         modMod.put("with", TokenEnum.TT_MODEQ);
         modMod.put("without", TokenEnum.TT_MOD);
 
-        EQUAL_MODS.put(Character.valueOf('+'), plusMod);
-        EQUAL_MODS.put(Character.valueOf('-'), minusMod);
-        EQUAL_MODS.put(Character.valueOf('*'), mulMod);
-        EQUAL_MODS.put(Character.valueOf('/'), divMod);
-        EQUAL_MODS.put(Character.valueOf('^'), powMod);
-        EQUAL_MODS.put(Character.valueOf('%'), modMod);
+        EQUAL_MODS.put('+', plusMod);
+        EQUAL_MODS.put('-', minusMod);
+        EQUAL_MODS.put('*', mulMod);
+        EQUAL_MODS.put('/', divMod);
+        EQUAL_MODS.put('^', powMod);
+        EQUAL_MODS.put('%', modMod);
+
     }
 }

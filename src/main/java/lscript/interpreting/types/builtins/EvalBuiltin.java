@@ -4,7 +4,9 @@ import lscript.Shell;
 import lscript.Tuple;
 import lscript.errors.Error;
 import lscript.interpreting.Context;
+import lscript.interpreting.ModifierList;
 import lscript.interpreting.RTResult;
+import lscript.interpreting.Symbol;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.NullType;
 import lscript.interpreting.types.LString;
@@ -30,7 +32,12 @@ public class EvalBuiltin implements IExecutable {
         if (resCtx.getRight() != null) return res.failure(resCtx.getRight());
         resCtx.getLeft().getSymbolTable().getSymbols().forEach(symbol -> {
             if (!Shell.GLOBAL_SYMBOL_TABLE.hasVar(symbol.getName())) {
-                execCtx.getParent().getSymbolTable().set(symbol.getType(), symbol.getType(), symbol.getValue(), !symbol.canEdit());
+                ModifierList modifierList = new ModifierList();
+                if (symbol.isAccessible()) modifierList.addModByString("pub");
+                else modifierList.addModByStringHarsh("priv");
+                if (symbol.isImmutable()) modifierList.addModByString("fin");
+                if (symbol.isStatic()) modifierList.addModByString("stat");
+                execCtx.getParent().getSymbolTable().set(symbol.getType(), symbol.getType(), symbol.getValue(), modifierList);
             }
         });
         return res.success(NullType.Void);

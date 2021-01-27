@@ -4,6 +4,7 @@ import lscript.TokenEnum;
 import lscript.Tuple;
 import lscript.errors.Error;
 import lscript.interpreting.Context;
+import lscript.interpreting.Symbol;
 import lscript.lexing.Position;
 import lscript.lexing.Token;
 import lscript.interpreting.RTResult;
@@ -96,7 +97,7 @@ public abstract class Value {
     /**
      * @return The value of this Value, if it has one. Can return null.
      */
-    public abstract Object getValue();
+    public Object getValue() { return null; }
 
     /**
      * @param context - The Context to set for this Value.
@@ -191,4 +192,8 @@ public abstract class Value {
         return !getValue().equals(NullType.Null);
     }
 
+    @Override
+    public String toString() {
+        return type + " " + getContext().getSymbolTable().getSymbols().stream().filter(symbol -> symbol.getValue().equalTo(this).isTrue()).findFirst().map(Symbol::getName).orElse("anonymous");
+    }
 }

@@ -1,11 +1,12 @@
 package lscript.parsing.nodes;
 
+import lscript.interpreting.ModifierList;
 import lscript.lexing.Token;
 
 /**
  * A simple Node representing an attempt to assign a value to a variable.
  */
-public class VarAssignNode extends Node {
+public class VarAssignNode extends VarNode {
     private final Token type;
     private final Token token;
     private final Node valueNode;
@@ -14,9 +15,10 @@ public class VarAssignNode extends Node {
      * @param type - A Token representing the variable's type.
      * @param token - The Token containing the variable name to be accessed.
      * @param valueNode - A Node containing the value to be assigned.
+     * @param mods - A ModifierList containing all of the modifiers for the variable.
      */
-    public VarAssignNode(Token type, Token token, Node valueNode) {
-        super(token.getPosStart(), token.getPosEnd());
+    public VarAssignNode(Token type, Token token, Node valueNode, ModifierList mods) {
+        super(token.getPosStart(), token.getPosEnd(), mods, (String) token.getValue());
         this.type = type;
         this.token = token;
         this.valueNode = valueNode;

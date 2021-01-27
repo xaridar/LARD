@@ -109,4 +109,14 @@ public class ParseResult {
     public int getToReverseCount() {
         return toReverseCount;
     }
+
+    /**
+     * Removes the Error, if there is one, and returns it.
+     * @return the old Error of the ParseResult.
+     */
+    public Error pullError() {
+        Error temp = error;
+        error = null;
+        return temp;
+    }
 }

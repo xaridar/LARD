@@ -1,5 +1,6 @@
 package lscript.interpreting;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import lscript.Constants;
 import lscript.Shell;
 import lscript.Tuple;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
@@ -163,6 +165,10 @@ public class Interpreter {
             if (context.getContainedByName(node.getContext().getValue().toString()) == null) {
                 return res.failure(new Error.RunTimeError(node.getContext().getPosStart(), node.getContext().getPosEnd(), "'" + node.getContext().getValue().toString() + "' is not defined", context));
             }
+            if (context.getContainedByName(node.getContext().getValue().toString()).getSymbolTable().getSymbolByName(varName) == null)
+                return res.failure(new Error.RunTimeError(node.getToken().getPosStart(), node.getToken().getPosEnd(), "'" + node.getContext().getValue().toString() + "." + varName + "' is not defined", context));
+            if (!context.getContainedByName(node.getContext().getValue().toString()).getSymbolTable().getSymbolByName(varName).isAccessible())
+                return res.failure(new Error.IllegalAccessError(node.getContext().getPosStart(), node.getContext().getPosEnd(), "'" + varName + "' in '" + node.getContext().getValue() + "'", context));
             value = context.getContainedByName(node.getContext().getValue().toString()).getSymbolTable().get(varName);
         }
         if (value == null) return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "'" + varName + "' is not defined", context));
@@ -189,7 +195,7 @@ public class Interpreter {
         if (expectedType != null) {
             if (Constants.getInstance().TYPES.get(expectedType) == null || Constants.getInstance().TYPES.get(value.getType()).contains(expectedType) || value.getType().equals("nullType")) {
                 value.setType(expectedType);
-                Error err = context.getSymbolTable().set(expectedType, varName, value, false);
+                Error err = context.getSymbolTable().set(expectedType, varName, value, node.getMods());
                 if (err != null)
                     return res.failure(err);
                 return res.success(value);
@@ -197,7 +203,7 @@ public class Interpreter {
                 try {
                     value = res.register((RTResult) Constants.getInstance().CONVERT_CLASSES.get(expectedType).getMethod("from", Value.class).invoke(null, value));
                     if (res.shouldReturn()) return res;
-                    Error err = context.getSymbolTable().set(expectedType, varName, value, false);
+                    Error err = context.getSymbolTable().set(expectedType, varName, value, node.getMods());
                     if (err != null)
                         return res.failure(err);
                     return res.success(value);
@@ -208,14 +214,14 @@ public class Interpreter {
             return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong type; Expected '" + expectedType + "', got '" + value.getType() + "'", context));
         } else if (context.getSymbolTable().hasVar(varName)) {
 
-            Error err = context.getSymbolTable().set(null, varName, value, false);
+            Error err = context.getSymbolTable().set(null, varName, value, null);
             if (err != null) {
                 if (Constants.getInstance().CONVERT_CLASSES.containsKey(
                         context.getSymbolTable().getSymbolByName(varName).getType())) {
                     try {
                         value = res.register((RTResult) Constants.getInstance().CONVERT_CLASSES.get(context.getSymbolTable().getSymbolByName(varName).getType()).getMethod("from", Value.class).invoke(null, value));
                         if (res.shouldReturn()) return res;
-                        err = context.getSymbolTable().set(null, varName, value, false);
+                        err = context.getSymbolTable().set(null, varName, value, null);
                         if (err != null)
                             return res.failure(err);
                         return res.success(value);
@@ -251,7 +257,7 @@ public class Interpreter {
             if (((LList) value).getElements().get(0) instanceof LList) value = ((LList) value).getElements().get(0);
             if (((LList) value).getElements().size() == 1 && node.isAllSameType()) {
                 for (int i = 0; i < node.getVars().size(); i++) {
-                    VarAssignNode n = new VarAssignNode(vars.get(i).getLeft(), vars.get(i).getRight(), null);
+                    VarAssignNode n = new VarAssignNode(vars.get(i).getLeft(), vars.get(i).getRight(), null, ModifierList.getDefault());
                     res.register(visitVarAssignNode(n, ((LList) value).getElements().get(0), context));
                     if (res.hasError()) return res;
                 }
@@ -260,7 +266,7 @@ public class Interpreter {
             if (((LList) value).getElements().size() != vars.size())
                 return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Wrong number of values to set; Expected " + vars.size() + ", got " + ((LList) value).getElements().size(), context));
             for (int i = 0; i < ((LList) value).getElements().size(); i++) {
-                VarAssignNode n = new VarAssignNode(vars.get(i).getLeft(), vars.get(i).getRight(), null);
+                VarAssignNode n = new VarAssignNode(vars.get(i).getLeft(), vars.get(i).getRight(), null, ModifierList.getDefault());
                 res.register(visitVarAssignNode(n, ((LList) value).getElements().get(i), context));
                 if (res.hasError()) return res;
             }
@@ -330,9 +336,9 @@ public class Interpreter {
          } else {
              condition = v -> i[0] > endValue.getValue();
          }
-         context.getSymbolTable().set(((String) node.getVarTypeToken().getValue()), ((String) node.getVarNameToken().getValue()), new LInt(i[0]), false);
+         context.getSymbolTable().set(((String) node.getVarTypeToken().getValue()), ((String) node.getVarNameToken().getValue()), new LInt(i[0]), ModifierList.getDefault());
          while (condition.test(null)) {
-             context.getSymbolTable().set(null, ((String) node.getVarNameToken().getValue()), new LInt(i[0]), false);
+             context.getSymbolTable().set(null, ((String) node.getVarNameToken().getValue()), new LInt(i[0]), ModifierList.getDefault());
              i[0] += step_value.getValue();
 
              res.register(visit(node.getBodyNode(), loopContext));
@@ -386,7 +392,7 @@ public class Interpreter {
         Value funcValue = new LFunction(funcName, bodyNode, argNames, returnTypes).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
 
         if (funcName != null)
-            context.getSymbolTable().set("function", funcName, funcValue, false);
+            context.getSymbolTable().set("function", funcName, funcValue, node.getMods());
         for (ReturnNode retNode : retNodes) {
             if (retNode.getNodesToCall().size() != retTypes.size() && !(retNode.getNodesToCall().size() == 0 && retTypes.size() == 1 && retTypes.get(0).equals("void"))) {
                 context.getSymbolTable().remove(funcName);
@@ -495,7 +501,12 @@ public class Interpreter {
             if (node.importAll()) {
                 resCtx.getLeft().getSymbolTable().symbols.forEach(symbol -> {
                     if (!Shell.GLOBAL_SYMBOL_TABLE.hasVar(symbol.getName())) {
-                        context.getSymbolTable().set(symbol.getType(), symbol.getName(), symbol.getValue(), !symbol.canEdit());
+                        ModifierList modifierList = new ModifierList();
+                        if (symbol.isAccessible()) modifierList.addModByString("pub");
+                        else modifierList.addModByStringHarsh("priv");
+                        if (symbol.isImmutable()) modifierList.addModByString("fin");
+                        if (symbol.isStatic()) modifierList.addModByString("stat");
+                        context.getSymbolTable().set(symbol.getType(), symbol.getName(), symbol.getValue(), modifierList);
                     }
                 });
             } else {
@@ -506,7 +517,13 @@ public class Interpreter {
                     Value val = extCtx.getSymbolTable().get(token.getValue().toString());
                     if (val == null)
                         return res.failure(new Error.ImportError(token.getPosStart(), token.getPosEnd(), "No importable variable found from file '" + node.getFileName() + "' with name '" + token.getValue().toString() + "':", context));
-                    Error err = context.getSymbolTable().set(val.getType(), node.getNames().get(i), val, true);
+                    Symbol symbol = extCtx.getSymbolTable().getSymbolByName(token.getValue().toString());
+                    ModifierList modifierList = new ModifierList();
+                    if (symbol.isAccessible()) modifierList.addModByString("pub");
+                    else modifierList.addModByStringHarsh("priv");
+                    if (symbol.isImmutable()) modifierList.addModByString("fin");
+                    if (symbol.isStatic()) modifierList.addModByString("stat");
+                    Error err = context.getSymbolTable().set(val.getType(), node.getNames().get(i), val, modifierList);
                     if (err != null) return res.failure(err);
                 }
             }
@@ -524,9 +541,50 @@ public class Interpreter {
             Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), String.join("\n", Files.readAllLines(path)), true);
             if (resCtx.getRight() != null) return res.failure(resCtx.getRight());
             context.addContainedContext(node.getName(), resCtx.getLeft());
+            context.getSymbolTable().set("module", node.getName(), new Module(node.getName()), ModifierList.getDefault());
         } catch (IOException e) {
             e.printStackTrace();
         }
         return res.success(NullType.Void);
+    }
+
+    public RTResult visitClassNode(ClassNode node, Context context) {
+        RTResult res = new RTResult();
+        String name = ((String) node.getVarName().getValue());
+        Context classCtx = new Context(name, context, node.getPosStart());
+        classCtx.setSymbolTable(new SymbolTable());
+        context.addContainedContext(name, classCtx);
+        List<FuncDefNode> methods = new ArrayList<>();
+        List<LFunction> statMethods = new ArrayList<>();
+        List<Value> statics = new ArrayList<>();
+        List<VarNode> fields = new ArrayList<>();
+        LFunction constructor = null;
+        if (node.getConstructor() != null) {
+            constructor = (LFunction) res.register(visit(node.getConstructor(), classCtx));
+            classCtx.getSymbolTable().remove("constructor");
+        } else {
+            constructor = new LFunction("constructor", new MultilineNode(Collections.emptyList(), node.getPosStart(), node.getPosEnd()), Collections.emptyList(), Collections.emptyList());
+        }
+        for (VarNode n : node.getFields()) {
+            if (n.getMods().isStat()) {
+                Value v = res.register(visit(n, classCtx));
+                if (res.shouldReturn()) return res;
+                statics.add(v);
+            } else {
+                fields.add(n);
+            }
+        }
+        for (FuncDefNode n : node.getMethods()) {
+            if (n.getMods().isStat()) {
+                Value v = res.register(visit(n, classCtx));
+                if (res.shouldReturn()) return res;
+                statMethods.add((LFunction) v);
+            } else {
+                methods.add(n);
+            }
+        }
+        LClass cls = (LClass) new LClass(name, constructor, statMethods, methods, statics, fields).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
+        context.getSymbolTable().set("class", name, cls, node.getMods());
+        return res.success(cls);
     }
 }

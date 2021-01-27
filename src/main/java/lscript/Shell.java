@@ -1,10 +1,7 @@
 package lscript;
 
 import lscript.errors.Error;
-import lscript.interpreting.Context;
-import lscript.interpreting.Interpreter;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.SymbolTable;
+import lscript.interpreting.*;
 import lscript.interpreting.types.BuiltInFunction;
 import lscript.interpreting.types.LBoolean;
 import lscript.interpreting.types.LList;
@@ -37,12 +34,12 @@ public class Shell {
      */
     public static void main(String[] args) throws IOException {
 
-        GLOBAL_SYMBOL_TABLE.set("nullType", "null", NullType.Null, true);
-        GLOBAL_SYMBOL_TABLE.set("bool", "true", LBoolean.True, true);
-        GLOBAL_SYMBOL_TABLE.set("bool", "false", LBoolean.False, true);
-        GLOBAL_SYMBOL_TABLE.set("float", "pi", MathConstants.Pi, true);
+        GLOBAL_SYMBOL_TABLE.set("nullType", "null", NullType.Null, ModifierList.getDefault());
+        GLOBAL_SYMBOL_TABLE.set("bool", "true", LBoolean.True, ModifierList.getDefault());
+        GLOBAL_SYMBOL_TABLE.set("bool", "false", LBoolean.False, ModifierList.getDefault());
+        GLOBAL_SYMBOL_TABLE.set("float", "pi", MathConstants.Pi, ModifierList.getDefault());
         for (IExecutable func : IExecutable.builtins) {
-            GLOBAL_SYMBOL_TABLE.set("function", func.getName(), new BuiltInFunction(func.getName()), true);
+            GLOBAL_SYMBOL_TABLE.set("function", func.getName(), new BuiltInFunction(func.getName()), ModifierList.getDefault());
         }
         InputStream in;
         String fn;

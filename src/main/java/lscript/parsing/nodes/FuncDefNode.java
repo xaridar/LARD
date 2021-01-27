@@ -1,6 +1,8 @@
 package lscript.parsing.nodes;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import lscript.Tuple;
+import lscript.interpreting.ModifierList;
 import lscript.lexing.Token;
 
 import java.util.List;
@@ -16,19 +18,22 @@ public class FuncDefNode extends Node {
     private final List<Tuple<Token, Token>> argTokens;
     private final List<String> returnTypes;
     private final MultilineNode bodyNode;
+    private final ModifierList mods;
 
     /**
      * @param varNameToken - A Token representing the name of the instance variable of the loop.
      * @param argTokens - A list of tokens representing the arguments of the function.
      * @param returnTypes - A list of Strings containing the return types of the function.
      * @param bodyNode - A Node to be called when the function is called.
+     * @param mods - A ModifierList containing all of the modifiers for the variable.
      */
-    public FuncDefNode(Token varNameToken, List<Tuple<Token, Token>> argTokens, List<String> returnTypes, MultilineNode bodyNode) {
+    public FuncDefNode(Token varNameToken, List<Tuple<Token, Token>> argTokens, List<String> returnTypes, MultilineNode bodyNode, ModifierList mods) {
         super(varNameToken != null ? varNameToken.getPosStart() : argTokens.size() > 0 ? argTokens.get(0).getLeft().getPosStart() : bodyNode.getPosStart(), bodyNode.getPosEnd());
         this.varNameToken = varNameToken;
         this.argTokens = argTokens;
         this.returnTypes = returnTypes;
         this.bodyNode = bodyNode;
+        this.mods = mods;
     }
 
     /**
@@ -66,5 +71,9 @@ public class FuncDefNode extends Node {
      */
     public List<String> getReturnTypes() {
         return returnTypes;
+    }
+
+    public ModifierList getMods() {
+        return mods;
     }
 }

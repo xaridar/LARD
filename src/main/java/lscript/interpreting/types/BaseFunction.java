@@ -4,6 +4,7 @@ import lscript.Constants;
 import lscript.Tuple;
 import lscript.errors.Error;
 import lscript.interpreting.Context;
+import lscript.interpreting.ModifierList;
 import lscript.interpreting.RTResult;
 import lscript.interpreting.SymbolTable;
 
@@ -48,7 +49,7 @@ public class BaseFunction extends BasicType {
                 return res.failure(new Error.ArgumentError(argValue.getPosStart(), argValue.getPosEnd(),
                         String.format("Wrong type passed as argument; Expected %s, got %s", argType, argValue.getType()), getContext()));
             argValue.setContext(execCtx);
-            Error err = execCtx.getSymbolTable().set(argType, argName, argValue, false);
+            Error err = execCtx.getSymbolTable().set(argType, argName, argValue, ModifierList.getDefault());
             if (err != null)
                 return res.failure(err);
         }
@@ -74,11 +75,6 @@ public class BaseFunction extends BasicType {
     @Override
     public Value copy() {
         return new BaseFunction(name).setPos(getPosStart(), getPosEnd()).setContext(getContext());
-    }
-
-    @Override
-    public Object getValue() {
-        return null;
     }
 
     @Override
