@@ -161,7 +161,7 @@ public class Parser {
             return res.success(importNode);
         }
 
-        return res.failure(new Error.InvalidSyntaxError(tok.getPosStart(), tok.getPosEnd(), "Expected value, identifier, '+', '-', '(', '[', '{', 'if', 'for', 'while', or 'func'"));
+        return res.slightFailure(new Error.InvalidSyntaxError(tok.getPosStart(), tok.getPosEnd(), "Expected value, identifier, '+', '-', '(', '[', '{', 'if', 'for', 'while', or 'func'"));
     }
 
     private ParseResult importLine() {
@@ -865,9 +865,14 @@ public class Parser {
                     advance();
                 }
             } else {
-                reverse(res.getToReverseCount());
+                Error err = res.pullError();
+                if (err != null) {
+                    return res.failure(err);
+                } else {
+                    reverse(res.getToReverseCount());
 
-                break;
+                    break;
+                }
             }
         }
         return res.success(new MultilineNode(statements, posStart, currentToken.getPosEnd().copy()));
@@ -913,7 +918,7 @@ public class Parser {
         }
         Node expression = res.register(expression());
         if (res.hasError())
-            return res.failure(new Error.InvalidSyntaxError(res.getError().pos_start, res.getError().pos_end, "Expected type, 'return', 'continue', 'break', "));
+            return res.slightFailure(new Error.InvalidSyntaxError(res.getError().pos_start, res.getError().pos_end, "Expected type, 'return', 'continue', 'break', "));
         return res.success(expression);
     }
 
@@ -1000,12 +1005,13 @@ public class Parser {
         if (currentToken.getType().equals(TT_KW)) {
             ModifierList mods = new ModifierList();
             int modNum = 0;
-            while (!Constants.getInstance().TYPES.containsKey((String) currentToken.getValue())) {
+            String val = (String) currentToken.getValue();
+            while (!Constants.getInstance().TYPES.containsKey(val)) {
                 if (currentToken.getType() != TT_KW) {
                     reverse(modNum);
                     break;
                 }
-                String val = (String) currentToken.getValue();
+                val = (String) currentToken.getValue();
                 String err = mods.addModByString(val);
                 if (err != null) {
                     if (err.equals("")) {
@@ -1055,7 +1061,7 @@ public class Parser {
                                 return res.failure(new Error.InvalidSyntaxError(node.getPosStart(), node.getPosEnd(), "Expected methods, variables, and/or inner classes in class."));
                             }
                         }
-                        if (currentToken.getType() != TT_RIGHT_BRACE) return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '{'"));
+                        if (currentToken.getType() != TT_RIGHT_BRACE) return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '}'"));
                         res.registerAdvancement();
                         advance();
                         return res.success(new ClassNode(var_name, varAssignNodes, funcDefNodes, constructor, posStart, currentToken.getPosEnd().copy(), mods));
@@ -1074,7 +1080,6 @@ public class Parser {
                         if (!allSameType) {
                             if (!currentToken.getType().equals(TT_KW))
                                 return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
-                            String s = (String) currentToken.getValue();
                             if (!Constants.getInstance().TYPES.containsKey(str))
                                 return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type"));
                             type = currentToken;
@@ -1142,7 +1147,7 @@ public class Parser {
             }
         }
         Node node = res.register(bin_op(unused -> comp(), Arrays.asList(TT_PIPE, TT_AND), null));
-        if (res.hasError()) return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type, 'if', 'for', 'while', 'func', value, identifier, '+', '-', '(', '[', '{', or '!'"));
+        if (res.hasError()) return res.slightFailure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type, 'if', 'for', 'while', 'func', value, identifier, '+', '-', '(', '[', '{', or '!'"));
         return res.success(node);
     }
 
@@ -1183,7 +1188,7 @@ public class Parser {
             return res.success(new UnaryOperationNode(opToken, node));
         }
         Node node = res.register(bin_op(unused -> arith(), Arrays.asList(TT_NEQ, TT_GEQ, TT_LEQ, TT_LT, TT_GT, TT_BOOLEQ), null));
-        if (res.hasError()) return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected value, identifier, '+', '-', '(', '[', '{', or '!'"));
+        if (res.hasError()) return res.slightFailure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected value, identifier, '+', '-', '(', '[', '{', or '!'"));
         return res.success(node);
     }
 

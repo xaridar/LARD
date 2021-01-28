@@ -12,6 +12,7 @@ public class ParseResult {
     private Node node;
     private int advanceCount;
     private int toReverseCount;
+    private boolean overrideTryRegister;
 
     /**
      * Default constructor. Sets default variables.
@@ -21,6 +22,7 @@ public class ParseResult {
         node = null;
         advanceCount = 0;
         toReverseCount = 0;
+        overrideTryRegister = false;
     }
 
     /**
@@ -30,6 +32,7 @@ public class ParseResult {
      */
     public Node register(ParseResult res) {
         advanceCount += res.getAdvanceCount();
+        if (res.overrideTryRegister) overrideTryRegister = true;
         if (res.hasError())
             error = res.getError();
         return res.getNode();
@@ -58,7 +61,7 @@ public class ParseResult {
      * @return this ParseResult, which can be registered later.
      */
     public ParseResult failure(Error error) {
-        if (!hasError() || advanceCount == 0) this.error = error;
+        if (!hasError()) this.error = error;
         return this;
     }
 
@@ -97,6 +100,9 @@ public class ParseResult {
      */
     public Node tryRegister(ParseResult res) {
         if (res.hasError()) {
+            if (!res.overrideTryRegister) {
+                return register(res);
+            }
             toReverseCount = res.advanceCount;
             return null;
         }
@@ -118,5 +124,18 @@ public class ParseResult {
         Error temp = error;
         error = null;
         return temp;
+    }
+
+    /**
+     * Returns a normal failure, but if the err is registered, override is set to true for statements() in Parser.
+     * @param err - The Error to register.
+     * @return this ParseResult, which can be registered later.
+     */
+    public ParseResult slightFailure(Error err) {
+        if (!hasError()) {
+            this.error = err;
+            overrideTryRegister = true;
+        }
+        return this;
     }
 }
