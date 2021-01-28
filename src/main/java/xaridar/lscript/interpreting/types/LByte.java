@@ -1,8 +1,8 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.Tuple;
-import lscript.errors.Error;
-import lscript.interpreting.RTResult;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.RTResult;
 
 public class LByte extends BasicType {
 

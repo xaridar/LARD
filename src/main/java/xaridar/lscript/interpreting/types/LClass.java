@@ -1,8 +1,7 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.interpreting.Symbol;
-import lscript.parsing.nodes.FuncDefNode;
-import lscript.parsing.nodes.VarNode;
+import xaridar.lscript.parsing.nodes.FuncDefNode;
+import xaridar.lscript.parsing.nodes.VarNode;
 
 import java.util.List;
 

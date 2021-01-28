@@ -1,7 +1,7 @@
-package lscript.interpreting;
+package xaridar.lscript.interpreting;
 
-import lscript.errors.Error;
-import lscript.interpreting.types.Value;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.types.Value;
 
 /**
  * Manages results from interpreting, and holds a success Value, return Value from a function, break, continue, or Error as a result.

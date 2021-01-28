@@ -1,6 +1,6 @@
-package lscript.errors;
+package xaridar.lscript.errors;
 
-import lscript.lexing.Position;
+import xaridar.lscript.lexing.Position;
 
 public class ErrorUtil {
     public static String string_with_arrows(String text, Position pos_start, Position pos_end) {
