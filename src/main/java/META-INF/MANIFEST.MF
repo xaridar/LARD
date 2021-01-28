@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: lscript.Shell
+Main-Class: xaridar.lscript.Shell
 

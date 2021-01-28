@@ -1,10 +1,10 @@
-package lscript.interpreting.types.builtins.lists;
+package xaridar.lscript.interpreting.types.builtins.lists;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.*;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.*;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +22,7 @@ public class RemoveBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         Value ret;
         if (execNum == 0) {
             LList list = (LList) execCtx.getSymbolTable().get("container");
@@ -39,6 +39,6 @@ public class RemoveBuiltin implements IExecutable {
         } else {
             return null;
         }
-        return new RTResult().success(ret.setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+        return new RunTimeResult().success(ret.setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

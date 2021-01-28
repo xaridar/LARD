@@ -1,12 +1,12 @@
-package lscript.interpreting.types.builtins.math;
+package xaridar.lscript.interpreting.types.builtins.math;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.LFloat;
-import lscript.interpreting.types.LNumber;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.LFloat;
+import xaridar.lscript.interpreting.types.LNumber;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class RootBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        return new RTResult().success(new LFloat((float) Math.pow(((LNumber) execCtx.getSymbolTable().get("val")).getValue().doubleValue(), 1 / ((LNumber) execCtx.getSymbolTable().get("power")).getValue().doubleValue())).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+        return new RunTimeResult().success(new LFloat((float) Math.pow(((LNumber) execCtx.getSymbolTable().get("val")).getValue().doubleValue(), 1 / ((LNumber) execCtx.getSymbolTable().get("power")).getValue().doubleValue())).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

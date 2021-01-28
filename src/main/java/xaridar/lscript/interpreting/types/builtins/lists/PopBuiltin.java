@@ -1,14 +1,14 @@
-package lscript.interpreting.types.builtins.lists;
+package xaridar.lscript.interpreting.types.builtins.lists;
 
-import lscript.Tuple;
-import lscript.errors.Error;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.LInt;
-import lscript.interpreting.types.LList;
-import lscript.interpreting.types.Value;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.LInt;
+import xaridar.lscript.interpreting.types.LList;
+import xaridar.lscript.interpreting.types.Value;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,8 +26,8 @@ public class PopBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        RTResult res = new RTResult();
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+        RunTimeResult res = new RunTimeResult();
         LList list = (LList) execCtx.getSymbolTable().get("container");
         LInt index = (LInt) execCtx.getSymbolTable().get("index");
         int idxVal = index.getValue();

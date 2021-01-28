@@ -1,8 +1,7 @@
-package lscript.interpreting;
+package xaridar.lscript.interpreting;
 
-import lscript.lexing.Position;
+import xaridar.lscript.lexing.Position;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

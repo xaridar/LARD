@@ -1,4 +1,4 @@
-package lscript.lexing;
+package xaridar.lscript.lexing;
 
 /**
  * A datatype that stored a position in the input String.
@@ -62,15 +62,15 @@ public class Position {
 
     /**
      * Advances the Position and returns itself.
-     * @param current_char - The current character of the Lexer, passed in to determine whether a new line has been reached.
+     * @param currentChar - The current character of the Lexer, passed in to determine whether a new line has been reached.
      * @return this Position.
      */
-    public Position advance(Character current_char) {
+    public Position advance(Character currentChar) {
         idx += 1;
         col += 1;
 
-        if (current_char != null)
-            if (current_char == '\n') {
+        if (currentChar != null)
+            if (currentChar == '\n') {
                 ln += 1;
                 col = 0;
             }

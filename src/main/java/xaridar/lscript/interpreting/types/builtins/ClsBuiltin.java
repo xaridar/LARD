@@ -1,13 +1,12 @@
-package lscript.interpreting.types.builtins;
+package xaridar.lscript.interpreting.types.builtins;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.NullType;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.NullType;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class ClsBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         try {
             if (System.getProperty("os.name").contains("Windows"))
                 new ProcessBuilder("cmd", "/c",
@@ -31,6 +30,6 @@ public class ClsBuiltin implements IExecutable {
             else
                 Runtime.getRuntime().exec("clear");
         } catch (IOException | InterruptedException ignored ) {};
-        return new RTResult().success(NullType.Void);
+        return new RunTimeResult().success(NullType.Void);
     }
 }

@@ -1,7 +1,7 @@
-package lscript.interpreting;
+package xaridar.lscript.interpreting;
 
-import lscript.Constants;
-import lscript.interpreting.types.Value;
+import xaridar.lscript.Constants;
+import xaridar.lscript.interpreting.types.Value;
 
 /**
  * A data type that represents a variable in a SymbolTable.

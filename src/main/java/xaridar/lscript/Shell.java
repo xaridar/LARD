@@ -1,22 +1,29 @@
-package lscript;
+package xaridar.lscript;
 
-import lscript.errors.Error;
-import lscript.interpreting.*;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.LBoolean;
-import lscript.interpreting.types.LList;
-import lscript.interpreting.types.NullType;
-import lscript.interpreting.types.builtins.IExecutable;
-import lscript.interpreting.types.builtins.math.MathConstants;
-import lscript.lexing.Lexer;
-import lscript.lexing.Token;
-import lscript.parsing.ParseResult;
-import lscript.parsing.Parser;
+/*
+ * This is a project written by Elliot Topper called LScript.
+ * It is an interpreted scripting language with static typing.
+ *
+ * @version 2.0.0
+ * @author Xaridar
+ */
+
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.*;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.LBoolean;
+import xaridar.lscript.interpreting.types.LList;
+import xaridar.lscript.interpreting.types.NullType;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.interpreting.types.builtins.math.MathConstants;
+import xaridar.lscript.lexing.Lexer;
+import xaridar.lscript.lexing.Token;
+import xaridar.lscript.parsing.ParseResult;
+import xaridar.lscript.parsing.Parser;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -124,7 +131,7 @@ public class Shell {
      */
     public static Tuple<Object, Error> run(String fn, String text, Context context) {
         Lexer lexer = new Lexer(fn, text);
-        Tuple<List<Token>, Error> tkns = lexer.make_tokens();
+        Tuple<List<Token>, Error> tkns = lexer.makeTokens();
         if (tkns.getRight() != null)
             return Tuple.of(null, tkns.getRight());
         List<Token> tokens = tkns.getLeft();
@@ -135,7 +142,7 @@ public class Shell {
 
         Interpreter interpreter = Interpreter.getInstance();
         Interpreter.setOnlySymbols(false);
-        RTResult result = interpreter.visit(ast.getNode(), context);
+        RunTimeResult result = interpreter.visit(ast.getNode(), context);
         if (result.hasError()) return Tuple.of(null, result.getError());
 
         return Tuple.of(result.getValue(), null);
@@ -152,7 +159,7 @@ public class Shell {
         Context context = new Context(fn, null, null);
         context.setSymbolTable(new SymbolTable(GLOBAL_SYMBOL_TABLE));
         Lexer lexer = new Lexer(fn, text);
-        Tuple<List<Token>, Error> tkns = lexer.make_tokens();
+        Tuple<List<Token>, Error> tkns = lexer.makeTokens();
         if (tkns.getRight() != null)
             return Tuple.of(null, tkns.getRight());
         List<Token> tokens = tkns.getLeft();
@@ -163,7 +170,7 @@ public class Shell {
 
         Interpreter interpreter = Interpreter.getInstance();
         Interpreter.setOnlySymbols(setOnlySymbols);
-        RTResult result = interpreter.visit(ast.getNode(), context);
+        RunTimeResult result = interpreter.visit(ast.getNode(), context);
         Interpreter.setOnlySymbols(false);
         if (result.hasError()) return Tuple.of(null, result.getError());
 

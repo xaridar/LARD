@@ -1,12 +1,12 @@
-package lscript.interpreting.types.builtins;
+package xaridar.lscript.interpreting.types.builtins;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.errors.Error;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.LList;
-import lscript.interpreting.types.LString;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.LList;
+import xaridar.lscript.interpreting.types.LString;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class FormatBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         StringBuilder builder = new StringBuilder();
         LList list = (LList) execCtx.getSymbolTable().get("args");
         LString string = (LString) execCtx.getSymbolTable().get("text");
@@ -38,8 +38,8 @@ public class FormatBuiltin implements IExecutable {
                 lastIdx+=2;
             }
         }
-        if (list.getElements().size() != count) return new RTResult().failure(new Error.ArgumentError(fun.getPosStart(), fun.getPosEnd(), "Wrong number  of arguments passed into 'format': Expected " + count + ", got " + list.getElements().size(), execCtx));
-        if (count == 0) return new RTResult().success(new LString(val));
+        if (list.getElements().size() != count) return new RunTimeResult().failure(new Error.ArgumentError(fun.getPosStart(), fun.getPosEnd(), "Wrong number  of arguments passed into 'format': Expected " + count + ", got " + list.getElements().size(), execCtx));
+        if (count == 0) return new RunTimeResult().success(new LString(val));
         builder.append(val, 0, val.indexOf("{}"));
         int valIndex = 0;
         valIndex += val.indexOf("{}");
@@ -51,6 +51,6 @@ public class FormatBuiltin implements IExecutable {
             builder.append(val, valIndex, indexToAppendTo);
             valIndex = val.indexOf("{}", valIndex);
         }
-        return new RTResult().success(new LString(builder.toString()).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+        return new RunTimeResult().success(new LString(builder.toString()).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

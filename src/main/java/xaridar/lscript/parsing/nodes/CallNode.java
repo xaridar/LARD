@@ -1,4 +1,4 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,6 +1,6 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.lexing.Position;
+import xaridar.lscript.lexing.Position;
 
 /**
  * A datatype that holds two Positions and various other Nodes and Tokens for use in interpretation.

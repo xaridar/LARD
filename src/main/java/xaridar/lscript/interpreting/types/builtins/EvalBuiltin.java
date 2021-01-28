@@ -1,15 +1,14 @@
-package lscript.interpreting.types.builtins;
+package xaridar.lscript.interpreting.types.builtins;
 
-import lscript.Shell;
-import lscript.Tuple;
-import lscript.errors.Error;
-import lscript.interpreting.Context;
-import lscript.interpreting.ModifierList;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.Symbol;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.NullType;
-import lscript.interpreting.types.LString;
+import xaridar.lscript.Shell;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.ModifierList;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.NullType;
+import xaridar.lscript.interpreting.types.LString;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +25,8 @@ public class EvalBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        RTResult res = new RTResult();
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+        RunTimeResult res = new RunTimeResult();
         Tuple<Context, Error> resCtx = Shell.runInternal(fun.getPosStart().getFn(), ((LString) execCtx.getSymbolTable().get("text")).getValue(), false);
         if (resCtx.getRight() != null) return res.failure(resCtx.getRight());
         resCtx.getLeft().getSymbolTable().getSymbols().forEach(symbol -> {

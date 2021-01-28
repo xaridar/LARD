@@ -1,12 +1,12 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.Constants;
-import lscript.Tuple;
-import lscript.errors.Error;
-import lscript.interpreting.Context;
-import lscript.interpreting.ModifierList;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.SymbolTable;
+import xaridar.lscript.Constants;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.ModifierList;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.SymbolTable;
 
 import java.util.List;
 
@@ -25,8 +25,8 @@ public class BaseFunction extends BasicType {
         return newContext;
     }
 
-    public RTResult checkArgs(List<Tuple<String, String>> argNames, List<Value> args) {
-        RTResult res = new RTResult();
+    public RunTimeResult checkArgs(List<Tuple<String, String>> argNames, List<Value> args) {
+        RunTimeResult res = new RunTimeResult();
 
         if (args.size() > argNames.size())
             return res.failure(new Error.RunTimeError(getPosStart(), getPosEnd(),
@@ -38,8 +38,8 @@ public class BaseFunction extends BasicType {
         return res.success(null);
     }
 
-    public RTResult populateArgs(List<Tuple<String, String>> argNames, List<Value> args, Context execCtx) {
-        RTResult res = new RTResult();
+    public RunTimeResult populateArgs(List<Tuple<String, String>> argNames, List<Value> args, Context execCtx) {
+        RunTimeResult res = new RunTimeResult();
 
         for (int i = 0; i < args.size(); i++) {
             String argType = argNames.get(i).getLeft();
@@ -56,8 +56,8 @@ public class BaseFunction extends BasicType {
         return res.success(null);
     }
 
-    public RTResult checkAndPopArgs(List<Tuple<String, String>> argNames, List<Value> args, Context execContext) {
-        RTResult res = new RTResult();
+    public RunTimeResult checkAndPopArgs(List<Tuple<String, String>> argNames, List<Value> args, Context execContext) {
+        RunTimeResult res = new RunTimeResult();
 
         res.register(checkArgs(argNames, args));
         if (res.shouldReturn()) return res;

@@ -1,11 +1,10 @@
-package lscript.interpreting.types.builtins;
+package xaridar.lscript.interpreting.types.builtins;
 
-import lscript.Tuple;
-import lscript.errors.Error;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.*;
-import lscript.parsing.Parser;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ public class GetBytesBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         if (execNum == 0 || execNum == 1) {
             byte[] bytes;
             if (execNum == 0) {
@@ -35,26 +34,26 @@ public class GetBytesBuiltin implements IExecutable {
             LList retList = (LList) new LList(new ArrayList<>()).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd());
             for (byte aByte : bytes) {
                 Tuple<BasicType, Error> tup = retList.addedTo(new LByte(aByte));
-                if (tup.getRight() != null) return new RTResult().failure(tup.getRight());
+                if (tup.getRight() != null) return new RunTimeResult().failure(tup.getRight());
                 retList = (LList) tup.getLeft();
             }
-            return new RTResult().success(retList);
+            return new RunTimeResult().success(retList);
         } else if (execNum == 2) {
             LList list = (LList) execCtx.getSymbolTable().get("l");
             List<Value> bytes = new ArrayList<>();
             for (Value val : list.getElements()) {
                 byte[] currBytes = getBytes(val);
                 if (currBytes == null)
-                    return new RTResult().failure(new Error.ArgumentError(val.getPosStart(), val.getPosEnd(), "Cannot get bytes of type '" + val.getType() + "'", execCtx));
+                    return new RunTimeResult().failure(new Error.ArgumentError(val.getPosStart(), val.getPosEnd(), "Cannot get bytes of type '" + val.getType() + "'", execCtx));
                 LList l = new LList(new ArrayList<>());
                 for (byte aByte : currBytes) {
                     Tuple<BasicType, Error> tup = l.addedTo(new LByte(aByte));
-                    if (tup.getRight() != null) return new RTResult().failure(tup.getRight());
+                    if (tup.getRight() != null) return new RunTimeResult().failure(tup.getRight());
                     l = (LList) tup.getLeft();
                 }
                 bytes.add(l);
             }
-            return new RTResult().success(new LList(bytes).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
+            return new RunTimeResult().success(new LList(bytes).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
         }
         return null;
     }

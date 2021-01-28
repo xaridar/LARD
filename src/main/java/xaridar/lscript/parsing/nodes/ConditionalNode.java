@@ -1,6 +1,6 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.Tuple;
+import xaridar.lscript.Tuple;
 
 import java.util.List;
 

@@ -1,11 +1,11 @@
-package lscript.interpreting.types.builtins.lists;
+package xaridar.lscript.interpreting.types.builtins.lists;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.errors.Error;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.*;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.*;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,8 +30,8 @@ public class IndexBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        RTResult res = new RTResult();
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+        RunTimeResult res = new RunTimeResult();
         Value toIndex = execCtx.getSymbolTable().get("toIndex");
         Value val = execCtx.getSymbolTable().get("val");
         LInt startIndex = null;

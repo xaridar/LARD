@@ -1,11 +1,11 @@
-package lscript.interpreting.types.builtins.lists;
+package xaridar.lscript.interpreting.types.builtins.lists;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.*;
-import lscript.interpreting.types.LBoolean;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.*;
+import xaridar.lscript.interpreting.types.LBoolean;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +22,7 @@ public class ContainsBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         boolean contains = false;
         Value element = execCtx.getSymbolTable().get("element");
         switch (execNum) {
@@ -39,6 +39,6 @@ public class ContainsBuiltin implements IExecutable {
                 contains = m.getValue().keySet().stream().anyMatch(val -> val.equalTo(element).isTrue());
                 break;
         }
-        return new RTResult().success(new LBoolean(contains).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+        return new RunTimeResult().success(new LBoolean(contains).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

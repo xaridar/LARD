@@ -1,10 +1,4 @@
-package lscript.interpreting;
-
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import lscript.errors.Error;
-
-import java.util.ArrayList;
-import java.util.List;
+package xaridar.lscript.interpreting;
 
 public class ModifierList {
     private Privacy priv;
@@ -41,9 +35,7 @@ public class ModifierList {
         return stat;
     }
 
-    public interface Modifier {}
-
-    public enum Privacy implements Modifier { PUBLIC, PRIVATE }
+    public enum Privacy { PUBLIC, PRIVATE }
 
     public String addModByStringHarsh(String str) {
         if (str.equals("pub") || str.equals("priv")) {

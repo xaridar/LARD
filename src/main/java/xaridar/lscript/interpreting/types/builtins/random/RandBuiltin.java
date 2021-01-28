@@ -1,11 +1,11 @@
-package lscript.interpreting.types.builtins.random;
+package xaridar.lscript.interpreting.types.builtins.random;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.LFloat;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.LFloat;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,7 @@ public class RandBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        return new RTResult().success(new LFloat(random.nextFloat()).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+        return new RunTimeResult().success(new LFloat(random.nextFloat()).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
     }
 }

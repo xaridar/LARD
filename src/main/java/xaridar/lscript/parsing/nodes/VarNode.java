@@ -1,7 +1,7 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.interpreting.ModifierList;
-import lscript.lexing.Position;
+import xaridar.lscript.interpreting.ModifierList;
+import xaridar.lscript.lexing.Position;
 
 public class VarNode extends Node {
     private final ModifierList mods;

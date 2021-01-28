@@ -1,7 +1,7 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.interpreting.ModifierList;
-import lscript.lexing.Token;
+import xaridar.lscript.interpreting.ModifierList;
+import xaridar.lscript.lexing.Token;
 
 /**
  * A simple Node representing an attempt to assign a value to a variable.

@@ -1,11 +1,11 @@
-package lscript.interpreting.types.builtins.input;
+package xaridar.lscript.interpreting.types.builtins.input;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.*;
-import lscript.interpreting.types.LFloat;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.*;
+import xaridar.lscript.interpreting.types.LFloat;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,17 +24,17 @@ public class NumInputBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         if (execNum == 1) {
             System.out.print(execCtx.getSymbolTable().get("prompt"));
         }
         Scanner scanner = new Scanner(System.in);
         String s = scanner.nextLine();
         if (s.matches("^-?\\d+\\.\\d+$")) {
-            return new RTResult().success(new LFloat(java.lang.Float.parseFloat(s)).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+            return new RunTimeResult().success(new LFloat(java.lang.Float.parseFloat(s)).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
         } else if (s.matches("^-?\\d+$")) {
-            return new RTResult().success(new LInt(Integer.parseInt(s)).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+            return new RunTimeResult().success(new LInt(Integer.parseInt(s)).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
         }
-        return new RTResult().success(NullType.Null);
+        return new RunTimeResult().success(NullType.Null);
     }
 }

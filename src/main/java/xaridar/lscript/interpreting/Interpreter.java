@@ -1,18 +1,15 @@
-package lscript.interpreting;
+package xaridar.lscript.interpreting;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import lscript.Constants;
-import lscript.Shell;
-import lscript.Tuple;
-import lscript.errors.Error;
-import lscript.lexing.Token;
-import lscript.parsing.nodes.*;
-import lscript.interpreting.types.*;
-import lscript.interpreting.types.LFloat;
+import xaridar.lscript.*;
+import static xaridar.lscript.TokenEnum.*;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.lexing.Token;
+import xaridar.lscript.parsing.nodes.*;
+import xaridar.lscript.interpreting.types.*;
+import xaridar.lscript.interpreting.types.LFloat;
 
 import java.io.IOException;
 import java.lang.Boolean;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -24,9 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static lscript.TokenEnum.*;
-
 /**
  * Singleton class, which recursively visits all nodes contained in a nested node and calls operations, functions, and other capabilities of the language.
  */
@@ -59,10 +53,10 @@ public class Interpreter {
      * @param context - The Context of the provided Node.
      * @return an RTResult, containing either a Value or an Error.
      */
-    public RTResult visit(Node node, Context context) {
+    public RunTimeResult visit(Node node, Context context) {
         try {
             Method method = getClass().getMethod("visit" + node.getClass().getSimpleName(), node.getClass(), Context.class);
-            return (RTResult) method.invoke(this, node, context);
+            return (RunTimeResult) method.invoke(this, node, context);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
@@ -75,20 +69,20 @@ public class Interpreter {
      * They all return an RTResult, containing either a Value or an Error.
      */
 
-    public RTResult visitNumberNode(NumberNode node, Context context) {
+    public RunTimeResult visitNumberNode(NumberNode node, Context context) {
         if (node.getToken().getType().equals(TT_INT))
-            return new RTResult().success(new LInt((int) node.getToken().getValue()).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
+            return new RunTimeResult().success(new LInt((int) node.getToken().getValue()).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
         else if (node.getToken().getType().equals(TT_FLOAT))
-            return new RTResult().success(new LFloat((float) node.getToken().getValue()).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
-        return new RTResult().failure(new Error.InvalidSyntaxError(node.getPosStart(), node.getPosEnd(), "Expected 'int' or 'float'"));
+            return new RunTimeResult().success(new LFloat((float) node.getToken().getValue()).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
+        return new RunTimeResult().failure(new Error.InvalidSyntaxError(node.getPosStart(), node.getPosEnd(), "Expected 'int' or 'float'"));
     }
 
-    public RTResult visitStringNode(StringNode node, Context context) {
-        return new RTResult().success(new LString((String) node.getToken().getValue(), context).setPos(node.getPosStart(), node.getPosEnd()));
+    public RunTimeResult visitStringNode(StringNode node, Context context) {
+        return new RunTimeResult().success(new LString((String) node.getToken().getValue(), context).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
-    public RTResult visitListNode(ListNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitListNode(ListNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         List<Value> vals = new ArrayList<>();
         for (Node n : node.getNodes()) {
             vals.add(res.register(visit(n, context)));
@@ -97,8 +91,8 @@ public class Interpreter {
         return res.success(new LList(vals).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
-    public RTResult visitMultilineNode(MultilineNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitMultilineNode(MultilineNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         List<Value> vals = new ArrayList<>();
         for (Node n : node.getNodes()) {
             if (setOnlySymbols && context.getParent() == null) {
@@ -112,8 +106,8 @@ public class Interpreter {
         return res.success(new LList(vals).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
-    public RTResult visitMapNode(MapNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitMapNode(MapNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         HashMap<Value, Value> pairs = new HashMap<>();
         for (Tuple<Node, Node> tup : node.getPairs()) {
             pairs.put(res.register(visit(tup.getLeft(), context)), res.register(visit(tup.getRight(), context)));
@@ -122,8 +116,8 @@ public class Interpreter {
         return res.success(new LMap(pairs).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
-    public RTResult visitBinaryOperationNode(BinaryOperationNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitBinaryOperationNode(BinaryOperationNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         Value left = res.register(visit(node.getStartNode(), context));
         if (res.shouldReturn()) return res;
         Value right = res.register(visit(node.getEndNode(), context));
@@ -135,8 +129,8 @@ public class Interpreter {
         return res.success(result.getLeft().setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
-    public RTResult visitUnaryOperationNode(UnaryOperationNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitUnaryOperationNode(UnaryOperationNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         Value val = res.register(visit(node.getNode(), context));
         if (res.shouldReturn()) return res;
 
@@ -155,8 +149,8 @@ public class Interpreter {
         return res.success(val.setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
-    public RTResult visitVarAccessNode(VarAccessNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitVarAccessNode(VarAccessNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         String varName = (String) node.getToken().getValue();
         Value value;
         if (node.getContext() == null)
@@ -176,16 +170,16 @@ public class Interpreter {
         return res.success(value);
     }
 
-    public RTResult visitVarAssignNode(VarAssignNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitVarAssignNode(VarAssignNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
 
         Value value = res.register(visit(node.getValueNode(), context));
         if (res.shouldReturn()) return res;
         return visitVarAssignNode(node, value, context);
     }
 
-    public RTResult visitVarAssignNode(VarAssignNode node, Value value, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitVarAssignNode(VarAssignNode node, Value value, Context context) {
+        RunTimeResult res = new RunTimeResult();
         String varName = (String) node.getToken().getValue();
 
         String expectedType = null;
@@ -201,7 +195,7 @@ public class Interpreter {
                 return res.success(value);
             } else if (Constants.getInstance().CONVERT_CLASSES.containsKey(expectedType)) {
                 try {
-                    value = res.register((RTResult) Constants.getInstance().CONVERT_CLASSES.get(expectedType).getMethod("from", Value.class).invoke(null, value));
+                    value = res.register((RunTimeResult) Constants.getInstance().CONVERT_CLASSES.get(expectedType).getMethod("from", Value.class).invoke(null, value));
                     if (res.shouldReturn()) return res;
                     Error err = context.getSymbolTable().set(expectedType, varName, value, node.getMods());
                     if (err != null)
@@ -219,7 +213,7 @@ public class Interpreter {
                 if (Constants.getInstance().CONVERT_CLASSES.containsKey(
                         context.getSymbolTable().getSymbolByName(varName).getType())) {
                     try {
-                        value = res.register((RTResult) Constants.getInstance().CONVERT_CLASSES.get(context.getSymbolTable().getSymbolByName(varName).getType()).getMethod("from", Value.class).invoke(null, value));
+                        value = res.register((RunTimeResult) Constants.getInstance().CONVERT_CLASSES.get(context.getSymbolTable().getSymbolByName(varName).getType()).getMethod("from", Value.class).invoke(null, value));
                         if (res.shouldReturn()) return res;
                         err = context.getSymbolTable().set(null, varName, value, null);
                         if (err != null)
@@ -236,8 +230,8 @@ public class Interpreter {
         return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "Type not defined. Use 'var' or 'const' for dynamic typing.", context));
     }
 
-    public RTResult visitValueListNode(ValueListNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitValueListNode(ValueListNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         List<Value> list = new ArrayList<>();
         for (Node n : node.getNodes()) {
             Value val = res.register(visit(n, context));
@@ -247,8 +241,8 @@ public class Interpreter {
         return res.success(new LList(list).setContext(context).setPos(node.getPosStart(), node.getPosEnd()));
     }
 
-    public RTResult visitVarListAssignNode(VarListAssignNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitVarListAssignNode(VarListAssignNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         List<Tuple<Token, Token>> vars = node.getVars();
         Value value = res.register(visit(node.getValueNode(), context));
         if (res.shouldReturn()) return res;
@@ -275,8 +269,8 @@ public class Interpreter {
         return res.failure(new Error.RunTimeError(value.getPosStart(), value.getPosEnd(), "Expected either multiple values or a value matching a shared type of all variables.", context));
     }
 
-    public RTResult visitConditionalNode(ConditionalNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitConditionalNode(ConditionalNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         for (Tuple<Tuple<Node, Node>, Boolean> cond : node.getCases()) {
             Tuple<Node, Node> condition = cond.getLeft();
             Value conditionVal = res.register(visit(condition.getLeft(), context));
@@ -300,9 +294,9 @@ public class Interpreter {
         return res.success(NullType.Void);
     }
 
-    public RTResult visitForNode(ForNode node, Context context) {
-        RTResult res = new RTResult();
-        LInt step_value;
+    public RunTimeResult visitForNode(ForNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
+        LInt stepValue;
         Context loopContext = new Context("<anonymous for loop>", context, node.getPosStart());
         loopContext.setSymbolTable(new SymbolTable(context.getSymbolTable()));
 
@@ -323,15 +317,15 @@ public class Interpreter {
             if (res.shouldReturn()) return res;
             if (!(step instanceof LInt))
                 return res.failure(new Error.RunTimeError(step.getPosStart(), step.getPosEnd(), "Expected int value", context));
-            step_value = (LInt) step;
+            stepValue = (LInt) step;
         } else
-            step_value = new LInt(1);
+            stepValue = new LInt(1);
 
          int[] i = {startValue.getValue()};
 
          Predicate<Void> condition;
 
-         if (step_value.getValue() >= 0) {
+         if (stepValue.getValue() >= 0) {
             condition = v -> i[0] < endValue.getValue();
          } else {
              condition = v -> i[0] > endValue.getValue();
@@ -339,7 +333,7 @@ public class Interpreter {
          context.getSymbolTable().set(((String) node.getVarTypeToken().getValue()), ((String) node.getVarNameToken().getValue()), new LInt(i[0]), ModifierList.getDefault());
          while (condition.test(null)) {
              context.getSymbolTable().set(null, ((String) node.getVarNameToken().getValue()), new LInt(i[0]), ModifierList.getDefault());
-             i[0] += step_value.getValue();
+             i[0] += stepValue.getValue();
 
              res.register(visit(node.getBodyNode(), loopContext));
              if (!res.isLoopBreak() && !res.isLoopCont() && res.shouldReturn()) return res;
@@ -354,8 +348,8 @@ public class Interpreter {
          return res.success(NullType.Void);
     }
 
-    public RTResult visitWhileNode(WhileNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitWhileNode(WhileNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         Context loopContext = new Context("<anonymous while loop>", context, node.getPosStart());
         loopContext.setSymbolTable(new SymbolTable(context.getSymbolTable()));
 
@@ -378,8 +372,8 @@ public class Interpreter {
     }
 
 
-    public RTResult visitFuncDefNode(FuncDefNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitFuncDefNode(FuncDefNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         List<ReturnNode> retNodes = node.getBodyNode().getNodes().stream().filter(n -> n instanceof ReturnNode).map(n -> (ReturnNode) n).collect(Collectors.toList());
         List<String> retTypes = node.getReturnTypes();
 
@@ -420,8 +414,8 @@ public class Interpreter {
         return res.success(funcValue);
     }
 
-    public RTResult visitCallNode(CallNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitCallNode(CallNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         List<Value> args = new ArrayList<>();
         Value valueToCall = res.register(visit(node.getNodeToCall(), context));
         if (res.shouldReturn()) return res;
@@ -438,8 +432,8 @@ public class Interpreter {
         return res.success(returnVal);
     }
 
-    public RTResult visitIndexNode(IndexNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitIndexNode(IndexNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         Value left = res.register(visit(node.getLeft(), context));
         if (res.shouldReturn()) return res;
         Value startIndex = res.register(visit(node.getStartIndex(), context));
@@ -451,8 +445,8 @@ public class Interpreter {
         return res.success(result.getLeft());
     }
 
-    public RTResult visitSetIndexNode(SetIndexNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitSetIndexNode(SetIndexNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         Value left = res.register(visit(node.getLeft(), context));
         if (res.shouldReturn()) return res;
         Value startIndex = res.register(visit(node.getStartIndex(), context));
@@ -466,12 +460,12 @@ public class Interpreter {
         return res.success(result.getLeft());
     }
 
-    public RTResult visitContinueNode(ContinueNode node, Context context) {
-        return new RTResult().successCont();
+    public RunTimeResult visitContinueNode(ContinueNode node, Context context) {
+        return new RunTimeResult().successCont();
     }
 
-    public RTResult visitReturnNode(ReturnNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitReturnNode(ReturnNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         List<Value> retVals = new ArrayList<>();
         if (node.getNodesToCall().size() != 0) {
             for (Node n : node.getNodesToCall()) {
@@ -487,12 +481,12 @@ public class Interpreter {
         return res.successRet(new LList(retVals));
     }
 
-    public RTResult visitBreakNode(BreakNode node, Context context) {
-        return new RTResult().successBreak();
+    public RunTimeResult visitBreakNode(BreakNode node, Context context) {
+        return new RunTimeResult().successBreak();
     }
 
-    public RTResult visitImportNode(ImportNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitImportNode(ImportNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         Path path = Paths.get(Shell.baseDir, node.getFileName().getValue() + ".ls");
         if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         try {
@@ -533,8 +527,8 @@ public class Interpreter {
         return res.success(NullType.Void);
     }
 
-    public RTResult visitFileImportNode(FileImportNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitFileImportNode(FileImportNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         Path path = Paths.get(Shell.baseDir, node.getFileName().getValue() + ".ls");
         if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         try {
@@ -548,8 +542,8 @@ public class Interpreter {
         return res.success(NullType.Void);
     }
 
-    public RTResult visitClassNode(ClassNode node, Context context) {
-        RTResult res = new RTResult();
+    public RunTimeResult visitClassNode(ClassNode node, Context context) {
+        RunTimeResult res = new RunTimeResult();
         String name = ((String) node.getVarName().getValue());
         Context classCtx = new Context(name, context, node.getPosStart());
         classCtx.setSymbolTable(new SymbolTable());
@@ -558,12 +552,12 @@ public class Interpreter {
         List<LFunction> statMethods = new ArrayList<>();
         List<Value> statics = new ArrayList<>();
         List<VarNode> fields = new ArrayList<>();
-        LFunction constructor = null;
+        LFunction constructor;
         if (node.getConstructor() != null) {
             constructor = (LFunction) res.register(visit(node.getConstructor(), classCtx));
             classCtx.getSymbolTable().remove("constructor");
         } else {
-            constructor = new LFunction("constructor", new MultilineNode(Collections.emptyList(), node.getPosStart(), node.getPosEnd()), Collections.emptyList(), Collections.emptyList());
+            constructor = new LFunction("constructor", new MultilineNode(Collections.emptyList(), node.getPosStart(), node.getPosEnd()), null, Collections.emptyList());
         }
         for (VarNode n : node.getFields()) {
             if (n.getMods().isStat()) {

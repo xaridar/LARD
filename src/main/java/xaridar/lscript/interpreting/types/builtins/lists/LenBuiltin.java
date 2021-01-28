@@ -1,10 +1,10 @@
-package lscript.interpreting.types.builtins.lists;
+package xaridar.lscript.interpreting.types.builtins.lists;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.*;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.*;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +22,7 @@ public class LenBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         int len = 0;
         switch (execNum) {
             case 0:
@@ -35,6 +35,6 @@ public class LenBuiltin implements IExecutable {
                 len = ((LMap) execCtx.getSymbolTable().get("collection")).getMap().size();
                 break;
         }
-        return new RTResult().success(new LInt(len).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+        return new RunTimeResult().success(new LInt(len).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
     }
 }

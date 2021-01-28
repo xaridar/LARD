@@ -1,13 +1,13 @@
-package lscript.interpreting.types.builtins.files;
+package xaridar.lscript.interpreting.types.builtins.files;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.errors.Error;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.LFile;
-import lscript.interpreting.types.LString;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.LFile;
+import xaridar.lscript.interpreting.types.LString;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,8 +31,8 @@ public class OpenBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        RTResult res = new RTResult();
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+        RunTimeResult res = new RunTimeResult();
         LString path = (LString) execCtx.getSymbolTable().get("path");
         LString modes = (LString) execCtx.getSymbolTable().get("modes");
         LFile f;

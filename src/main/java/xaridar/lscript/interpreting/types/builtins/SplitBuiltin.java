@@ -1,13 +1,12 @@
-package lscript.interpreting.types.builtins;
+package xaridar.lscript.interpreting.types.builtins;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.LList;
-import lscript.interpreting.types.LString;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.LList;
+import xaridar.lscript.interpreting.types.LString;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,13 +24,13 @@ public class SplitBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         LString toSplit = (LString) execCtx.getSymbolTable().get("toSplit");
         String toSplitStr = toSplit.getValue();
         String splitBy = "";
         if (execNum == 1) {
             splitBy = ((LString) execCtx.getSymbolTable().get("regex")).getValue();
         }
-        return new RTResult().success(new LList(Arrays.stream(toSplitStr.split(splitBy)).map(str -> new LString(str).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd())).collect(Collectors.toList())).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
+        return new RunTimeResult().success(new LList(Arrays.stream(toSplitStr.split(splitBy)).map(str -> new LString(str).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd())).collect(Collectors.toList())).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
     }
 }

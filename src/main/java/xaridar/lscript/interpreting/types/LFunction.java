@@ -1,17 +1,13 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.Constants;
-import lscript.*;
-import lscript.errors.Error;
-import lscript.interpreting.Context;
-import lscript.interpreting.Interpreter;
-import lscript.parsing.nodes.MultilineNode;
-import lscript.parsing.nodes.Node;
-import lscript.interpreting.RTResult;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.Interpreter;
+import xaridar.lscript.parsing.nodes.Node;
+import xaridar.lscript.interpreting.RunTimeResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import xaridar.lscript.Tuple;
 
 public class LFunction extends BaseFunction {
 
@@ -30,8 +26,8 @@ public class LFunction extends BaseFunction {
     }
 
     @Override
-    public RTResult execute(List<Value> args) {
-        RTResult res = new RTResult();
+    public RunTimeResult execute(List<Value> args) {
+        RunTimeResult res = new RunTimeResult();
         Interpreter interpreter = Interpreter.getInstance();
         Context newContext = generateExecContext();
 

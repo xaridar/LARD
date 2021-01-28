@@ -1,8 +1,8 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.interpreting.ModifierList;
-import lscript.lexing.Position;
-import lscript.lexing.Token;
+import xaridar.lscript.interpreting.ModifierList;
+import xaridar.lscript.lexing.Position;
+import xaridar.lscript.lexing.Token;
 
 import java.util.List;
 

@@ -1,11 +1,11 @@
-package lscript.interpreting.types.builtins.lists;
+package xaridar.lscript.interpreting.types.builtins.lists;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BasicType;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BasicType;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class AppendBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
-        return new RTResult().success(((BasicType) execCtx.getSymbolTable().get("container")).addedTo(((BasicType) execCtx.getSymbolTable().get("value"))).getLeft());
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+        return new RunTimeResult().success(((BasicType) execCtx.getSymbolTable().get("container")).addedTo(((BasicType) execCtx.getSymbolTable().get("value"))).getLeft());
     }
 }

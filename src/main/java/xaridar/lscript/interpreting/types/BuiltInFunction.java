@@ -1,10 +1,10 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.errors.Error;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,8 +16,8 @@ public class BuiltInFunction extends BaseFunction {
     }
 
     @Override
-    public RTResult execute(List<Value> args) {
-        RTResult res = new RTResult();
+    public RunTimeResult execute(List<Value> args) {
+        RunTimeResult res = new RunTimeResult();
         Context execCtx = generateExecContext();
         IExecutable builtin = IExecutable.builtins.stream().filter(func -> func.getName().equals(name)).findFirst().orElse(null);
         if (builtin == null) {
@@ -26,7 +26,7 @@ public class BuiltInFunction extends BaseFunction {
         int execNum = -1;
         List<List<Tuple<String, String>>> argNames = builtin.getArgNames();
         for (int i = 0, argNamesSize = argNames.size(); i < argNamesSize; i++) {
-            res = new RTResult();
+            res = new RunTimeResult();
             List<Tuple<String, String>> list = argNames.get(i);
 
             res.register(checkAndPopArgs(list, args, execCtx));

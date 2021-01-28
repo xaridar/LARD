@@ -2,7 +2,7 @@ package xaridar.lscript.interpreting.types;
 
 import xaridar.lscript.Tuple;
 import xaridar.lscript.errors.Error;
-import xaridar.lscript.interpreting.RTResult;
+import xaridar.lscript.interpreting.RunTimeResult;
 
 public class LByte extends BasicType {
 
@@ -14,8 +14,8 @@ public class LByte extends BasicType {
     }
 
     @SuppressWarnings("unused")
-    public static RTResult from(Value val) {
-        RTResult res = new RTResult();
+    public static RunTimeResult from(Value val) {
+        RunTimeResult res = new RunTimeResult();
         if (val instanceof LNumber) {
             if (((LNumber) val).getValue().byteValue() < Byte.MAX_VALUE && ((LNumber) val).getValue().byteValue() < Byte.MAX_VALUE) {
                 return res.success(new LByte(((LNumber) val).getValue().byteValue()).setContext(val.getContext()).setPos(val.getPosStart(), val.getPosEnd()));

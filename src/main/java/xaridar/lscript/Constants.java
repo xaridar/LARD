@@ -1,9 +1,9 @@
-package lscript;
+package xaridar.lscript;
 
-import lscript.interpreting.types.BasicType;
-import lscript.interpreting.types.LByte;
-import lscript.interpreting.types.LList;
-import lscript.interpreting.types.LString;
+import xaridar.lscript.interpreting.types.BasicType;
+import xaridar.lscript.interpreting.types.LByte;
+import xaridar.lscript.interpreting.types.LList;
+import xaridar.lscript.interpreting.types.LString;
 
 import java.util.*;
 

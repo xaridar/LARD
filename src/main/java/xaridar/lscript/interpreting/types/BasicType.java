@@ -1,10 +1,10 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.Tuple;
-import lscript.errors.Error;
-import lscript.interpreting.Context;
-import lscript.lexing.Position;
-import lscript.lexing.Token;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.lexing.Position;
+import xaridar.lscript.lexing.Token;
 
 public abstract class BasicType extends Value {
 

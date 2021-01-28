@@ -1,7 +1,7 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.Tuple;
-import lscript.errors.Error;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.errors.Error;
 
 import java.util.HashMap;
 

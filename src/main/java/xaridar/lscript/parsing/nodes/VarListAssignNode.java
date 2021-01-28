@@ -1,12 +1,9 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.Tuple;
-import lscript.lexing.Token;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.lexing.Token;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * A Node representing an attempt to assign a value to a list of variables.

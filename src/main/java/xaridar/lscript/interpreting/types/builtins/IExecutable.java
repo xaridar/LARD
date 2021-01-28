@@ -1,18 +1,18 @@
-package lscript.interpreting.types.builtins;
+package xaridar.lscript.interpreting.types.builtins;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.builtins.files.OpenBuiltin;
-import lscript.interpreting.types.builtins.files.ReadFileBultin;
-import lscript.interpreting.types.builtins.files.WriteFileBuiltin;
-import lscript.interpreting.types.builtins.input.InputBuiltin;
-import lscript.interpreting.types.builtins.input.NumInputBuiltin;
-import lscript.interpreting.types.builtins.lists.*;
-import lscript.interpreting.types.builtins.math.*;
-import lscript.interpreting.types.builtins.random.RandBuiltin;
-import lscript.interpreting.types.builtins.random.RandIntBuiltin;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.builtins.files.OpenBuiltin;
+import xaridar.lscript.interpreting.types.builtins.files.ReadFileBultin;
+import xaridar.lscript.interpreting.types.builtins.files.WriteFileBuiltin;
+import xaridar.lscript.interpreting.types.builtins.input.InputBuiltin;
+import xaridar.lscript.interpreting.types.builtins.input.NumInputBuiltin;
+import xaridar.lscript.interpreting.types.builtins.lists.*;
+import xaridar.lscript.interpreting.types.builtins.math.*;
+import xaridar.lscript.interpreting.types.builtins.random.RandBuiltin;
+import xaridar.lscript.interpreting.types.builtins.random.RandIntBuiltin;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +39,7 @@ public interface IExecutable {
      * @param fun - The BuiltinFunction value being called, for access to its state and variables.
      * @return
      */
-    RTResult execute(Context execCtx, int execNum, BuiltInFunction fun);
+    RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun);
 
     List<IExecutable> builtins = Arrays.asList(
             new PrintBuiltin(),

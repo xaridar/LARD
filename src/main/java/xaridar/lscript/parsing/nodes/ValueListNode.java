@@ -1,6 +1,4 @@
-package lscript.parsing.nodes;
-
-import lscript.lexing.Position;
+package xaridar.lscript.parsing.nodes;
 
 import java.util.List;
 

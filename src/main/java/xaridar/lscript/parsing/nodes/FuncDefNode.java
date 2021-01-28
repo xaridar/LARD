@@ -1,13 +1,10 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import lscript.Tuple;
-import lscript.interpreting.ModifierList;
-import lscript.lexing.Token;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.ModifierList;
+import xaridar.lscript.lexing.Token;
 
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 /**
  * A simple Node representing a function definition.

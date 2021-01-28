@@ -1,11 +1,11 @@
-package lscript.interpreting.types.builtins.files;
+package xaridar.lscript.interpreting.types.builtins.files;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.errors.Error;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.*;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.*;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,15 +28,15 @@ public class ReadFileBultin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         LFile f = (LFile) execCtx.getSymbolTable().get("f");
         if (!f.canRead()) {
-            return new RTResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot read a file in '" + f.getAccessModes() + "' mode.", execCtx));
+            return new RunTimeResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot read a file in '" + f.getAccessModes() + "' mode.", execCtx));
         }
         try {
             if (!f.binaryAccess()) {
                 String s = String.join("\n", Files.readAllLines(Paths.get(f.getPath()), StandardCharsets.UTF_8));
-                return new RTResult().success(new LString(s).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
+                return new RunTimeResult().success(new LString(s).setPos(fun.getPosStart(), fun.getPosEnd()).setContext(fun.getContext()));
             }
             else {
                 byte[] s = Files.readAllBytes(Paths.get(f.getPath()));
@@ -44,10 +44,10 @@ public class ReadFileBultin implements IExecutable {
                 for (int i = 0; i < s.length; i++) {
                     bytes[i] = Byte.valueOf(s[i]);
                 }
-                return new RTResult().success(new LList(Arrays.stream(bytes).map(LByte::new).collect(Collectors.toList())));
+                return new RunTimeResult().success(new LList(Arrays.stream(bytes).map(LByte::new).collect(Collectors.toList())));
             }
         } catch (IOException e) {
-            return new RTResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot find file '" + f.getPath() + "'", execCtx));
+            return new RunTimeResult().failure(new Error.FileAccessError(fun.getPosStart(), fun.getPosEnd(), "Cannot find file '" + f.getPath() + "'", execCtx));
         }
     }
 }

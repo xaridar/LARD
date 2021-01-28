@@ -1,6 +1,6 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.lexing.Token;
+import xaridar.lscript.lexing.Token;
 
 /**
  * A Node that represents an 'import' token followed by a filename.

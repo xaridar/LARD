@@ -1,4 +1,4 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
 public class LFloat extends LNumber {
 

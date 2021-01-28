@@ -1,13 +1,13 @@
-package lscript.interpreting.types.builtins.lists;
+package xaridar.lscript.interpreting.types.builtins.lists;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.interpreting.RTResult;
-import lscript.interpreting.types.BuiltInFunction;
-import lscript.interpreting.types.LList;
-import lscript.interpreting.types.LString;
-import lscript.interpreting.types.Value;
-import lscript.interpreting.types.builtins.IExecutable;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.interpreting.types.BuiltInFunction;
+import xaridar.lscript.interpreting.types.LList;
+import xaridar.lscript.interpreting.types.LString;
+import xaridar.lscript.interpreting.types.Value;
+import xaridar.lscript.interpreting.types.builtins.IExecutable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +25,7 @@ public class JoinBuiltin implements IExecutable {
     }
 
     @Override
-    public RTResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
+    public RunTimeResult execute(Context execCtx, int execNum, BuiltInFunction fun) {
         LString delimiter = (LString) execCtx.getSymbolTable().get("delimiter");
         LList list = (LList) execCtx.getSymbolTable().get("toJoin");
         StringBuilder builder = new StringBuilder();
@@ -34,6 +34,6 @@ public class JoinBuiltin implements IExecutable {
             Value val = list.getElements().get(i);
             builder.append(val.toString());
         }
-        return new RTResult().success(new LString(builder.toString()).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
+        return new RunTimeResult().success(new LString(builder.toString()).setContext(fun.getContext()).setPos(fun.getPosStart(), fun.getPosEnd()));
     }
 }

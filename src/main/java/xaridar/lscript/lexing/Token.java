@@ -1,6 +1,6 @@
-package lscript.lexing;
+package xaridar.lscript.lexing;
 
-import lscript.TokenEnum;
+import xaridar.lscript.TokenEnum;
 
 /**
  * A piece of data created by the Lexer that stores information about one small piece of input for convenience in parsing.

@@ -2,30 +2,30 @@ package xaridar.lscript.errors;
 
 import xaridar.lscript.lexing.Position;
 
-public class ErrorUtil {
-    public static String string_with_arrows(String text, Position pos_start, Position pos_end) {
+public class ErrorUtilities {
+    public static String stringWithArrows(String text, Position posStart, Position posEnd) {
         StringBuilder result = new StringBuilder();
 
-        String sub = text.substring(0, pos_start.getIdx());
-        int idx_start = Math.max(sub.lastIndexOf('\n'), 0);
-        int idx_end = text.indexOf('\n', idx_start + 1);
-        if (idx_end< 0)
-            idx_end = text.length();
+        String sub = text.substring(0, posStart.getIdx());
+        int idxStart = Math.max(sub.lastIndexOf('\n'), 0);
+        int idxEnd = text.indexOf('\n', idxStart + 1);
+        if (idxEnd< 0)
+            idxEnd = text.length();
 
-        int line_count = pos_end.getLn() - pos_start.getLn() + 1;
-        for (int i = 0; i < line_count; i++) {
+        int lineCount = posEnd.getLn() - posStart.getLn() + 1;
+        for (int i = 0; i < lineCount; i++) {
 
-            String line = text.substring(idx_start, idx_end);
-            int col_start = i == 0 ? pos_start.getCol() : 0;
-            int col_end = i == line_count - 1 ? pos_end.getCol() : line.length() - 1;
+            String line = text.substring(idxStart, idxEnd);
+            int colStart = i == 0 ? posStart.getCol() : 0;
+            int colEnd = i == lineCount - 1 ? posEnd.getCol() : line.length() - 1;
 
             result.append(line).append('\n');
-            result.append(new String(new char[col_start]).replace("\0", " ")).append(new String(new char[col_end - col_start]).replace("\0", "^"));
+            result.append(new String(new char[colStart]).replace("\0", " ")).append(new String(new char[colEnd - colStart]).replace("\0", "^"));
 
-            idx_start = idx_end;
-            idx_end = text.indexOf('\n', idx_start + 1);
-            if (idx_end< 0)
-                idx_end = text.length();
+            idxStart = idxEnd;
+            idxEnd = text.indexOf('\n', idxStart + 1);
+            if (idxEnd< 0)
+                idxEnd = text.length();
         }
 
         return result.toString().replace("\t", "");

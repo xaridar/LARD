@@ -1,4 +1,4 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
 /**
  * A simple Node representing a while loop.

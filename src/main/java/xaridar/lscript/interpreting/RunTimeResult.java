@@ -6,7 +6,7 @@ import xaridar.lscript.interpreting.types.Value;
 /**
  * Manages results from interpreting, and holds a success Value, return Value from a function, break, continue, or Error as a result.
  */
-public class RTResult {
+public class RunTimeResult {
 
     private Value funcRetVal;
     private Error error;
@@ -14,7 +14,7 @@ public class RTResult {
     private boolean loopCont;
     private boolean loopBreak;
 
-    public RTResult() {
+    public RunTimeResult() {
         reset();
     }
 
@@ -34,7 +34,7 @@ public class RTResult {
      * @param res - the RTResult to register
      * @return the registered RTResult's Value.
      */
-    public Value register(RTResult res) {
+    public Value register(RunTimeResult res) {
         error = res.getError();
         funcRetVal = res.getFuncRetVal();
         loopCont = res.isLoopCont();
@@ -47,7 +47,7 @@ public class RTResult {
      * @param value - The Value to register.
      * @return this RTResult, which can be registered later.
      */
-    public RTResult success(Value value) {
+    public RunTimeResult success(Value value) {
         reset();
         this.value = value;
         return this;
@@ -58,7 +58,7 @@ public class RTResult {
      * @param value - The Value to register.
      * @return this RTResult, which can be registered later.
      */
-    public RTResult successRet(Value value) {
+    public RunTimeResult successRet(Value value) {
         reset();
         this.funcRetVal = value;
         return this;
@@ -68,7 +68,7 @@ public class RTResult {
      * Registers a continue block and returns itself for registration.
      * @return this RTResult, which can be registered later.
      */
-    public RTResult successCont() {
+    public RunTimeResult successCont() {
         reset();
         this.loopCont = true;
         return this;
@@ -78,7 +78,7 @@ public class RTResult {
      * Registers a break block and returns itself for registration.
      * @return this RTResult, which can be registered later.
      */
-    public RTResult successBreak() {
+    public RunTimeResult successBreak() {
         reset();
         this.loopBreak = true;
         return this;
@@ -97,7 +97,7 @@ public class RTResult {
      * @param error - The Error to register.
      * @return this ParseResult, which can be registered later.
      */
-    public RTResult failure(Error error) {
+    public RunTimeResult failure(Error error) {
         reset();
         this.error = error;
         return this;

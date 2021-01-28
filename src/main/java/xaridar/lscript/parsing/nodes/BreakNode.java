@@ -1,6 +1,6 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.lexing.Position;
+import xaridar.lscript.lexing.Position;
 
 /**
  * A simple Node representing a 'break' statement.

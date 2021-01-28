@@ -1,19 +1,18 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.TokenEnum;
-import lscript.Tuple;
-import lscript.errors.Error;
-import lscript.interpreting.Context;
-import lscript.interpreting.Symbol;
-import lscript.lexing.Position;
-import lscript.lexing.Token;
-import lscript.interpreting.RTResult;
-import lscript.parsing.nodes.*;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.interpreting.Symbol;
+import xaridar.lscript.lexing.Position;
+import xaridar.lscript.lexing.Token;
+import xaridar.lscript.interpreting.RunTimeResult;
+import xaridar.lscript.parsing.nodes.*;
 
 import java.util.Collections;
 import java.util.List;
 
-import static lscript.TokenEnum.*;
+import static xaridar.lscript.TokenEnum.*;
 
 /**
  * Holds a single value of any type, including int, float, boolean, list, map, function, file, and nulltype.
@@ -160,8 +159,8 @@ public abstract class Value {
      * @param args - A list of args for execution of a function.
      * @return An RTResult containing either a Value or an Error; without overriding, it returns an UnsupportedOperationError.
      */
-    public RTResult execute(List<Value> args) {
-        return new RTResult().failure(new Error.UnsupportedOperationError(posStart, posEnd, "Expected function", context));
+    public RunTimeResult execute(List<Value> args) {
+        return new RunTimeResult().failure(new Error.UnsupportedOperationError(posStart, posEnd, "Expected function", context));
     }
 
     /**

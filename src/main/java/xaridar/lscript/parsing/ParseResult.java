@@ -1,7 +1,7 @@
-package lscript.parsing;
+package xaridar.lscript.parsing;
 
-import lscript.errors.Error;
-import lscript.parsing.nodes.Node;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.parsing.nodes.Node;
 
 /**
  * Manages results from parsing, and holds a success Node or Error as a result.

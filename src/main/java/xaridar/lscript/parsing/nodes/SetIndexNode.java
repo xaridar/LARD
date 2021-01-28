@@ -1,7 +1,7 @@
-package lscript.parsing.nodes;
+package xaridar.lscript.parsing.nodes;
 
-import lscript.TokenEnum;
-import lscript.lexing.Token;
+import xaridar.lscript.TokenEnum;
+import xaridar.lscript.lexing.Token;
 
 /**
  * A simple Node representing an attempt to set the index of an object to a value.

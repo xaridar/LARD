@@ -1,9 +1,9 @@
-package lscript.interpreting.types;
+package xaridar.lscript.interpreting.types;
 
-import lscript.Tuple;
-import lscript.interpreting.Context;
-import lscript.errors.Error;
-import lscript.interpreting.RTResult;
+import xaridar.lscript.Tuple;
+import xaridar.lscript.interpreting.Context;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.RunTimeResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +67,8 @@ public class LString extends BasicType {
     }
 
     @SuppressWarnings("unused")
-    public static RTResult from(Value val) {
-        return new RTResult().success(new LString(val.getValue().toString()).setContext(val.getContext()).setPos(val.getPosStart(), val.getPosEnd()));
+    public static RunTimeResult from(Value val) {
+        return new RunTimeResult().success(new LString(val.getValue().toString()).setContext(val.getContext()).setPos(val.getPosStart(), val.getPosEnd()));
     }
 
     @Override

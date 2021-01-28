@@ -1,4 +1,4 @@
-package lscript;
+package xaridar.lscript;
 
 /**
  * Simple datatype for holding two parallel values
