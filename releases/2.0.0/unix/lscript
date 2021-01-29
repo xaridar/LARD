@@ -1,0 +1,8 @@
+#!/bin/bash
+JAR_PATH=$(dirname "$(realpath "$0")")/LScript.jar
+if [[ "$1" == "" ]];
+	then
+		java -jar "$JAR_PATH"
+else
+	java -jar "$JAR_PATH" "$1"
+fi

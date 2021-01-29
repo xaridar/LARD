@@ -1,8 +1,7 @@
 package xaridar.lscript;
 
 /*
- * This is a project written by Elliot Topper called LScript.
- * It is an interpreted scripting language with static typing.
+ * LScript is an interpreted scripting language with static typing, written in Java by Xaridar.
  *
  * @version 2.0.0
  * @author Xaridar
