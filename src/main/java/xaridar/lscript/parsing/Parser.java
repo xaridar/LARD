@@ -3,7 +3,7 @@ package xaridar.lscript.parsing;
 /*
  * LScript is an interpreted scripting language with static typing, written in Java by Xaridar.
  *
- * @version 2.0.0
+ * @version 2.1.0
  * @author Xaridar
  */
 
@@ -117,10 +117,20 @@ public class Parser {
             if (currentToken.getType() == TT_DOT) {
                 res.registerAdvancement();
                 advance();
+                List<Token> contexts = new ArrayList<>();
+                contexts.add(tok);
                 Token varTok = currentToken;
                 res.registerAdvancement();
                 advance();
-                return res.success(new VarAccessNode(tok, varTok));
+                while (currentToken.getType() == TT_DOT) {
+                    res.registerAdvancement();
+                    advance();
+                    contexts.add(varTok);
+                    varTok = currentToken;
+                    res.registerAdvancement();
+                    advance();
+                }
+                return res.success(new VarAccessNode(contexts, varTok));
             }
             return res.success(new VarAccessNode(tok));
         } else if (tok.getType().equals(TT_LEFT_PAREN)) {

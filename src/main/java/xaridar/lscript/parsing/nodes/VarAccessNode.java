@@ -3,27 +3,30 @@ package xaridar.lscript.parsing.nodes;
 /*
  * LScript is an interpreted scripting language with static typing, written in Java by Xaridar.
  *
- * @version 2.0.0
+ * @version 2.1.0
  * @author Xaridar
  */
 
 import xaridar.lscript.lexing.Token;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A simple Node representing an attempt to access a variable.
  */
 public class VarAccessNode extends Node {
 
-    private final Token context;
+    private final List<Token> nestedContexts;
     private final Token token;
 
     /**
-     * @param context - A String representing the Context name to access the variable from (separated by '.').
+     * @param nestedContexts - A List of nested Token names representing the Context name to access the variable from (separated by '.').
      * @param token - The Token containing the variable name to be accessed.
      */
-    public VarAccessNode(Token context, Token token) {
-        super(context != null ? context.getPosStart().copy() : token.getPosStart().copy(), token.getPosEnd().copy());
-        this.context = context;
+    public VarAccessNode(List<Token> nestedContexts, Token token) {
+        super(nestedContexts.size() != 0 ? nestedContexts.get(0).getPosStart().copy() : token.getPosStart().copy(), token.getPosEnd().copy());
+        this.nestedContexts = nestedContexts;
         this.token = token;
     }
     /**
@@ -31,7 +34,7 @@ public class VarAccessNode extends Node {
      * @param token - The Token containing the variable name to be accessed.
      */
     public VarAccessNode(Token token) {
-        this(null, token);
+        this(Collections.emptyList(), token);
     }
 
     /**
@@ -42,9 +45,9 @@ public class VarAccessNode extends Node {
     }
 
     /**
-     * @return A String representing the Context name to access the variable from (separated by '.').
+     * @return A List of nested Token names representing the Context name to access the variable from (separated by '.').
      */
-    public Token getContext() {
-        return context;
+    public List<Token> getContext() {
+        return nestedContexts;
     }
 }

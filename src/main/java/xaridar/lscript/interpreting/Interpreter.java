@@ -3,7 +3,7 @@ package xaridar.lscript.interpreting;
 /*
  * LScript is an interpreted scripting language with static typing, written in Java by Xaridar.
  *
- * @version 2.0.0
+ * @version 2.1.0
  * @author Xaridar
  */
 
@@ -15,11 +15,13 @@ import xaridar.lscript.parsing.nodes.*;
 import xaridar.lscript.interpreting.types.*;
 import xaridar.lscript.interpreting.types.LFloat;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.Boolean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -103,7 +105,7 @@ public class Interpreter {
         List<Value> vals = new ArrayList<>();
         for (Node n : node.getNodes()) {
             if (setOnlySymbols && context.getParent() == null) {
-                if (!(n instanceof FuncDefNode || n instanceof VarAssignNode)) {
+                if (!(n instanceof FuncDefNode || n instanceof VarAssignNode || n instanceof FileImportNode || n instanceof ImportNode)) {
                     continue;
                 }
             }
@@ -160,17 +162,31 @@ public class Interpreter {
         RunTimeResult res = new RunTimeResult();
         String varName = (String) node.getToken().getValue();
         Value value;
-        if (node.getContext() == null)
+        if (node.getContext().size() == 0)
             value = context.getSymbolTable().get(varName);
         else {
-            if (context.getContainedByName(node.getContext().getValue().toString()) == null) {
-                return res.failure(new Error.RunTimeError(node.getContext().getPosStart(), node.getContext().getPosEnd(), "'" + node.getContext().getValue().toString() + "' is not defined", context));
+            Context lastContext = null;
+            String fullCtx = "";
+            for (Token ctx : node.getContext()) {
+                if (lastContext == null) {
+                    if (context.getContainedByName(ctx.getValue().toString()) == null) {
+                        return res.failure(new Error.RunTimeError(ctx.getPosStart(), ctx.getPosEnd(), "'" + ctx.getValue().toString() + "' is not defined", context));
+                    }
+                    lastContext = context.getContainedByName(((String) ctx.getValue()));
+                } else {
+                    if (lastContext.getContainedByName(ctx.getValue().toString()) == null) {
+                        return res.failure(new Error.RunTimeError(ctx.getPosStart(), ctx.getPosEnd(), "'" + ctx.getValue().toString() + "' is not defined", context));
+                    }
+                    lastContext = lastContext.getContainedByName(((String) ctx.getValue()));
+                }
+                fullCtx += ctx.getValue() + ".";
             }
-            if (context.getContainedByName(node.getContext().getValue().toString()).getSymbolTable().getSymbolByName(varName) == null)
-                return res.failure(new Error.RunTimeError(node.getToken().getPosStart(), node.getToken().getPosEnd(), "'" + node.getContext().getValue().toString() + "." + varName + "' is not defined", context));
-            if (!context.getContainedByName(node.getContext().getValue().toString()).getSymbolTable().getSymbolByName(varName).isAccessible())
-                return res.failure(new Error.IllegalAccessError(node.getContext().getPosStart(), node.getContext().getPosEnd(), "'" + varName + "' in '" + node.getContext().getValue() + "'", context));
-            value = context.getContainedByName(node.getContext().getValue().toString()).getSymbolTable().get(varName);
+            assert lastContext != null;
+            if (lastContext.getSymbolTable().getSymbolByName(varName) == null)
+                return res.failure(new Error.RunTimeError(node.getToken().getPosStart(), node.getToken().getPosEnd(), "'" + node.getContext().stream().map(token -> (String) token.getValue()).collect(Collectors.joining(".")) + "." + varName + "' is not defined", context));
+            if (!lastContext.getSymbolTable().getSymbolByName(varName).isAccessible())
+                return res.failure(new Error.IllegalAccessError(node.getContext().get(0).getPosStart(), node.getContext().get(0).getPosEnd(), "'" + varName + "' in '" + node.getContext().stream().map(token -> (String) token.getValue()).collect(Collectors.joining(".")) + "'", context));
+            value = lastContext.getSymbolTable().get(varName);
         }
         if (value == null) return res.failure(new Error.RunTimeError(node.getPosStart(), node.getPosEnd(), "'" + varName + "' is not defined", context));
         value = value.copy().setPos(node.getPosStart(), node.getPosEnd()).setContext(context);
@@ -536,7 +552,12 @@ public class Interpreter {
 
     public RunTimeResult visitFileImportNode(FileImportNode node, Context context) {
         RunTimeResult res = new RunTimeResult();
-        Path path = Paths.get(Shell.baseDir, node.getFileName().getValue() + ".ls");
+        Path path;
+        try {
+            path = Paths.get(Shell.baseDir, node.getFileName().getValue() + ".ls");
+        } catch (InvalidPathException ignored) {
+            return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "Cannot path absolutely", context));
+        }
         if (!Files.exists(path)) return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         try {
             Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), String.join("\n", Files.readAllLines(path)), true);
@@ -544,7 +565,7 @@ public class Interpreter {
             context.addContainedContext(node.getName(), resCtx.getLeft());
             context.getSymbolTable().set("module", node.getName(), new Module(node.getName()), ModifierList.getDefault());
         } catch (IOException e) {
-            e.printStackTrace();
+            return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         }
         return res.success(NullType.Void);
     }
