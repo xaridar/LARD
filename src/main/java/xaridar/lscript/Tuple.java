@@ -1,5 +1,12 @@
 package xaridar.lscript;
 
+/*
+ * LScript is an interpreted scripting language with static typing, written in Java by Xaridar.
+ *
+ * @version 2.0.0
+ * @author Xaridar
+ */
+
 /**
  * Simple datatype for holding two parallel values
  * @param <L> - Type of left side of Tuple

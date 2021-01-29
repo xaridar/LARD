@@ -1,5 +1,12 @@
 package xaridar.lscript.lexing;
 
+/*
+ * LScript is an interpreted scripting language with static typing, written in Java by Xaridar.
+ *
+ * @version 2.0.0
+ * @author Xaridar
+ */
+
 import xaridar.lscript.TokenEnum;
 
 /**

@@ -1,5 +1,12 @@
 package xaridar.lscript.interpreting.types.builtins.random;
 
+/*
+ * LScript is an interpreted scripting language with static typing, written in Java by Xaridar.
+ *
+ * @version 2.0.0
+ * @author Xaridar
+ */
+
 import xaridar.lscript.Tuple;
 import xaridar.lscript.errors.Error;
 import xaridar.lscript.interpreting.Context;
