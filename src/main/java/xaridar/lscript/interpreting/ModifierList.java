@@ -82,4 +82,12 @@ public class ModifierList {
         if (s != null && s.startsWith("Modifier not found")) return "";
         return s;
     }
+
+    public int numMods() {
+        int i = 0;
+        if (priv != null) i++;
+        if (stat != null) i++;
+        if (fin != null) i++;
+        return i;
+    }
 }

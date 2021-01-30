@@ -7,6 +7,8 @@ package xaridar.lscript.parsing.nodes;
  * @author Xaridar
  */
 
+import xaridar.lscript.lexing.Token;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

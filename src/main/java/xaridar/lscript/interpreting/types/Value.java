@@ -18,6 +18,7 @@ import xaridar.lscript.parsing.nodes.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static xaridar.lscript.TokenEnum.*;
 
@@ -30,6 +31,7 @@ public abstract class Value {
     protected Position posStart;
     protected Position posEnd;
     protected String type;
+    protected Context ownContext;
 
     /**
      * @param type - The type associated with the value. (ex. 'str', 'int')
@@ -39,6 +41,18 @@ public abstract class Value {
         this.posEnd = null;
         this.context = null;
         this.type = type;
+        this.ownContext = null;
+    }
+    /**
+     * @param type - The type associated with the value. (ex. 'str', 'int')
+     * @param contained - The contained Context for a class instance.
+     */
+    public Value(String type, Context contained) {
+        this.posStart = null;
+        this.posEnd = null;
+        this.context = null;
+        this.type = type;
+        this.ownContext = contained;
     }
 
     /**
@@ -171,6 +185,16 @@ public abstract class Value {
     }
 
     /**
+     * Called from any CallNode on a function.
+     * @param args - A list of args for execution of a function.
+     * @param context - The Context to run the function in.
+     * @return An RTResult containing either a Value or an Error; without overriding, it returns an UnsupportedOperationError.
+     */
+    public RunTimeResult execute(List<Value> args, Context context) {
+        return new RunTimeResult().failure(new Error.UnsupportedOperationError(posStart, posEnd, "Expected function", context));
+    }
+
+    /**
      * @param expectedType - The type to set for this Value.
      */
     public void setType(String expectedType) {
@@ -200,6 +224,19 @@ public abstract class Value {
 
     @Override
     public String toString() {
-        return type + " " + getContext().getSymbolTable().getSymbols().stream().filter(symbol -> symbol.getValue().equalTo(this).isTrue()).findFirst().map(Symbol::getName).orElse("anonymous");
+        for (Symbol symbol : getContext().getSymbolTable().getSymbols()) {
+            if (symbol.getValue() == this) {
+                return type + " " + symbol.getName();
+            }
+        }
+        return type + " anonymous";
+    }
+
+    public boolean hasContext() {
+        return ownContext != null;
+    }
+
+    public Context getOwnContext() {
+        return ownContext;
     }
 }

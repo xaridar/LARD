@@ -178,7 +178,7 @@ public class SymbolTable {
      * @return the first Symbol found in the list with the given name.
      */
     public Symbol getParentSymbolByName(String varName) {
-        if (parent != null) {
+        if (parent != null && getSymbolByName(varName) == null) {
             return parent.getParentSymbolByName(varName);
         }
         return symbols.stream().filter(symbol -> symbol.getName().equals(varName)).findFirst().orElse(null);

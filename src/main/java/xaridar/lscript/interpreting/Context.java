@@ -7,9 +7,14 @@ package xaridar.lscript.interpreting;
  * @author Xaridar
  */
 
+import xaridar.lscript.Constants;
+import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.types.LClass;
 import xaridar.lscript.lexing.Position;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +26,7 @@ public class Context {
     String displayName;
     SymbolTable symbolTable;
     Map<String, Context> accessibleContainedContexts;
+    List<String> types;
 
     /**
      * @param displayName - The name of the context, to be displayed on error stack traces.
@@ -33,6 +39,7 @@ public class Context {
         this.displayName = displayName;
         this.symbolTable = null;
         this.accessibleContainedContexts = new HashMap<>();
+        types = new ArrayList<>(Constants.getInstance().TYPES.keySet());
     }
 
     /**
@@ -77,6 +84,7 @@ public class Context {
      */
     public void addContainedContext(String name, Context c) {
         accessibleContainedContexts.put(name, c);
+        c.parent = this;
     }
 
     /**
@@ -85,5 +93,32 @@ public class Context {
      */
     public Context getContainedByName(String name) {
         return accessibleContainedContexts.keySet().stream().filter(str -> str.equals(name)).findFirst().map(str -> accessibleContainedContexts.get(str)).orElse(null);
+    }
+
+    /**
+     * Adds a class to be accessible through this Context.
+     * @param cls - The class to add.
+     * @param c - The internal context of the class.
+     * @param mods - A ModifierList containing all of the modifiers for the variable.
+     * @return an Error if one occurs in saving the class.
+     */
+    public Error addClass(LClass cls, Context c, ModifierList mods) {
+        Error err = getSymbolTable().set("class", cls.getName(), cls, mods);
+        if (err != null) return err;
+        accessibleContainedContexts.put(cls.getName(), c);
+        types.add(cls.getName());
+        return null;
+    }
+
+    public List<String> getTypes() {
+        return types;
+    }
+
+    public boolean hasType(String type) {
+        return types.contains(type);
+    }
+
+    public void addType(String type) {
+        types.add(type);
     }
 }

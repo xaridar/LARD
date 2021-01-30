@@ -33,6 +33,23 @@ public class LFunction extends BaseFunction {
     }
 
     @Override
+    public RunTimeResult execute(List<Value> args, Context context) {
+        RunTimeResult res = new RunTimeResult();
+        Interpreter interpreter = Interpreter.getInstance();
+        Context newContext = generateExecContext(context);
+
+        res.register(checkAndPopArgs(argNames, args, newContext));
+        if (res.shouldReturn()) return res;
+
+        res.register(interpreter.visit(bodyNode, newContext));
+        if (res.getFuncRetVal() == null && res.shouldReturn()) return res;
+        Value retVal = res.getFuncRetVal();
+        if (retVal == null)
+            retVal = NullType.Void;
+        return res.success(retVal);
+    }
+
+    @Override
     public RunTimeResult execute(List<Value> args) {
         RunTimeResult res = new RunTimeResult();
         Interpreter interpreter = Interpreter.getInstance();
