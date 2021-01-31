@@ -1066,7 +1066,7 @@ public class Parser {
         ModifierList mods = new ModifierList();
         int modNum = 0;
         if (currentToken.getType().equals(TT_KW) && Constants.getInstance().MODS_LIST.contains(currentToken.getValue().toString())) {
-            String val = (String) currentToken.getValue();
+            String val;
             while (Constants.getInstance().MODS_LIST.contains(currentToken.getValue().toString())) {
                 if (currentToken.getType() != TT_KW) {
                     break;
@@ -1087,6 +1087,7 @@ public class Parser {
         }
         mods.setToDefaults();
         if (currentToken.getType().equals(TT_IDENTIFIER)) {
+            List<Token> s = new ArrayList<>();
             Token type = null;
             Token varName;
             if (!currentToken.getType().equals(TT_IDENTIFIER))
@@ -1112,6 +1113,25 @@ public class Parser {
 
                     res.registerAdvancement();
                     advance();
+                } else {
+                    res.registerAdvancement(); advance();
+                    if (currentToken.getType() == TT_DOT) {
+                        res.registerAdvancement();
+                        advance();
+                        s.add(varName);
+                        varName = currentToken;
+                        res.registerAdvancement();
+                        advance();
+                        while (currentToken.getType() == TT_DOT) {
+                            res.registerAdvancement();
+                            advance();
+                            s.add(varName);
+                            varName = currentToken;
+                            res.registerAdvancement();
+                            advance();
+                        }
+                    }
+                    reverse(1);
                 }
             }
             String typeStr = "";
@@ -1205,13 +1225,13 @@ public class Parser {
                 advance();
                 Node expression = res.register(expression());
                 if (res.hasError()) return res;
-                return res.success(new VarAssignNode(null, varName, expression, null));
+                return res.success(new VarAssignNode(null, varName, s, expression, null));
             } else if (Arrays.asList(TT_PLUS, TT_MINUS).contains(nextToken.getType())) {
                 if (tokens.size() >= tokenIndex + 2 && tokens.get(tokenIndex + 2).getType().equals(nextToken.getType())) {
                     tokens.set(tokenIndex + 2, new Token(TT_INT, 1, nextToken.getPosStart(), null, null));
                     Node assignment = res.register(expression());
                     if (res.hasError()) return res;
-                    return res.success(new VarAssignNode(null, varName, assignment, null));
+                    return res.success(new VarAssignNode(null, varName, s, assignment, null));
                 }
             } else if (eqMods.containsKey(nextToken.getType())) {
                 TokenEnum toToken = eqMods.get(nextToken.getType());
@@ -1220,8 +1240,9 @@ public class Parser {
                 nextToken = tok;
                 Node assignment = res.register(expression());
                 if (res.hasError()) return res;
-                return res.success(new VarAssignNode(null, varName, assignment, null));
+                return res.success(new VarAssignNode(null, varName, s, assignment, null));
             }
+            reverse(s.size() * 2);
         }
         Node node = res.register(binaryOperation(unused -> comp(), Arrays.asList(TT_PIPE, TT_AND), null));
         if (res.hasError()) return res.slightFailure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected type, 'if', 'for', 'while', 'func', value, identifier, '+', '-', '(', '[', '{', or '!'"));

@@ -73,7 +73,7 @@ public class Error {
             Position pos = posStart;
 
             while (context != null) {
-                result.insert(0, String.format("\tFile %s, line %d, in %s\n", pos.getFn(), Integer.valueOf(pos.getLn() + 1), context.getDisplayName()));
+                result.insert(0, String.format("\tFile %s, line %d, in %s\n", pos.getFn(), pos.getLn() + 1, context.getDisplayName()));
                 pos = context.getParentEntryPos();
                 context = context.getParent();
             }

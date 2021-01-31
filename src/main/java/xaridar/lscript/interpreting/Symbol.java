@@ -21,6 +21,7 @@ public class Symbol {
     private final boolean immutable;
     private final boolean accessible;
     private final boolean stat;
+    private final Context context;
 
     /**
      * Default constructor for Symbol.
@@ -30,14 +31,16 @@ public class Symbol {
      * @param immutable - A boolean representing whether the variable's value can be changed.
      * @param accessible - A boolean representing whether the variable's value can be accessed from other contexts.
      * @param stat - A boolean representing whether the variable's value is static.
+     * @param context - This Symbol's Context.
      */
-    public Symbol(String name, String type, Value value, boolean immutable, boolean accessible, boolean stat) {
+    public Symbol(String name, String type, Value value, boolean immutable, boolean accessible, boolean stat, Context context) {
         this.name = name;
         this.type = type;
         this.value = value;
         this.immutable = immutable;
         this.accessible = accessible;
         this.stat = stat;
+        this.context = context;
     }
 
     /**
@@ -45,9 +48,10 @@ public class Symbol {
      * @param name - The name to be given to the variable.
      * @param type - The type of the variable stored.
      * @param value - The Value stored in the variable.
+     * @param context - This Symbol's Context.
      */
-    public Symbol(String name, String type, Value value) {
-        this(name, type, value, false, true, false);
+    public Symbol(String name, String type, Value value, Context context) {
+        this(name, type, value, false, true, false, context);
     }
 
     /**
@@ -84,7 +88,7 @@ public class Symbol {
      * @return True if the types match; otherwise, false.
      */
     public boolean typeEquals(String otherType) {
-        return this.type.equals(otherType) || Constants.getInstance().TYPES.get(otherType) == null;
+        return this.type.equals(otherType) || otherType.equals("nullType");
     }
 
     /**
@@ -105,5 +109,9 @@ public class Symbol {
 
     public boolean isStatic() {
         return stat;
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

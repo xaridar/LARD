@@ -156,7 +156,7 @@ public class Shell {
      */
     public static Tuple<Context, Error> runInternal(String fn, String text, boolean setOnlySymbols) {
         Context context = new Context(fn, null, null);
-        context.setSymbolTable(new SymbolTable(GLOBAL_SYMBOL_TABLE));
+        context.setSymbolTable(new SymbolTable(GLOBAL_SYMBOL_TABLE, context));
         Lexer lexer = new Lexer(fn, text);
         Tuple<List<Token>, Error> tkns = lexer.makeTokens();
         if (tkns.getRight() != null)

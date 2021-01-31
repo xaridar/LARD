@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class SymbolTable {
     List<Symbol> symbols;
     SymbolTable parent;
+    Context context;
 
     /**
      * Default constructor.
@@ -32,10 +33,12 @@ public class SymbolTable {
     /**
      * Overloaded constructor, which takes a parent SymbolTable as its only argument.
      * @param parent - a parent SymbolTable to be used for this one.
+     * @param context - This SymbolTable's Context.
      */
-    public SymbolTable(SymbolTable parent) {
+    public SymbolTable(SymbolTable parent, Context context) {
         symbols = new ArrayList<>();
         this.parent = parent;
+        this.context = context;
     }
 
     /**
@@ -115,7 +118,7 @@ public class SymbolTable {
                 moveUp(type, varName, value, mods);
             }
             else {
-                Symbol s = new Symbol(varName, type, value, mods.isFin(), mods.getPriv() == ModifierList.Privacy.PUBLIC, mods.isStat());
+                Symbol s = new Symbol(varName, type, value, mods.isFin(), mods.getPriv() == ModifierList.Privacy.PUBLIC, mods.isStat(), context);
                 symbols.add(s);
             }
         }
@@ -158,7 +161,7 @@ public class SymbolTable {
         if (parent != null)
             parent.moveUp(type, varName, value, mods);
         else {
-            Symbol s = new Symbol(varName, type, value, mods.isFin(), mods.getPriv() == ModifierList.Privacy.PUBLIC, true);
+            Symbol s = new Symbol(varName, type, value, mods.isFin(), mods.getPriv() == ModifierList.Privacy.PUBLIC, true, context);
             symbols.add(s);
         }
     }

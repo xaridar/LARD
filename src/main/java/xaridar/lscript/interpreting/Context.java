@@ -115,7 +115,11 @@ public class Context {
     }
 
     public boolean hasType(String type) {
-        return types.contains(type);
+        if (types.contains(type)) return true;
+        if (parent != null) {
+            return parent.hasType(type);
+        }
+        return false;
     }
 
     public void addType(String type) {
