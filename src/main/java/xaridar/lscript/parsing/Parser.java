@@ -540,6 +540,12 @@ public class Parser {
         res.registerAdvancement();
         advance();
 
+        if (currentToken.getType().equals(TT_RIGHT_BRACE)) {
+            res.registerAdvancement();
+            advance();
+            return res.success(new FuncDefNode(varNameToken, argNameTokens, returnTypes, new MultilineNode(Collections.emptyList(), currentToken.getPosStart(), currentToken.getPosEnd()), mods));
+        }
+
         Node nodeToReturn = res.register(statements());
         if (res.hasError()) return res;
 
@@ -621,9 +627,9 @@ public class Parser {
         res.registerAdvancement();
         advance();
 
-        if (!currentToken.matches(TT_KW, "int") && !currentToken.matches(TT_KW, "var"))
+        if (!currentToken.matches(TT_IDENTIFIER, "int") && !currentToken.matches(TT_IDENTIFIER, "var"))
             return res.failure(
-                new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected variable type"));
+                new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected variable type (either int or var)"));
 
         Token type = currentToken;
 
@@ -1038,6 +1044,7 @@ public class Parser {
 
             if (!currentToken.getType().equals(TT_RIGHT_BRACKET))
                 return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected ']'"));
+            Map<TokenEnum, TokenEnum> eqMods = Constants.getInstance().EQUAL_MODS.values().stream().collect(Collectors.toMap(m -> m.get("with"), m -> m.get("without")));
 
             res.registerAdvancement();
             advance();
@@ -1049,6 +1056,25 @@ public class Parser {
                 Node toSet = res.register(expr());
                 if (res.hasError()) return res;
                 return res.success(new SetIndexNode(left, startIdx, endIdx, toSet));
+            } else if (Arrays.asList(TT_PLUS, TT_MINUS).contains(currentToken.getType())) {
+                if (tokens.size() >= tokenIndex + 1 && nextToken.getType().equals(currentToken.getType())) {
+                    Token t = currentToken;
+                    res.registerAdvancement();
+                    advance();
+                    res.registerAdvancement();
+                    advance();
+                    return res.success(new SetIndexNode(left, startIdx, endIdx, new BinaryOperationNode(new IndexNode(left, startIdx, endIdx), t, new NumberNode(new Token(TT_INT, 1, t.getPosStart(), null, null)))));
+                }
+            } else if (eqMods.containsKey(currentToken.getType())) {
+                Token t = currentToken;
+                TokenEnum tt = eqMods.get(currentToken.getType());
+
+                res.registerAdvancement();
+                advance();
+                Node val = res.register(expr());
+                if (res.hasError()) return res;
+
+                return res.success(new SetIndexNode(left, startIdx, endIdx, new BinaryOperationNode(new IndexNode(left, startIdx, endIdx), new Token(tt, null, t.getPosStart(), null, null), val)));
             }
 
             return res.success(new IndexNode(left, startIdx, endIdx));
