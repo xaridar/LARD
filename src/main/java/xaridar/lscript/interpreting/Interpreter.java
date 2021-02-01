@@ -645,11 +645,6 @@ public class Interpreter {
         c.setSymbolTable(new SymbolTable(context.getSymbolTable(), c));
         Value val = new Value(name, c) {
             @Override
-            public Value copy() {
-                return res.register(visitInstanceNode(new InstanceNode(node.getCls(), node.getArgNodes()), context)).setContext(getContext()).setPos(getPosStart(), getPosEnd());
-            }
-
-            @Override
             public LBoolean equalTo(Value other) {
                 return (LBoolean) new LBoolean(false).setPos(posStart, posEnd).setContext(context);
             }
@@ -660,15 +655,11 @@ public class Interpreter {
             }
 
             @Override
-            public Context getOwnContext() {
-                return c;
-            }
-
-            @Override
             public String toString() {
                 return c.getDisplayName();
             }
         };
+        val.setOwnContext(c);
         LClass lClass = (LClass) context.getSymbolTable().get(name);
         for (VarNode field : lClass.getFields()) {
             res.register(visit(field, c));

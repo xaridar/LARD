@@ -112,7 +112,7 @@ public abstract class Value {
     /**
      * @return A copy of the Value.
      */
-    public abstract Value copy();
+    public Value copy() { return this; };
 
     /**
      * @return The value of this Value, if it has one. Can return null.
@@ -238,5 +238,9 @@ public abstract class Value {
 
     public Context getOwnContext() {
         return ownContext;
+    }
+
+    public void setOwnContext(Context ownContext) {
+        this.ownContext = ownContext;
     }
 }
