@@ -254,7 +254,7 @@ public class Interpreter {
             Error err = lastContext.getSymbolTable().set(null, varName, value, null);
             if (err != null) {
                 if (Constants.getInstance().CONVERT_CLASSES.containsKey(
-                        context.getSymbolTable().getParentSymbolByName(varName).getType())) {
+                        lastContext.getSymbolTable().getParentSymbolByName(varName).getType())) {
                     try {
                         value = res.register((RunTimeResult) Constants.getInstance().CONVERT_CLASSES.get(context.getSymbolTable().getSymbolByName(varName).getType()).getMethod("from", Value.class).invoke(null, value));
                         if (res.shouldReturn()) return res;
@@ -541,7 +541,7 @@ public class Interpreter {
                         ModifierList modifierList = new ModifierList();
                         if (symbol.isAccessible()) modifierList.addModByString("pub");
                         else modifierList.addModByStringHarsh("priv");
-                        if (symbol.isImmutable()) modifierList.addModByString("fin");
+                        modifierList.addModByString("fin");
                         if (symbol.isStatic()) modifierList.addModByString("stat");
                         context.getSymbolTable().set(symbol.getType(), symbol.getName(), symbol.getValue(), modifierList);
                     }
@@ -563,7 +563,7 @@ public class Interpreter {
                     ModifierList modifierList = new ModifierList();
                     if (symbol.isAccessible()) modifierList.addModByString("pub");
                     else modifierList.addModByStringHarsh("priv");
-                    if (symbol.isImmutable()) modifierList.addModByString("fin");
+                    modifierList.addModByString("fin");
                     if (symbol.isStatic()) modifierList.addModByString("stat");
                     Error err = context.getSymbolTable().set(val.getType(), node.getNames().get(i), val, modifierList);
                     if (err != null) return res.failure(err);
@@ -587,8 +587,15 @@ public class Interpreter {
         try {
             Tuple<Context, Error> resCtx = Shell.runInternal(path.getFileName().toString(), String.join("\n", Files.readAllLines(path)), true);
             if (resCtx.getRight() != null) return res.failure(resCtx.getRight());
+            for (Symbol s : resCtx.getLeft().getSymbolTable().symbols) {
+                s.setImmutable();
+            }
             context.addContainedContext(node.getName(), resCtx.getLeft());
-            context.getSymbolTable().set("module", node.getName(), new Module(node.getName()), ModifierList.getDefault());
+            ModifierList modList = new ModifierList();
+            modList.addModByString("stat");
+            modList.addModByString("fin");
+            modList.setToDefaults();
+            context.getSymbolTable().set("module", node.getName(), new Module(node.getName()), modList);
         } catch (IOException e) {
             return res.failure(new Error.FileAccessError(node.getFileName().getPosStart(), node.getFileName().getPosEnd(), "File not found: '" + path.toAbsolutePath() + "'", context));
         }
@@ -641,7 +648,7 @@ public class Interpreter {
         if (!context.hasType(name)) {
             return res.failure(new Error.RunTimeError(node.getCls().getPosStart(), node.getCls().getPosEnd(), "Class '" + name + "' not defined", context));
         }
-        Context c = new Context(name + "@" + new Random().nextLong(), context, node.getPosStart());
+        Context c = new Context(name + "@" + Utilities.generateHex(8), context, node.getPosStart());
         c.setSymbolTable(new SymbolTable(context.getSymbolTable(), c));
         Value val = new Value(name, c) {
             @Override

@@ -121,6 +121,8 @@ public class SymbolTable {
                 Symbol s = new Symbol(varName, type, value, mods.isFin(), mods.getPriv() == ModifierList.Privacy.PUBLIC, mods.isStat(), context);
                 symbols.add(s);
             }
+        } else if (symbol != null && !symbol.canEdit()) {
+            return new Error.IllegalAccessError(value.getPosStart(), value.getPosEnd(), "Variable '" + varName + "' is private in '" + symbol.getContext().getDisplayName() + "'", value.getContext());
         }
         return null;
     }

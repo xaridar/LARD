@@ -18,7 +18,7 @@ public class Symbol {
     private final String name;
     private final String type;
     private Value value;
-    private final boolean immutable;
+    private boolean immutable;
     private final boolean accessible;
     private final boolean stat;
     private final Context context;
@@ -88,7 +88,7 @@ public class Symbol {
      * @return True if the types match; otherwise, false.
      */
     public boolean typeEquals(String otherType) {
-        return this.type.equals(otherType) || otherType.equals("nullType");
+        return this.type.equals(otherType) || otherType.equals("nullType") || Constants.getInstance().TYPES.get(this.type) == null;
     }
 
     /**
@@ -113,5 +113,9 @@ public class Symbol {
 
     public Context getContext() {
         return context;
+    }
+
+    public void setImmutable() {
+        immutable = true;
     }
 }

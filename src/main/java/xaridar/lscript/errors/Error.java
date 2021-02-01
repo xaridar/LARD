@@ -7,6 +7,7 @@ package xaridar.lscript.errors;
  * @author Xaridar
  */
 
+import xaridar.lscript.Utilities;
 import xaridar.lscript.interpreting.Context;
 import xaridar.lscript.lexing.Position;
 
@@ -26,7 +27,7 @@ public class Error {
     @Override
     public String toString() {
         String result = String.format("%s: %s\nFile %s, line %d", errorName, details, posStart.getFn(), posStart.getLn() + 1);
-        result += "\n\n" + ErrorUtilities.stringWithArrows(posStart.getFtxt(), posStart, posEnd);
+        result += "\n\n" + Utilities.stringWithArrows(posStart.getFtxt(), posStart, posEnd);
         return result;
     }
 
@@ -64,7 +65,7 @@ public class Error {
         public String toString() {
             String result = generateStackTrace();
             result += String.format("%s: %s", errorName, details);
-            result += "\n\n" + ErrorUtilities.stringWithArrows(posStart.getFtxt(), posStart, posEnd);
+            result += "\n\n" + Utilities.stringWithArrows(posStart.getFtxt(), posStart, posEnd);
             return result;
         }
 

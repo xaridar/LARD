@@ -1,4 +1,4 @@
-package xaridar.lscript.errors;
+package xaridar.lscript;
 
 /*
  * LScript is an interpreted scripting language with static typing, written in Java by Xaridar.
@@ -9,7 +9,9 @@ package xaridar.lscript.errors;
 
 import xaridar.lscript.lexing.Position;
 
-public class ErrorUtilities {
+import java.util.Random;
+
+public class Utilities {
     public static String stringWithArrows(String text, Position posStart, Position posEnd) {
         StringBuilder result = new StringBuilder();
 
@@ -36,6 +38,17 @@ public class ErrorUtilities {
         }
 
         return result.toString().replace("\t", "");
+    }
+
+    public static String generateHex(int len) {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        String hex = "0123456789abcdef";
+        for (int i = 0; i < len; i++) {
+            int r = (int) (random.nextDouble() * hex.length());
+            sb.append(hex, r, r + 1);
+        }
+        return sb.toString();
     }
 
 }

@@ -1215,7 +1215,7 @@ public class Parser {
                     }
                     return res.success(new VarAssignNode(type, varName, def, mods));
                 }
-                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '=', ',', or ';'"));
+                return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '=', ',', '{', or ';'"));
             }
             Map<TokenEnum, TokenEnum> eqMods = Constants.getInstance().EQUAL_MODS.values().stream().collect(Collectors.toMap(m -> m.get("with"), m -> m.get("without")));
             if (nextToken.getType().equals(TT_EQ)) {
