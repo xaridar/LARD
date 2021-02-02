@@ -59,7 +59,7 @@ public class Shell {
             fn = "<stdin>";
             Scanner scanner = new Scanner(in);
             boolean listening = true;
-            Context context = new Context(fn, null, null);
+            Context context = new Context(fn, null, null, false);
             context.setSymbolTable(GLOBAL_SYMBOL_TABLE);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
@@ -111,7 +111,7 @@ public class Shell {
                 baseDir = fn.replace("/", "\\").substring(0, fn.replace("/", "\\").lastIndexOf("\\"));
             String text = String.join("\n", Files.readAllLines(p));
             if (text.trim().equals("")) System.exit(0);
-            Context context = new Context(fn, null, null);
+            Context context = new Context(fn, null, null, false);
             context.setSymbolTable(GLOBAL_SYMBOL_TABLE);
             Tuple<Object, Error> result = run(fn, text, context);
 
@@ -155,7 +155,7 @@ public class Shell {
      * @return a Tuple which holds any Error result of the interpretation and the main Context
      */
     public static Tuple<Context, Error> runInternal(String fn, String text, boolean setOnlySymbols) {
-        Context context = new Context(fn, null, null);
+        Context context = new Context(fn, null, null, false);
         context.setSymbolTable(new SymbolTable(GLOBAL_SYMBOL_TABLE, context));
         Lexer lexer = new Lexer(fn, text);
         Tuple<List<Token>, Error> tkns = lexer.makeTokens();

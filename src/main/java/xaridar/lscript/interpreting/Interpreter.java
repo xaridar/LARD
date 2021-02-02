@@ -209,6 +209,13 @@ public class Interpreter {
         if (node.getNestedContexts().size() == 0) {
             lastContext = context;
         } else {
+            if (node.getNestedContexts().get(0).getValue().toString().equals("this")) {
+                lastContext = context.getClassCtx();
+                if (lastContext == null) {
+                    return res.failure(new Error.RunTimeError(node.getNestedContexts().get(0).getPosStart(), node.getNestedContexts().get(0).getPosEnd(), "No class found", context));
+                }
+                node.getNestedContexts().remove(0);
+            }
             for (Token ctx : node.getNestedContexts()) {
                 if (lastContext == null) {
                     if (context.getContainedByName(ctx.getValue().toString()) == null) {
@@ -340,7 +347,7 @@ public class Interpreter {
     public RunTimeResult visitForNode(ForNode node, Context context) {
         RunTimeResult res = new RunTimeResult();
         LInt stepValue;
-        Context loopContext = new Context("<anonymous for loop>", context, node.getPosStart());
+        Context loopContext = new Context("<anonymous for loop>", context, node.getPosStart(), false);
         loopContext.setSymbolTable(new SymbolTable(context.getSymbolTable(), loopContext));
 
         Value start = res.register(visit(node.getStartValueNode(), context));
@@ -393,7 +400,7 @@ public class Interpreter {
 
     public RunTimeResult visitWhileNode(WhileNode node, Context context) {
         RunTimeResult res = new RunTimeResult();
-        Context loopContext = new Context("<anonymous while loop>", context, node.getPosStart());
+        Context loopContext = new Context("<anonymous while loop>", context, node.getPosStart(), false);
         loopContext.setSymbolTable(new SymbolTable(context.getSymbolTable(), loopContext));
 
         while (true) {
@@ -605,7 +612,7 @@ public class Interpreter {
     public RunTimeResult visitClassNode(ClassNode node, Context context) {
         RunTimeResult res = new RunTimeResult();
         String name = ((String) node.getVarName().getValue());
-        Context classCtx = new Context(name, context, node.getPosStart());
+        Context classCtx = new Context(name, context, node.getPosStart(), false);
         classCtx.setSymbolTable(new SymbolTable());
         List<FuncDefNode> methods = new ArrayList<>();
         List<LFunction> statMethods = new ArrayList<>();
@@ -648,7 +655,7 @@ public class Interpreter {
         if (!context.hasType(name)) {
             return res.failure(new Error.RunTimeError(node.getCls().getPosStart(), node.getCls().getPosEnd(), "Class '" + name + "' not defined", context));
         }
-        Context c = new Context(name + "@" + Utilities.generateHex(8), context, node.getPosStart());
+        Context c = new Context(name + "@" + Utilities.generateHex(8), context, node.getPosStart(), true);
         c.setSymbolTable(new SymbolTable(context.getSymbolTable(), c));
         Value val = new Value(name, c) {
             @Override

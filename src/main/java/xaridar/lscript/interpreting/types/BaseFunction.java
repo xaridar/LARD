@@ -27,13 +27,13 @@ public class BaseFunction extends BasicType {
     }
 
     public Context generateExecContext(Context context) {
-        Context newContext = new Context(name, context, getPosStart());
+        Context newContext = new Context(name, context, getPosStart(), false);
         newContext.setSymbolTable(new SymbolTable(context.getSymbolTable(), newContext));
         return newContext;
     }
 
     public Context generateExecContext() {
-        Context newContext = new Context(name, getContext(), getPosStart());
+        Context newContext = new Context(name, getContext(), getPosStart(), false);
         newContext.setSymbolTable(new SymbolTable(getContext().getSymbolTable(), newContext));
         return newContext;
     }

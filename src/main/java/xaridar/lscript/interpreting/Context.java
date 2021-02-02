@@ -27,19 +27,22 @@ public class Context {
     SymbolTable symbolTable;
     Map<String, Context> accessibleContainedContexts;
     List<String> types;
+    boolean isClass;
 
     /**
      * @param displayName - The name of the context, to be displayed on error stack traces.
      * @param parent - The parent Context, if there is one. Can be null.
      * @param parentEntryPos - The Position in the parent Context, if there is one, where this Context started. Can be null.
+     * @param isClass - A boolean representing whether this context represents a class.
      */
-    public Context(String displayName, Context parent, Position parentEntryPos) {
+    public Context(String displayName, Context parent, Position parentEntryPos, boolean isClass) {
         this.parentEntryPos = parentEntryPos;
         this.parent = parent;
         this.displayName = displayName;
         this.symbolTable = null;
         this.accessibleContainedContexts = new HashMap<>();
         types = new ArrayList<>(Constants.getInstance().TYPES.keySet());
+        this.isClass = isClass;
     }
 
     /**
@@ -124,5 +127,11 @@ public class Context {
 
     public void addType(String type) {
         types.add(type);
+    }
+
+    public Context getClassCtx() {
+        if (isClass) return this;
+        if (parent != null) return parent.getClassCtx();
+        return null;
     }
 }
