@@ -63,8 +63,6 @@ public class Interpreter {
             Method method = getClass().getMethod("visit" + node.getClass().getSimpleName(), node.getClass(), Context.class);
             return (RunTimeResult) method.invoke(this, node, context);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            System.out.println(node.getClass());
-            System.out.println(node.getClass().getSimpleName());
             e.printStackTrace();
             return null;
         }
@@ -678,23 +676,6 @@ public class Interpreter {
         }
         Context c = new Context(name + "@" + Utilities.generateHex(8), context, node.getPosStart(), true);
         c.setSymbolTable(new SymbolTable(context.getSymbolTable(), c));
-        Value val = new Value(name, c) {
-            @Override
-            public LBoolean equalTo(Value other) {
-                return (LBoolean) new LBoolean(false).setPos(posStart, posEnd).setContext(context);
-            }
-
-            @Override
-            public LBoolean notEqualTo(Value other) {
-                return (LBoolean) new LBoolean(true).setPos(posStart, posEnd).setContext(context);
-            }
-
-            @Override
-            public String toString() {
-                return c.getDisplayName();
-            }
-        };
-        val.setOwnContext(c);
         LClass lClass = (LClass) context.getSymbolTable().get(name);
         for (VarNode field : lClass.getFields()) {
             res.register(visit(field, c));
@@ -708,20 +689,46 @@ public class Interpreter {
                 return res;
             }
         }
+        Value val = new Value(name, c) {
+            @Override
+            public LBoolean equalTo(Value other) {
+                return (LBoolean) new LBoolean(false).setPos(posStart, posEnd).setContext(context);
+            }
+
+            @Override
+            public LBoolean notEqualTo(Value other) {
+                return (LBoolean) new LBoolean(true).setPos(posStart, posEnd).setContext(context);
+            }
+
+            @Override
+            public String toString() {
+                Value val = c.getSymbolTable().get("toString");
+                if (val instanceof LFunction && ((LFunction) val).getArgNames().size() == 0 && c.getSymbolTable().getSymbolByName("toString").isAccessible() && ((LFunction) val).getRetTypes().size() == 1 && ((LFunction) val).getRetTypes().get(0).equals("str")) {
+                    RunTimeResult res = new RunTimeResult();
+                    Value str = res.register(val.execute(Collections.emptyList()));
+                    if (res.shouldReturn()) return c.getDisplayName();
+                    return str.toString();
+                }
+                return c.getDisplayName();
+            }
+        };
+        val.setOwnContext(c);
         List<Value> args = new ArrayList<>();
         for (Node n : node.getArgNodes()) {
             args.add(res.register(visit(n, c)));
         }
-        for (FuncDefNode m : lClass.getThisExtends().getMethods()) {
-            if (!c.getSymbolTable().hasVar(m.getVarNameToken().getValue().toString())) {
-                res.register(visit(m, c));
-                if (res.shouldReturn()) return res;
+        if (lClass.getThisExtends() != null) {
+            for (FuncDefNode m : lClass.getThisExtends().getMethods()) {
+                if (!c.getSymbolTable().hasVar(m.getVarNameToken().getValue().toString())) {
+                    res.register(visit(m, c));
+                    if (res.shouldReturn()) return res;
+                }
             }
-        }
-        for (VarNode n : lClass.getThisExtends().getFields()) {
-            if (!c.getSymbolTable().hasVar(n.getName())) {
-                res.register(visit(n, c));
-                if (res.shouldReturn()) return res;
+            for (VarNode n : lClass.getThisExtends().getFields()) {
+                if (!c.getSymbolTable().hasVar(n.getName())) {
+                    res.register(visit(n, c));
+                    if (res.shouldReturn()) return res;
+                }
             }
         }
         res.register(lClass.getConstructor().execute(args, c));
