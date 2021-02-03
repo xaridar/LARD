@@ -88,7 +88,10 @@ public class Symbol {
      * @return True if the types match; otherwise, false.
      */
     public boolean typeEquals(String otherType) {
-        return this.type.equals(otherType) || otherType.equals("nullType") || Constants.getInstance().TYPES.get(this.type) == null;
+        return typeEquals(type, otherType, context);
+    }
+    public static boolean typeEquals(String type, String otherType, Context ctx) {
+        return type.equals(otherType) || otherType.equals("nullType") || Constants.getInstance().TYPES.get(type) == null || ctx.getTypesForClass(otherType).contains(type);
     }
 
     /**

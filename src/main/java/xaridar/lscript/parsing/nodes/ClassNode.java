@@ -21,6 +21,7 @@ public class ClassNode extends VarNode {
     private final List<VarNode> fields;
     private final List<FuncDefNode> methods;
     private final FuncDefNode constructor;
+    private final VarAccessNode extendsNode;
 
     /**
      * @param varName      - The name to assign to the class.
@@ -29,13 +30,15 @@ public class ClassNode extends VarNode {
      * @param constructor  - The constructor of the class.
      * @param posStart     - The start Position of the class definition.
      * @param mods         - A ModifierList containing all of the modifiers for the variable.
+     * @param extendsNode  - A Node representing the class for this class to extend, if any.
      */
-    public ClassNode(Token varName, List<VarNode> fields, List<FuncDefNode> methods, FuncDefNode constructor, Position posStart, Position posEnd, ModifierList mods) {
+    public ClassNode(Token varName, List<VarNode> fields, List<FuncDefNode> methods, FuncDefNode constructor, Position posStart, Position posEnd, ModifierList mods, VarAccessNode extendsNode) {
         super(posStart, posEnd, mods, (String) varName.getValue());
         this.varName = varName;
         this.fields = fields;
         this.methods = methods;
         this.constructor = constructor;
+        this.extendsNode = extendsNode;
     }
 
     public Token getVarName() {
@@ -57,5 +60,9 @@ public class ClassNode extends VarNode {
     @Override
     public boolean requiresSemicolon() {
         return false;
+    }
+
+    public VarAccessNode getExtendNode() {
+        return extendsNode;
     }
 }

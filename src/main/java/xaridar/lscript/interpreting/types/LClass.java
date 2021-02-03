@@ -20,8 +20,9 @@ public class LClass extends BasicType {
     private final List<Value> staticVars;
     private final List<VarNode> fields;
     private final LFunction constructor;
+    private final LClass thisExtends;
 
-    public LClass(String name, LFunction constructor, List<LFunction> statMethods, List<FuncDefNode> methods, List<Value> staticVars, List<VarNode> fields) {
+    public LClass(String name, LFunction constructor, List<LFunction> statMethods, List<FuncDefNode> methods, List<Value> staticVars, List<VarNode> fields, LClass thisExtends) {
         super("class");
         this.name = name;
         this.statMethods = statMethods;
@@ -29,6 +30,7 @@ public class LClass extends BasicType {
         this.staticVars = staticVars;
         this.fields = fields;
         this.constructor = constructor;
+        this.thisExtends = thisExtends;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class LClass extends BasicType {
 
     @Override
     public Value copy() {
-        LClass cls = new LClass(name, constructor, statMethods, methods, staticVars, fields);
+        LClass cls = new LClass(name, constructor, statMethods, methods, staticVars, fields, thisExtends);
         cls.setContext(context);
         cls.setPos(posStart, posEnd);
         return cls;
@@ -85,5 +87,9 @@ public class LClass extends BasicType {
 
     public LFunction getConstructor() {
         return constructor;
+    }
+
+    public LClass getThisExtends() {
+        return thisExtends;
     }
 }

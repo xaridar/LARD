@@ -10,12 +10,11 @@ package xaridar.lscript.interpreting;
 import xaridar.lscript.Constants;
 import xaridar.lscript.errors.Error;
 import xaridar.lscript.interpreting.types.LClass;
+import xaridar.lscript.interpreting.types.Value;
 import xaridar.lscript.lexing.Position;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A nested context of the program, which includes a SymbolTable holding all of the Context's variable, as well as a name for error generation.
@@ -26,7 +25,7 @@ public class Context {
     String displayName;
     SymbolTable symbolTable;
     Map<String, Context> accessibleContainedContexts;
-    List<String> types;
+    Map<String, List<String>> extendTypes;
     boolean isClass;
 
     /**
@@ -41,7 +40,7 @@ public class Context {
         this.displayName = displayName;
         this.symbolTable = null;
         this.accessibleContainedContexts = new HashMap<>();
-        types = new ArrayList<>(Constants.getInstance().TYPES.keySet());
+        extendTypes = new HashMap<>(Constants.getInstance().TYPES.keySet().stream().collect(Collectors.toMap(type -> type, Collections::singletonList)));
         this.isClass = isClass;
     }
 
@@ -109,29 +108,39 @@ public class Context {
         Error err = getSymbolTable().set("class", cls.getName(), cls, mods);
         if (err != null) return err;
         accessibleContainedContexts.put(cls.getName(), c);
-        types.add(cls.getName());
+        extendTypes.put(cls.getName(), getStringExtendNames(cls));
         return null;
     }
 
-    public List<String> getTypes() {
-        return types;
+    private List<String> getStringExtendNames(LClass cls) {
+        if (cls.getThisExtends() == null) return Arrays.asList(cls.getName());
+        return getStringExtendNames(cls.getThisExtends());
+    }
+
+    public Map<String, List<String>> getTypes() {
+        return extendTypes;
     }
 
     public boolean hasType(String type) {
-        if (types.contains(type)) return true;
+        if (extendTypes.containsKey(type)) return true;
         if (parent != null) {
             return parent.hasType(type);
         }
         return false;
     }
 
-    public void addType(String type) {
-        types.add(type);
+    public void addType(String type, List<String> extendTypes) {
+        this.extendTypes.put(type, extendTypes);
     }
 
     public Context getClassCtx() {
         if (isClass) return this;
         if (parent != null) return parent.getClassCtx();
+        return null;
+    }
+
+    public List<String> getTypesForClass(String cls) {
+        if (extendTypes.containsKey(cls)) return extendTypes.get(cls);
         return null;
     }
 }

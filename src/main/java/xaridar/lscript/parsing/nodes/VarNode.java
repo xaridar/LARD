@@ -12,18 +12,25 @@ import xaridar.lscript.lexing.Position;
 
 public class VarNode extends Node {
     private final ModifierList mods;
+    private final String name;
 
     /**
      * @param posStart - The start position of the node.
      * @param posEnd   - The end position of the node.
      * @param mods     - The modifiers to the variable.
+     * @param name     - The name of the variable.
      */
     public VarNode(Position posStart, Position posEnd, ModifierList mods, String name) {
         super(posStart, posEnd);
         this.mods = mods;
+        this.name = name;
     }
 
     public ModifierList getMods() {
         return mods;
+    }
+
+    public String getName() {
+        return name;
     }
 }

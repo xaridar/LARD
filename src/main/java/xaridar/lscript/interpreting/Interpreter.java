@@ -15,7 +15,6 @@ import xaridar.lscript.parsing.nodes.*;
 import xaridar.lscript.interpreting.types.*;
 import xaridar.lscript.interpreting.types.LFloat;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.Boolean;
 import java.lang.reflect.InvocationTargetException;
@@ -64,6 +63,8 @@ public class Interpreter {
             Method method = getClass().getMethod("visit" + node.getClass().getSimpleName(), node.getClass(), Context.class);
             return (RunTimeResult) method.invoke(this, node, context);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            System.out.println(node.getClass());
+            System.out.println(node.getClass().getSimpleName());
             e.printStackTrace();
             return null;
         }
@@ -234,7 +235,7 @@ public class Interpreter {
         if (expectedType != null) {
             if (!lastContext.hasType(expectedType)) {
                 return res.failure(new Error.RunTimeError(node.getType().getPosStart(), node.getType().getPosEnd(), "Class not found: '" + expectedType + "'", context));
-            } else if (Constants.getInstance().TYPES.containsKey(expectedType) && (Constants.getInstance().TYPES.get(expectedType) == null || Constants.getInstance().TYPES.get(value.getType()).contains(expectedType)) || value.getType().equals("nullType") || (context.hasType(expectedType) && expectedType.equals(value.getType()))) {
+            } else if (Symbol.typeEquals(expectedType, value.getType(), context)) {
                 value.setType(expectedType);
                 Error err = lastContext.getSymbolTable().set(expectedType, varName, value, node.getMods());
                 if (err != null)
@@ -450,7 +451,7 @@ public class Interpreter {
             else vals.add(val);
             for (int i = 0, retValSize = retNode.getNodesToCall().size(); i < retValSize; i++) {
                 Node n = retNode.getNodesToCall().get(i);
-                if (!(Constants.getInstance().TYPES.get(retTypes.get(i)) == null || Constants.getInstance().TYPES.get(vals.get(i).getType()).contains(retTypes.get(i)) || context.hasType(vals.get(i).getType()))) {
+                if (!Symbol.typeEquals(retTypes.get(i), vals.get(i).getType(), context)) {
                     context.getSymbolTable().remove(funcName);
                     return res.failure(new Error.RunTimeError(n.getPosStart(), n.getPosEnd(), "Wrong type; Expected '" + retTypes.get(i) + "', got '" + vals.get(i).getType() + "'", context));
                 }
@@ -553,9 +554,9 @@ public class Interpreter {
                         context.getSymbolTable().set(symbol.getType(), symbol.getName(), symbol.getValue(), modifierList);
                     }
                 });
-                resCtx.getLeft().getTypes().forEach(type -> {
+                resCtx.getLeft().getTypes().forEach((type, ext) -> {
                     if (!Constants.getInstance().TYPES.containsKey(type)) {
-                        context.addType(type);
+                        context.addType(type, ext);
                     }
                 });
             } else {
@@ -631,6 +632,9 @@ public class Interpreter {
                 if (res.shouldReturn()) return res;
                 statics.add(v);
             } else {
+                res.register(visit(n, classCtx));
+                if (res.shouldReturn()) return res;
+                classCtx.getSymbolTable().remove(n.getName());
                 fields.add(n);
             }
         }
@@ -640,10 +644,27 @@ public class Interpreter {
                 if (res.shouldReturn()) return res;
                 statMethods.add((LFunction) v);
             } else {
+                res.register(visit(n, classCtx));
+                if (res.shouldReturn()) return res;
+                classCtx.getSymbolTable().remove(n.getVarNameToken().getValue().toString());
                 methods.add(n);
             }
         }
-        LClass cls = (LClass) new LClass(name, constructor, statMethods, methods, statics, fields).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
+        if (node.getExtendNode() != null) {
+            LClass clazz = (LClass) res.register(visit(node.getExtendNode(), context));
+            if (res.shouldReturn()) return res;
+            statMethods.addAll(clazz.getStatMethods());
+            statics.addAll(clazz.getStaticVars());
+        }
+        LClass ext = null;
+        if (node.getExtendNode() != null) {
+            Node n = node.getExtendNode();
+            Value val = res.register(visit(n, context));
+            if (res.shouldReturn()) return res;
+            if (!(val instanceof LClass)) return res.failure(new Error.RunTimeError(n.getPosStart(), n.getPosEnd(), "Expected class type; got " + val.getType(), context));
+            ext = (LClass) val;
+        }
+        LClass cls = (LClass) new LClass(name, constructor, statMethods, methods, statics, fields, ext).setContext(context).setPos(node.getPosStart(), node.getPosEnd());
         Error err = context.addClass(cls, classCtx, node.getMods());
         if (err != null) return res.failure(err);
         return res.success(cls);
@@ -690,6 +711,18 @@ public class Interpreter {
         List<Value> args = new ArrayList<>();
         for (Node n : node.getArgNodes()) {
             args.add(res.register(visit(n, c)));
+        }
+        for (FuncDefNode m : lClass.getThisExtends().getMethods()) {
+            if (!c.getSymbolTable().hasVar(m.getVarNameToken().getValue().toString())) {
+                res.register(visit(m, c));
+                if (res.shouldReturn()) return res;
+            }
+        }
+        for (VarNode n : lClass.getThisExtends().getFields()) {
+            if (!c.getSymbolTable().hasVar(n.getName())) {
+                res.register(visit(n, c));
+                if (res.shouldReturn()) return res;
+            }
         }
         res.register(lClass.getConstructor().execute(args, c));
         if (res.shouldReturn()) {

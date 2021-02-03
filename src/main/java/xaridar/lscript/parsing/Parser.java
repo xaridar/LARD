@@ -7,7 +7,6 @@ package xaridar.lscript.parsing;
  * @author Xaridar
  */
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import xaridar.lscript.Constants;
 import xaridar.lscript.TokenEnum;
 import xaridar.lscript.Tuple;
@@ -18,7 +17,6 @@ import xaridar.lscript.lexing.Position;
 import xaridar.lscript.lexing.Token;
 import xaridar.lscript.parsing.nodes.*;
 
-import javax.management.ImmutableDescriptor;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -63,7 +61,7 @@ public class Parser {
      * Sets the currentToken and nextToken variables properly based on the tokenIndex.
      */
     public void updateTokens() {
-        if (tokenIndex < tokens.size()) {
+        if (tokenIndex < tokens.size() && tokenIndex >= 0) {
             currentToken = tokens.get(tokenIndex);
             if (tokenIndex < tokens.size() - 1)
                 nextToken = tokens.get(tokenIndex + 1);
@@ -1163,6 +1161,20 @@ public class Parser {
             String typeStr = "";
             if (type != null) typeStr = type.getValue().toString();
             if (Constants.getInstance().TYPES_BRACKET.contains(typeStr)) {
+                VarAccessNode extendsNode = null;
+                if (currentToken.getType() == TT_COLON) {
+                    res.registerAdvancement();
+                    advance();
+
+                    if (!currentToken.getType().equals(TT_IDENTIFIER))
+                        return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected identifier"));
+
+                    Node n = res.register(atom());
+                    if (res.hasError()) return res;
+                    if (!(n instanceof VarAccessNode))
+                        return res.failure(new Error.InvalidSyntaxError(n.getPosStart(), n.getPosEnd(), "Expected class name"));
+                    extendsNode = (VarAccessNode) n;
+                }
                 if (currentToken.getType() == TT_LEFT_BRACE) {
                     Position posStart = currentToken.getPosStart().copy();
                     res.registerAdvancement();
@@ -1188,7 +1200,7 @@ public class Parser {
                     if (currentToken.getType() != TT_RIGHT_BRACE) return res.failure(new Error.InvalidSyntaxError(currentToken.getPosStart(), currentToken.getPosEnd(), "Expected '}'"));
                     res.registerAdvancement();
                     advance();
-                    return res.success(new ClassNode(varName, varAssignNodes, funcDefNodes, constructor, posStart, currentToken.getPosEnd().copy(), mods));
+                    return res.success(new ClassNode(varName, varAssignNodes, funcDefNodes, constructor, posStart, currentToken.getPosEnd().copy(), mods, extendsNode));
                 }
             }
 
