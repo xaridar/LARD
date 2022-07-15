@@ -9,7 +9,7 @@ LScript is a primarily statically-typed scripting language, with the ability to 
 It is written fully in Java.
 
 To run LScript, download a full version directory from [releases], which contains the commandline interface, as well as an .exe to run files.<br>
- - Windows: Place this directory on your path, nd use the command 'xaridar.lscript' in the command line to use the command line interface.
+ - Windows: Place this directory on your path, and use the command 'xaridar.lscript' in the command line to use the command line interface.
  - Unix: Use the command 'chmod u+x xaridar.lscript' (or 'chmod +x xaridar.lscript') To make the file executable. Then place the directory containing both files on your PATH, and use the command 'xaridar.lscript', with or without arguments, to use the CLI.
 
 To run the language in command line, compile all the classes provided. The Main method is located in [Shell.java].
