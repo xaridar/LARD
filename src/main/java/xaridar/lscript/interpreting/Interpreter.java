@@ -10,6 +10,7 @@ package xaridar.lscript.interpreting;
 import xaridar.lscript.*;
 import static xaridar.lscript.TokenEnum.*;
 import xaridar.lscript.errors.Error;
+import xaridar.lscript.interpreting.types.Module;
 import xaridar.lscript.lexing.Token;
 import xaridar.lscript.parsing.nodes.*;
 import xaridar.lscript.interpreting.types.*;

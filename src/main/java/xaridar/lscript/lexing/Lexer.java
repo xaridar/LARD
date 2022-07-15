@@ -256,14 +256,14 @@ public class Lexer {
                 if (periodCount == 1) {
                     break;
                 }
-                periodCount ++;
+                periodCount++;
                 numStr.append('.');
             }
             else {
                 numStr.append(currentChar);
             }
             advance();
-            if (currentChar == 'x' && (numStr.toString().matches("^0*$") && numStr.length() == 1)) {
+            if (currentChar != null && currentChar == 'x' && (numStr.toString().matches("^0*$") && numStr.length() == 1)) {
                 Tuple<Token, Error> hexToken = makeHex(posStart);
                 if (hexToken.getRight() != null) return Tuple.of(null, hexToken.getRight());
                 else return Tuple.of(hexToken.getLeft(), null);
